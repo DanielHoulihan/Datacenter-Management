@@ -1,8 +1,8 @@
 from django.shortcuts import  render
-from tool.models import Report, HostReport
+from tool.models import Report, HostReport, Threshold
 import requests
 from datetime import datetime
-
+from django.views.decorators.csrf import csrf_protect
 
 
 def get_reports(request):
@@ -26,8 +26,14 @@ def get_reports(request):
 
     return render (request, 'reports/report.html', { "all_reports": all_reports} )
 
-
+@csrf_protect
 def report_detail(request, id):
+
+    if request.method == 'POST':
+        low = request.POST['low']
+        medium = request.POST['medium']
+        Threshold.objects.update(low=low,medium=medium)
+
     get_reports(request)
     url = "http://localhost:3002/reports" 
     response = requests.get(url)
@@ -50,7 +56,10 @@ def report_detail(request, id):
                 host_reports_to_show = HostReport.objects.filter(reportId = 
                     Report.objects.get(id = id)).order_by('-reportId')
 
-    return render (request,'reports/report_detail.html',{'hosts': host_reports_to_show}
+    if Threshold.objects.count()==0:
+        Threshold.objects.create(low=15,medium=30)
+
+    return render (request,'reports/report_detail.html',{'hosts': host_reports_to_show, "threshold": Threshold.objects.all().get()}
     )
 
 
@@ -58,6 +67,6 @@ def host_detail(request, id, Id2):
     report_detail(request, id)
     host = HostReport.objects.filter(reportId = Report.objects.get(id = id)).\
             get(hostId = HostReport.objects.get(id = Id2))
-    return render (request,'reports/host_detail.html',{'hosts': host}
+    return render (request,'reports/host_detail.html',{'hosts': host, "threshold": Threshold.objects.all().get()}
     )
     

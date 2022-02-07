@@ -1,4 +1,3 @@
-from tkinter import CASCADE
 from django.db import models
 
 class Report(models.Model):
@@ -11,7 +10,6 @@ class Report(models.Model):
     pue = models.FloatField(null=True)
     startTime = models.CharField(max_length=20,null=True)
     endTime = models.CharField(max_length=20,null=True)
-
 
     def __str__(self):
         return self.reportId
@@ -27,8 +25,10 @@ class HostReport(models.Model):
     apparentWastageCost = models.FloatField(null=True)
     carbonFootprint = models.FloatField(null=True)
 
-
-    
     def __str__(self):
         return str(self.hostId)
 
+
+class Threshold(models.Model):
+    low = models.IntegerField()
+    medium = models.IntegerField()
