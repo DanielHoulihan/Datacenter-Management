@@ -1,0 +1,32 @@
+{% extends 'reports/base.html'%}
+{% load static %}
+{% block content %}
+  <div class = "container">
+    <div class = "text-center container">
+    </div> 
+    <br><br>
+    <div class="row">
+      {% for host in hosts %}
+        <div class="col-md-4 col-sm-6 col-lg-3">
+          <div class="card">
+            <div class="card-body text-center">
+              <p class="card-title">Host Name: {{ host.hostName }}</p>
+              <hr>
+              <p class="card-text">Host ID: {{ host.hostId }}</p>
+              <p class="card-text">CPU Usage: {{ host.cpu_usage }}%</p>
+              <p class="card-text">Report ID: {{ host.reportId }}%</p>
+              <a href="hosts/{{host.id}}"
+              ><input
+                type="submit"
+                value="Host Details"
+                class="btn btn-danger btn-sm"
+                type="button"
+            /></a>
+            </div>
+          </div>
+          <br><br><br>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends 'reports/base.html'%}
+{% load static %}
+{% block content %}
+  <div class = "container">
+    <div class = "text-center container">
+      <br>
+      <h2 class = "text-center">Available reports</h2> 
+      <br>
+    </div> 
+    <br><br>
+    <div class="row">
+      {% for report in all_reports %}
+        <div class="col-md-4 col-sm-6 col-lg-3">
+          <div class="card">
+            <div class="card-body text-center">
+              <p class="card-title">Data Center: {{ report.data_center_name }}</p>
+              <hr>
+              <p class="card-text">Report ID: {{report.reportId}} </p>
+              <p class="card-text">Start: {{report.startTime}}</p>
+              <p class="card-text">End: {{report.endTime}}</p>
+              <p class="card-text">PUE: {{report.pue}} </p>
+              <p class="card-text">Hosts: {{ report.hosts }}</p>
+              <p class="card-text">Racks:  {{ report.racks }}</p>
+              <a href="reports/{{report.id}}"
+              ><input
+                type="submit"
+                value="View Report"
+                class="btn btn-danger btn-sm"
+                type="button"
+            /></a>
+            </div>
+          </div>
+          <br><br><br>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+{% endblock %}
