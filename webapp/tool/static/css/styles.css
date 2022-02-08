@@ -18,7 +18,7 @@ table, th, td {
     z-index: 1; 
     top: 0; 
     left: 0;
-    background-color: rgb(85, 85, 85); 
+    background-color: rgb(135, 135, 135); 
     overflow-x: hidden; 
     padding-top: 20px;
   }
@@ -56,10 +56,9 @@ table, th, td {
     display: flex;
     flex-wrap: wrap;
     justify-content: flex-start;
-    max-width: 1000px;
     margin: 25px auto;
     padding: 50px;
-    background-color: rgb(227, 227, 227);
+    background-color: rgb(255, 255, 255);
     }
     
     .card {
@@ -67,6 +66,8 @@ table, th, td {
     height: 200px;
     margin: 25px;
     padding: 10px;
-    background-color: rgb(234, 241, 255);
+    background-color: rgb(233, 233, 233);
     box-shadow: 0 0 12px rgb(63, 63, 63);
     }
+
+    

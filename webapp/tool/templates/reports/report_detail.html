@@ -1,7 +1,7 @@
 {% include 'reports/base.html'%}
 
-
 <div class="sidenav">
+  <img style="padding:12px" src="/../../static/images/logo.png" alt="Beeyon" width="125" height="70">
   <a href="{% url 'get_reports' %}">Home</a>
   <br><br>
   <form method="POST" class="post-form"> 
@@ -9,10 +9,15 @@
     <ul style="list-style-type:none">
       <dev class="white_text">
       <li> <b> Threshold </b></li>
+      <li><b>0-X-Y-100</b></li>
     </dev>
       <br>
-      <li><input style="height:20px" type="text" name="low" placeholder={{threshold.low}} size="10"></li>
+      <!-- <li><input style="height:20px" type="text" name="low" placeholder={{threshold.low}} size="10"></li>
       <li><input style="height:20px" type="text" name="medium" placeholder={{threshold.medium}} size="10"></li>
+      <select name="age" id="selectThreshold"></select> -->
+      
+      <li><select name="low" id="selectThreshold" placeholder={{threshold.low}}></select></li>
+      <li><select name="medium" id="selectThreshold2" placeholder={{threshold.medium}}></select></li>
     </ul>
     <div class ="wrapper">
     <button type="submit" class="save">Submit</button>
@@ -20,12 +25,9 @@
   </form>
 </div>
 
-
-
-
-
 {% block content %}
 
+<div class="content">
   <div class="card-container">
     {% for host in hosts %}
     <div class="card">
@@ -34,7 +36,7 @@
         <hr>
         <p>Host ID: {{ host.hostId }}</p>
         {% if host.cpu_usage > threshold.medium %}
-          <p style="background-color: rgb(235, 59, 59)" > CPU Usage: {{ host.cpu_usage }}%</p>
+          <p style="background-color: rgb(235, 59, 59); color:#ffffff" > CPU Usage: {{ host.cpu_usage }}%</p>
         {% elif host.cpu_usage < threshold.low %} 
           <p style="background-color: rgb(11, 226, 58)">CPU Usage: {{ host.cpu_usage }}%</p>
         {% else %} 
@@ -47,9 +49,30 @@
     </div>
     {% endfor %}
   </div>  
-
+</div>
 {% endblock %}
-<script type="text/javascript" src= "/../../static/js/script.js"></script>
 
+<!-- <script type="text/javascript" src= "/../../static/js/script.js"></script> -->
+<script>
 
+  var selectAge = document.getElementById("selectThreshold");
+  var contents;
+  contents += "<option value='' disabled selected hidden>{{threshold.low}}</option>"
+  for (let i = 1; i <= 100; i++) {
+    contents += "<option>" + i + "</option>";
+  }
+  selectAge.innerHTML = contents;
+
+</script>
+<script>
+
+  var selectAge = document.getElementById("selectThreshold2");
+  var contents2;
+  contents2 += "<option value='' disabled selected hidden>{{threshold.medium}}</option>"
+  for (let i = 1; i <= 100; i++) {
+    contents2 += "<option>" + i + "</option>";
+  }
+  selectAge.innerHTML = contents2;
+
+</script>
 

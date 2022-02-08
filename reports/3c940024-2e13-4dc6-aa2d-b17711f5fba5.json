@@ -383,6 +383,1543 @@
                 "datacenterId": 266,
                 "datacenterName": "new-test-dc"
             }
+        },
+
+        {
+            "id": "d4c22bf3-4eca-4665-9df8-a34f8a842261",
+            "createDate": 1471435589,
+            "message": "Do we need this text?",
+            "hostReports": [
+                {
+                    "hostId": 283,
+                    "hostName": "Dell-PE-1950",
+                    "IPAddress": "192.168.0.76",
+                    "averageCpuUsage": 21.199837109661917,
+                    "energyConsumption": 5594.677420690696,
+                    "operationalCost": 1678.4032262072087,
+                    "apparentWastageCost": 1322.58447620797,
+                    "carbonFootprint": 279.7338710345348
+                },
+                {
+                    "hostId": 285,
+                    "hostName": "Dell-PE-SC1425",
+                    "IPAddress": "192.168.0.90",
+                    "averageCpuUsage": 99.2585578265745,
+                    "energyConsumption": 5804.438490838715,
+                    "operationalCost": 1741.3315472516144,
+                    "apparentWastageCost": 12.910966470486247,
+                    "carbonFootprint": 290.2219245419357
+                },
+                {
+                    "hostId": 286,
+                    "hostName": "ubuntu-vm",
+                    "IPAddress": "192.168.0.59",
+                    "averageCpuUsage": 67.5822314038805,
+                    "energyConsumption": 2863.588485744935,
+                    "operationalCost": 859.0765457234806,
+                    "apparentWastageCost": 278.4934466561747,
+                    "carbonFootprint": 143.17942428724675
+                },
+                {
+                    "hostId": 287,
+                    "hostName": "win-vm",
+                    "IPAddress": "192.168.0.51",
+                    "averageCpuUsage": 100,
+                    "energyConsumption": 2863.711155956438,
+                    "operationalCost": 859.1133467869313,
+                    "apparentWastageCost": 0,
+                    "carbonFootprint": 143.1855577978219
+                }
+            ],
+            "rackReports": [
+                {
+                    "rackId": 293,
+                    "rackName": "rack1",
+                    "averagePower": 1.8211431343841813,
+                    "maxPower": 2.1111786069490988,
+                    "pdu": 5
+                }
+            ],
+            "processReports": [
+                {
+                    "tags": "[T4]",
+                    "hosts": [
+                        287
+                    ],
+                    "names": [
+                        "wmplayer"
+                    ],
+                    "averageCpu": 1.9183104776434505,
+                    "power": 2.8242075924887895,
+                    "cost": 0.5648415184977567,
+                    "averageCpuCount": 1347
+                },
+                {
+                    "tags": "[T3]",
+                    "hosts": [
+                        286
+                    ],
+                    "names": [
+                        "java"
+                    ],
+                    "averageCpu": 11.849519638352794,
+                    "power": 18.24752565338737,
+                    "cost": 3.6495051306774706,
+                    "averageCpuCount": 1409
+                },
+                {
+                    "tags": "[T2]",
+                    "hosts": [
+                        285
+                    ],
+                    "names": [
+                        "VBoxSVC",
+                        "VBoxXPCOMIPCD"
+                    ],
+                    "averageCpu": 31.184626204620365,
+                    "power": 197.41849412527927,
+                    "cost": 39.4836988250558,
+                    "averageCpuCount": 2860
+                },
+                {
+                    "tags": "[T1]",
+                    "hosts": [
+                        283
+                    ],
+                    "names": [
+                        "firefox"
+                    ],
+                    "averageCpu": 25.791343927556202,
+                    "power": 77.05453247314786,
+                    "cost": 15.410906494629565,
+                    "averageCpuCount": 1394
+                }
+            ],
+            "reportParameter": {
+                "pue": 1.5,
+                "energyCost": 0.2,
+                "carbonCost": 0.05,
+                "startTime": 1471219200,
+                "endTime": 1471305600,
+                "extrapolateYears": 3,
+                "datacenterId": 266,
+                "datacenterName": "commscope-test-dc"
+            }
+        },
+        {
+            "id": "fe052e2c-06e2-4bd5-a71a-a114edef3ba8",
+            "createDate": 1584458073,
+            "message": "Do we need this text?",
+            "hostReports": [
+                {
+                    "hostId": 283,
+                    "hostName": "Dell-PE-1950",
+                    "IPAddress": "192.168.0.76",
+                    "averageCpuUsage": 1.9888820143733816,
+                    "energyConsumption": 5143.3338769692145,
+                    "operationalCost": 1543.0001630907645,
+                    "apparentWastageCost": 1512.3117103653003,
+                    "carbonFootprint": 1028.666775393843
+                },
+                {
+                    "hostId": 284,
+                    "hostName": "CSDellServer",
+                    "IPAddress": "192.168.0.73",
+                    "averageCpuUsage": 1.6218293066513398,
+                    "energyConsumption": 5084.459298161299,
+                    "operationalCost": 1525.3377894483897,
+                    "apparentWastageCost": 1500.599414153688,
+                    "carbonFootprint": 1016.8918596322598
+                },
+                {
+                    "hostId": 285,
+                    "hostName": "Dell-PE-SC1425",
+                    "IPAddress": "192.168.0.90",
+                    "averageCpuUsage": 24.055796571088308,
+                    "energyConsumption": 5367.617679616073,
+                    "operationalCost": 1610.2853038848218,
+                    "apparentWastageCost": 1222.918346968158,
+                    "carbonFootprint": 1073.5235359232145
+                },
+                {
+                    "hostId": 288,
+                    "hostName": "HP-PL-DL380-G7",
+                    "IPAddress": "192.168.0.245",
+                    "averageCpuUsage": 0.12560544565180695,
+                    "energyConsumption": 2713.581834668701,
+                    "operationalCost": 814.0745504006104,
+                    "apparentWastageCost": 813.0520284336418,
+                    "carbonFootprint": 542.7163669337402
+                },
+                {
+                    "hostId": 289,
+                    "hostName": "DellLattitude-D280",
+                    "IPAddress": "192.168.0.5",
+                    "averageCpuUsage": 0.650330108759773,
+                    "energyConsumption": 1209.0913588262204,
+                    "operationalCost": 362.72740764786613,
+                    "apparentWastageCost": 360.36848210320824,
+                    "carbonFootprint": 241.81827176524408
+                },
+                {
+                    "hostId": 290,
+                    "hostName": "Dell-Lattitude-D820(Centos)",
+                    "IPAddress": "192.168.0.83",
+                    "averageCpuUsage": 0.3670804554124772,
+                    "energyConsumption": 1209.1597998885368,
+                    "operationalCost": 362.74793996656103,
+                    "apparentWastageCost": 361.4163631765324,
+                    "carbonFootprint": 241.83195997770736
+                },
+                {
+                    "hostId": 286,
+                    "hostName": "ubuntu-vm",
+                    "IPAddress": "192.168.0.59",
+                    "averageCpuUsage": 27.695210212311892,
+                    "energyConsumption": 2606.6832231121066,
+                    "operationalCost": 782.0049669336321,
+                    "apparentWastageCost": 565.4270474706426,
+                    "carbonFootprint": 521.3366446224213
+                },
+                {
+                    "hostId": 287,
+                    "hostName": "win-vm",
+                    "IPAddress": "192.168.0.51",
+                    "averageCpuUsage": 3.0828099589493916,
+                    "energyConsumption": 2531.645749193747,
+                    "operationalCost": 759.4937247581242,
+                    "apparentWastageCost": 736.079976573685,
+                    "carbonFootprint": 506.32914983874946
+                }
+            ],
+            "rackReports": [
+                {
+                    "rackId": 293,
+                    "rackName": "rack1",
+                    "averagePower": 1.6099700785979774,
+                    "maxPower": 1.8229959218203686,
+                    "pdu": 5
+                },
+                {
+                    "rackId": 294,
+                    "rackName": "Rack2",
+                    "averagePower": 0.7689508291924455,
+                    "maxPower": 0.8315395324231412,
+                    "pdu": 1
+                }
+            ],
+            "processReports": [
+                {
+                    "tags": "[T3]",
+                    "hosts": [
+                        286
+                    ],
+                    "names": [
+                        "java"
+                    ],
+                    "averageCpu": 10.761186180172936,
+                    "power": 15.338435078205352,
+                    "cost": 3.0676870156410634,
+                    "averageCpuCount": 1433
+                },
+                {
+                    "tags": "[T2]",
+                    "hosts": [
+                        285
+                    ],
+                    "names": [
+                        "VBoxSVC"
+                    ],
+                    "averageCpu": 46.48176408894383,
+                    "power": 136.98559489076564,
+                    "cost": 27.3971189781531,
+                    "averageCpuCount": 1439
+                },
+                {
+                    "tags": "[T1]",
+                    "hosts": [
+                        283
+                    ],
+                    "names": [
+                        "firefox",
+                        "Web Content",
+                        "WebExtensions"
+                    ],
+                    "averageCpu": 7.094165035643717,
+                    "power": 48.74655105178469,
+                    "cost": 9.749310210356935,
+                    "averageCpuCount": 3493
+                }
+            ],
+            "reportParameter": {
+                "pue": 1.5,
+                "energyCost": 0.2,
+                "carbonCost": 0.2,
+                "startTime": 1584144000,
+                "endTime": 1584230400,
+                "extrapolateYears": 3,
+                "datacenterId": 266,
+                "datacenterName": "new-test-dc"
+            }
+        },
+        {
+            "id": "319f012d-5dff-4551-b2d4-ce7dc5ebcef1",
+            "createDate": 1586344781,
+            "message": "Do we need this text?",
+            "hostReports": [
+                {
+                    "hostId": 283,
+                    "hostName": "Dell-PE-1950",
+                    "IPAddress": "192.168.0.76",
+                    "averageCpuUsage": 3.017695360389545,
+                    "energyConsumption": 5186.273158672854,
+                    "operationalCost": 1555.8819476018562,
+                    "apparentWastageCost": 1508.9301702559364,
+                    "carbonFootprint": 1037.254631734571
+                },
+                {
+                    "hostId": 284,
+                    "hostName": "CSDellServer",
+                    "IPAddress": "192.168.0.73",
+                    "averageCpuUsage": 1.6154458851942433,
+                    "energyConsumption": 5078.867804446007,
+                    "operationalCost": 1523.660341333802,
+                    "apparentWastageCost": 1499.0464330453885,
+                    "carbonFootprint": 1015.7735608892013
+                },
+                {
+                    "hostId": 285,
+                    "hostName": "Dell-PE-SC1425",
+                    "IPAddress": "192.168.0.90",
+                    "averageCpuUsage": 25.48483335811631,
+                    "energyConsumption": 5367.348821976889,
+                    "operationalCost": 1610.2046465930669,
+                    "apparentWastageCost": 1199.846675684178,
+                    "carbonFootprint": 1073.4697643953778
+                },
+                {
+                    "hostId": 288,
+                    "hostName": "HP-PL-DL380-G7",
+                    "IPAddress": "192.168.0.245",
+                    "averageCpuUsage": 0.12640823673891544,
+                    "energyConsumption": 2713.594520320642,
+                    "operationalCost": 814.0783560961927,
+                    "apparentWastageCost": 813.0492940005784,
+                    "carbonFootprint": 542.7189040641284
+                },
+                {
+                    "hostId": 289,
+                    "hostName": "DellLattitude-D280",
+                    "IPAddress": "192.168.0.5",
+                    "averageCpuUsage": 0.8388681362051529,
+                    "energyConsumption": 1209.091359165045,
+                    "operationalCost": 362.72740774951353,
+                    "apparentWastageCost": 359.68460310461995,
+                    "carbonFootprint": 241.81827183300902
+                },
+                {
+                    "hostId": 290,
+                    "hostName": "Dell-Lattitude-D820(Centos)",
+                    "IPAddress": "192.168.0.83",
+                    "averageCpuUsage": 0.40021693192814467,
+                    "energyConsumption": 1209.234060084365,
+                    "operationalCost": 362.77021802530953,
+                    "apparentWastageCost": 361.3183501887796,
+                    "carbonFootprint": 241.846812016873
+                },
+                {
+                    "hostId": 286,
+                    "hostName": "ubuntu-vm",
+                    "IPAddress": "192.168.0.59",
+                    "averageCpuUsage": 28.033573607157155,
+                    "energyConsumption": 2606.8471873204558,
+                    "operationalCost": 782.0541561961368,
+                    "apparentWastageCost": 562.8164286710611,
+                    "carbonFootprint": 521.3694374640912
+                },
+                {
+                    "hostId": 287,
+                    "hostName": "win-vm",
+                    "IPAddress": "192.168.0.51",
+                    "averageCpuUsage": 3.1174585604636253,
+                    "energyConsumption": 2531.557470010877,
+                    "operationalCost": 759.4672410032631,
+                    "apparentWastageCost": 735.79116448469,
+                    "carbonFootprint": 506.3114940021754
+                }
+            ],
+            "rackReports": [
+                {
+                    "rackId": 293,
+                    "rackName": "rack1",
+                    "averagePower": 1.6099139384989805,
+                    "maxPower": 1.8207840640846027,
+                    "pdu": 5
+                },
+                {
+                    "rackId": 294,
+                    "rackName": "Rack2",
+                    "averagePower": 0.7689980540829551,
+                    "maxPower": 0.8409336790410918,
+                    "pdu": 1
+                }
+            ],
+            "processReports": [
+                {
+                    "tags": "[T3]",
+                    "hosts": [
+                        286
+                    ],
+                    "names": [
+                        "java"
+                    ],
+                    "averageCpu": 10.670402174573375,
+                    "power": 15.20810771609172,
+                    "cost": 3.041621543218349,
+                    "averageCpuCount": 1433
+                },
+                {
+                    "tags": "[T2]",
+                    "hosts": [
+                        285
+                    ],
+                    "names": [
+                        "VBoxSVC"
+                    ],
+                    "averageCpu": 46.37128262573747,
+                    "power": 136.55768360443955,
+                    "cost": 27.311536720887826,
+                    "averageCpuCount": 1438
+                },
+                {
+                    "tags": "[T1]",
+                    "hosts": [
+                        283
+                    ],
+                    "names": [
+                        "firefox",
+                        "Web Content",
+                        "WebExtensions"
+                    ],
+                    "averageCpu": 5.934496995064279,
+                    "power": 41.16466871583014,
+                    "cost": 8.23293374316603,
+                    "averageCpuCount": 3489
+                }
+            ],
+            "reportParameter": {
+                "pue": 1.5,
+                "energyCost": 0.2,
+                "carbonCost": 0.2,
+                "startTime": 1586131200,
+                "endTime": 1586217600,
+                "extrapolateYears": 3,
+                "datacenterId": 266,
+                "datacenterName": "new-test-dc"
+            }
+        },
+        {
+    "id": "880375a4-ac56-469e-9b96-3a98f42e7868",
+    "createDate": 1531301524,
+    "message": "Do we need this text?",
+    "hostReports": [
+        {
+            "hostId": 283,
+            "hostName": "Dell-PE-1950",
+            "IPAddress": "192.168.0.76",
+            "averageCpuUsage": 11.102315261318669,
+            "energyConsumption": 5521.253502246531,
+            "operationalCost": 1656.3760506739593,
+            "apparentWastageCost": 1472.479959615157,
+            "carbonFootprint": 1656.3760506739593
+        },
+        {
+            "hostId": 285,
+            "hostName": "Dell-PE-SC1425",
+            "IPAddress": "192.168.0.90",
+            "averageCpuUsage": 9.900215127333846,
+            "energyConsumption": 5136.965792528586,
+            "operationalCost": 1541.0897377585757,
+            "apparentWastageCost": 1388.5185384152117,
+            "carbonFootprint": 1541.0897377585757
+        },
+        {
+            "hostId": 288,
+            "hostName": "HP-PL-DL380-G7",
+            "IPAddress": "192.168.0.245",
+            "averageCpuUsage": 2.728904972330513,
+            "energyConsumption": 2731.326250434635,
+            "operationalCost": 819.3978751303905,
+            "apparentWastageCost": 797.0372857727867,
+            "carbonFootprint": 819.3978751303904
+        },
+        {
+            "hostId": 289,
+            "hostName": "DellLattitude-D280",
+            "IPAddress": "192.168.0.5",
+            "averageCpuUsage": 0.7862719496244913,
+            "energyConsumption": 1212.2696600097138,
+            "operationalCost": 363.68089800291415,
+            "apparentWastageCost": 360.82137711577474,
+            "carbonFootprint": 363.68089800291415
+        },
+        {
+            "hostId": 290,
+            "hostName": "Dell-Lattitude-D820(Centos)",
+            "IPAddress": "192.168.0.83",
+            "averageCpuUsage": 1.4956802549703678,
+            "energyConsumption": 1209.1556107495685,
+            "operationalCost": 362.7466832248706,
+            "apparentWastageCost": 357.3211527083163,
+            "carbonFootprint": 362.74668322487054
+        },
+        {
+            "hostId": 286,
+            "hostName": "ubuntu-vm",
+            "IPAddress": "192.168.0.59",
+            "averageCpuUsage": 2.8833491542470604,
+            "energyConsumption": 2529.644855600975,
+            "operationalCost": 758.8934566802926,
+            "apparentWastageCost": 737.0119086154651,
+            "carbonFootprint": 758.8934566802925
+        },
+        {
+            "hostId": 287,
+            "hostName": "win-vm",
+            "IPAddress": "192.168.0.51",
+            "averageCpuUsage": 2.230830140208983,
+            "energyConsumption": 2529.3538072463725,
+            "operationalCost": 758.8061421739118,
+            "apparentWastageCost": 741.8784660485392,
+            "carbonFootprint": 758.8061421739118
         }
+    ],
+    "rackReports": [
+        {
+            "rackId": 293,
+            "rackName": "rack1",
+            "averagePower": 1.608512545308285,
+            "maxPower": 1.8228036165637818,
+            "pdu": 5
+        },
+        {
+            "rackId": 294,
+            "rackName": "Rack2",
+            "averagePower": 0.7689481651592188,
+            "maxPower": 0.7989067330738714,
+            "pdu": 1
+        }
+    ],
+    "processReports": [
+        {
+            "tags": "[T7]",
+            "hosts": [
+                290
+            ],
+            "names": [
+                "htop"
+            ],
+            "averageCpu": 86.09021374917299,
+            "power": 57.155302487904656,
+            "cost": 11.431060497580953,
+            "averageCpuCount": 1439
+        },
+        {
+            "tags": "[T3]",
+            "hosts": [
+                286
+            ],
+            "names": [
+                "java"
+            ],
+            "averageCpu": 29.194620859024205,
+            "power": 40.464779829658156,
+            "cost": 8.092955965931628,
+            "averageCpuCount": 1436
+        },
+        {
+            "tags": "[T2]",
+            "hosts": [
+                285
+            ],
+            "names": [
+                "VBoxSVC",
+                "VBoxXPCOMIPCD"
+            ],
+            "averageCpu": 41.03929932270547,
+            "power": 231.41155927972898,
+            "cost": 46.282311855945856,
+            "averageCpuCount": 2878
+        },
+        {
+            "tags": "[T1]",
+            "hosts": [
+                283
+            ],
+            "names": [
+                "firefox"
+            ],
+            "averageCpu": 1.0460130982133624,
+            "power": 2.3955606520016555,
+            "cost": 0.4791121304003305,
+            "averageCpuCount": 1072
+        }
+    ],
+    "reportParameter": {
+        "pue": 1.5,
+        "energyCost": 0.2,
+        "carbonCost": 0.3,
+        "startTime": 1531008000,
+        "endTime": 1531094400,
+        "extrapolateYears": 3,
+        "datacenterId": 266,
+        "datacenterName": "new-test-dc"
+    }
+},
+{
+    "id": "3400c382-e41d-449b-a41b-211574f7123e",
+    "createDate": 1531470445,
+    "message": "Do we need this text?",
+    "hostReports": [
+        {
+            "hostId": 283,
+            "hostName": "Dell-PE-1950",
+            "IPAddress": "192.168.0.76",
+            "averageCpuUsage": 12.021373795590824,
+            "energyConsumption": 5601.443888118827,
+            "operationalCost": 2520.6497496534726,
+            "apparentWastageCost": 2217.633021170004,
+            "carbonFootprint": 1680.433166435648
+        },
+        {
+            "hostId": 285,
+            "hostName": "Dell-PE-SC1425",
+            "IPAddress": "192.168.0.90",
+            "averageCpuUsage": 10.010319297995382,
+            "energyConsumption": 5141.6890200691405,
+            "operationalCost": 2313.760059031113,
+            "apparentWastageCost": 2082.1452893326123,
+            "carbonFootprint": 1542.506706020742
+        },
+        {
+            "hostId": 288,
+            "hostName": "HP-PL-DL380-G7",
+            "IPAddress": "192.168.0.245",
+            "averageCpuUsage": 9.944323737273345,
+            "energyConsumption": 2936.679716389557,
+            "operationalCost": 1321.5058723753007,
+            "apparentWastageCost": 1190.0910502192226,
+            "carbonFootprint": 881.0039149168671
+        },
+        {
+            "hostId": 289,
+            "hostName": "DellLattitude-D280",
+            "IPAddress": "192.168.0.5",
+            "averageCpuUsage": 0.767732910305129,
+            "energyConsumption": 1211.9064280163348,
+            "operationalCost": 545.3578926073507,
+            "apparentWastageCost": 541.1710005868575,
+            "carbonFootprint": 363.5719284049004
+        },
+        {
+            "hostId": 290,
+            "hostName": "Dell-Lattitude-D820(Centos)",
+            "IPAddress": "192.168.0.83",
+            "averageCpuUsage": 1.4861360496639857,
+            "energyConsumption": 1209.1278565132866,
+            "operationalCost": 544.1075354309789,
+            "apparentWastageCost": 536.0213571980009,
+            "carbonFootprint": 362.73835695398594
+        },
+        {
+            "hostId": 286,
+            "hostName": "ubuntu-vm",
+            "IPAddress": "192.168.0.59",
+            "averageCpuUsage": 2.8414815404839913,
+            "energyConsumption": 2529.5893133414943,
+            "operationalCost": 1138.3151910036725,
+            "apparentWastageCost": 1105.970174978778,
+            "carbonFootprint": 758.8767940024483
+        },
+        {
+            "hostId": 287,
+            "hostName": "win-vm",
+            "IPAddress": "192.168.0.51",
+            "averageCpuUsage": 2.363025512469149,
+            "energyConsumption": 2529.652212121812,
+            "operationalCost": 1138.3434954548154,
+            "apparentWastageCost": 1111.4441482376849,
+            "carbonFootprint": 758.8956636365436
+        }
+    ],
+    "rackReports": [
+        {
+            "rackId": 293,
+            "rackName": "rack1",
+            "averagePower": 1.6087023123485276,
+            "maxPower": 1.942465136849553,
+            "pdu": 5
+        },
+        {
+            "rackId": 294,
+            "rackName": "Rack2",
+            "averagePower": 0.7689305151819332,
+            "maxPower": 0.7975183611434086,
+            "pdu": 1
+        }
+    ],
+    "processReports": [
+        {
+            "tags": "[T7]",
+            "hosts": [
+                290
+            ],
+            "names": [
+                "htop"
+            ],
+            "averageCpu": 86.12064335568745,
+            "power": 57.214279871353746,
+            "cost": 17.164283961406138,
+            "averageCpuCount": 1440
+        },
+        {
+            "tags": "[T3]",
+            "hosts": [
+                286
+            ],
+            "names": [
+                "java"
+            ],
+            "averageCpu": 29.39037045280679,
+            "power": 40.73552991616442,
+            "cost": 12.22065897484934,
+            "averageCpuCount": 1436
+        },
+        {
+            "tags": "[T2]",
+            "hosts": [
+                285
+            ],
+            "names": [
+                "VBoxSVC",
+                "VBoxXPCOMIPCD"
+            ],
+            "averageCpu": 41.01888328079173,
+            "power": 231.51069823846882,
+            "cost": 69.45320947154059,
+            "averageCpuCount": 2878
+        },
+        {
+            "tags": "[T1]",
+            "hosts": [
+                283
+            ],
+            "names": [
+                "firefox"
+            ],
+            "averageCpu": 1.0466409178193743,
+            "power": 2.5162585486220737,
+            "cost": 0.7548775645866223,
+            "averageCpuCount": 1104
+        }
+    ],
+    "reportParameter": {
+        "pue": 1.5,
+        "energyCost": 0.3,
+        "carbonCost": 0.3,
+        "startTime": 1531267200,
+        "endTime": 1531353600,
+        "extrapolateYears": 3,
+        "datacenterId": 266,
+        "datacenterName": "new-test-dc"
+    }
+},
+{
+    "id": "c0776a47-dc70-4c29-be96-b72fcae4c368",
+    "createDate": 1531386886,
+    "message": "Do we need this text?",
+    "hostReports": [
+        {
+            "hostId": 283,
+            "hostName": "Dell-PE-1950",
+            "IPAddress": "192.168.0.76",
+            "averageCpuUsage": 12.021373795590824,
+            "energyConsumption": 5601.443888118827,
+            "operationalCost": 1680.4331664356484,
+            "apparentWastageCost": 1478.4220141133362,
+            "carbonFootprint": 1680.433166435648
+        },
+        {
+            "hostId": 285,
+            "hostName": "Dell-PE-SC1425",
+            "IPAddress": "192.168.0.90",
+            "averageCpuUsage": 10.010319297995382,
+            "energyConsumption": 5141.6890200691405,
+            "operationalCost": 1542.506706020742,
+            "apparentWastageCost": 1388.0968595550748,
+            "carbonFootprint": 1542.506706020742
+        },
+        {
+            "hostId": 288,
+            "hostName": "HP-PL-DL380-G7",
+            "IPAddress": "192.168.0.245",
+            "averageCpuUsage": 9.944323737273345,
+            "energyConsumption": 2936.679716389557,
+            "operationalCost": 881.0039149168672,
+            "apparentWastageCost": 793.3940334794818,
+            "carbonFootprint": 881.0039149168671
+        },
+        {
+            "hostId": 289,
+            "hostName": "DellLattitude-D280",
+            "IPAddress": "192.168.0.5",
+            "averageCpuUsage": 0.767732910305129,
+            "energyConsumption": 1211.9064280163348,
+            "operationalCost": 363.57192840490046,
+            "apparentWastageCost": 360.780667057905,
+            "carbonFootprint": 363.5719284049004
+        },
+        {
+            "hostId": 290,
+            "hostName": "Dell-Lattitude-D820(Centos)",
+            "IPAddress": "192.168.0.83",
+            "averageCpuUsage": 1.4861360496639857,
+            "energyConsumption": 1209.1278565132866,
+            "operationalCost": 362.738356953986,
+            "apparentWastageCost": 357.347571465334,
+            "carbonFootprint": 362.73835695398594
+        },
+        {
+            "hostId": 286,
+            "hostName": "ubuntu-vm",
+            "IPAddress": "192.168.0.59",
+            "averageCpuUsage": 2.8414815404839913,
+            "energyConsumption": 2529.5893133414943,
+            "operationalCost": 758.8767940024484,
+            "apparentWastageCost": 737.3134499858521,
+            "carbonFootprint": 758.8767940024483
+        },
+        {
+            "hostId": 287,
+            "hostName": "win-vm",
+            "IPAddress": "192.168.0.51",
+            "averageCpuUsage": 2.363025512469149,
+            "energyConsumption": 2529.652212121812,
+            "operationalCost": 758.8956636365438,
+            "apparentWastageCost": 740.9627654917902,
+            "carbonFootprint": 758.8956636365436
+        }
+    ],
+    "rackReports": [
+        {
+            "rackId": 293,
+            "rackName": "rack1",
+            "averagePower": 1.6087023123485276,
+            "maxPower": 1.942465136849553,
+            "pdu": 5
+        },
+        {
+            "rackId": 294,
+            "rackName": "Rack2",
+            "averagePower": 0.7689305151819332,
+            "maxPower": 0.7975183611434086,
+            "pdu": 1
+        }
+    ],
+    "processReports": [
+        {
+            "tags": "[T7]",
+            "hosts": [
+                290
+            ],
+            "names": [
+                "htop"
+            ],
+            "averageCpu": 86.12064335568745,
+            "power": 57.214279871353746,
+            "cost": 11.442855974270751,
+            "averageCpuCount": 1440
+        },
+        {
+            "tags": "[T3]",
+            "hosts": [
+                286
+            ],
+            "names": [
+                "java"
+            ],
+            "averageCpu": 29.39037045280679,
+            "power": 40.73552991616442,
+            "cost": 8.147105983232906,
+            "averageCpuCount": 1436
+        },
+        {
+            "tags": "[T2]",
+            "hosts": [
+                285
+            ],
+            "names": [
+                "VBoxSVC",
+                "VBoxXPCOMIPCD"
+            ],
+            "averageCpu": 41.01888328079173,
+            "power": 231.51069823846882,
+            "cost": 46.30213964769362,
+            "averageCpuCount": 2878
+        },
+        {
+            "tags": "[T1]",
+            "hosts": [
+                283
+            ],
+            "names": [
+                "firefox"
+            ],
+            "averageCpu": 1.0466409178193743,
+            "power": 2.5162585486220737,
+            "cost": 0.503251709724415,
+            "averageCpuCount": 1104
+        }
+    ],
+    "reportParameter": {
+        "pue": 1.5,
+        "energyCost": 0.2,
+        "carbonCost": 0.3,
+        "startTime": 1531267200,
+        "endTime": 1531353600,
+        "extrapolateYears": 3,
+        "datacenterId": 266,
+        "datacenterName": "new-test-dc"
+    }
+},
+{
+    "id": "82ee9b27-c966-4be5-9651-c0a21ba84cb6",
+    "createDate": 1536592811,
+    "message": "Do we need this text?",
+    "hostReports": [
+        {
+            "hostId": 283,
+            "hostName": "Dell-PE-1950",
+            "IPAddress": "192.168.0.76",
+            "averageCpuUsage": 11.570500583122591,
+            "energyConsumption": 5394.04835991776,
+            "operationalCost": 1618.214507975328,
+            "apparentWastageCost": 1430.9789888938683,
+            "carbonFootprint": 1078.8096719835519
+        },
+        {
+            "hostId": 285,
+            "hostName": "Dell-PE-SC1425",
+            "IPAddress": "192.168.0.90",
+            "averageCpuUsage": 11.829942442245253,
+            "energyConsumption": 5150.572733928688,
+            "operationalCost": 1545.1718201786064,
+            "apparentWastageCost": 1362.3788832176838,
+            "carbonFootprint": 1030.1145467857375
+        },
+        {
+            "hostId": 290,
+            "hostName": "Dell-Lattitude-D820(Centos)",
+            "IPAddress": "192.168.0.83",
+            "averageCpuUsage": 1.5346510309532635,
+            "energyConsumption": 1209.3122285790387,
+            "operationalCost": 362.7936685737116,
+            "apparentWastageCost": 357.226051798712,
+            "carbonFootprint": 241.86244571580775
+        },
+        {
+            "hostId": 286,
+            "hostName": "ubuntu-vm",
+            "IPAddress": "192.168.0.59",
+            "averageCpuUsage": 3.0221770602274893,
+            "energyConsumption": 2529.9915640944255,
+            "operationalCost": 758.9974692283276,
+            "apparentWastageCost": 736.0592218256019,
+            "carbonFootprint": 505.9983128188851
+        },
+        {
+            "hostId": 287,
+            "hostName": "win-vm",
+            "IPAddress": "192.168.0.51",
+            "averageCpuUsage": 2.4484292703020585,
+            "energyConsumption": 2528.410790720075,
+            "operationalCost": 758.5232372160226,
+            "apparentWastageCost": 739.9513322539829,
+            "carbonFootprint": 505.68215814401503
+        }
+    ],
+    "rackReports": [
+        {
+            "rackId": 293,
+            "rackName": "rack1",
+            "averagePower": 1.6079128451363927,
+            "maxPower": 1.8539052150801671,
+            "pdu": 5
+        },
+        {
+            "rackId": 294,
+            "rackName": "Rack2",
+            "averagePower": 0.769047764409747,
+            "maxPower": 0.8456458362889434,
+            "pdu": 1
+        }
+    ],
+    "processReports": [
+        {
+            "tags": "[T7]",
+            "hosts": [
+                290
+            ],
+            "names": [
+                "htop"
+            ],
+            "averageCpu": 86.2505751621226,
+            "power": 57.26785544131366,
+            "cost": 11.453571088262736,
+            "averageCpuCount": 1439
+        },
+        {
+            "tags": "[T3]",
+            "hosts": [
+                286
+            ],
+            "names": [
+                "java"
+            ],
+            "averageCpu": 28.771650595899416,
+            "power": 39.88407957192586,
+            "cost": 7.976815914385177,
+            "averageCpuCount": 1436
+        },
+        {
+            "tags": "[T2]",
+            "hosts": [
+                285
+            ],
+            "names": [
+                "VBoxSVC",
+                "VBoxXPCOMIPCD"
+            ],
+            "averageCpu": 40.97912470548784,
+            "power": 231.63814362224926,
+            "cost": 46.327628724449745,
+            "averageCpuCount": 2878
+        },
+        {
+            "tags": "[T1]",
+            "hosts": [
+                283
+            ],
+            "names": [
+                "firefox"
+            ],
+            "averageCpu": 1.4109107830816565,
+            "power": 3.1032555237384383,
+            "cost": 0.6206511047476895,
+            "averageCpuCount": 1062
+        }
+    ],
+    "reportParameter": {
+        "pue": 1.5,
+        "energyCost": 0.2,
+        "carbonCost": 0.2,
+        "startTime": 1536192000,
+        "endTime": 1536278400,
+        "extrapolateYears": 3,
+        "datacenterId": 266,
+        "datacenterName": "new-test-dc"
+    }
+},
+{
+    "id": "083630f0-8e32-4878-8076-d46234ecc2f2",
+    "createDate": 1544696944,
+    "message": "Do we need this text?",
+    "hostReports": [
+        {
+            "hostId": 283,
+            "hostName": "Dell-PE-1950",
+            "IPAddress": "192.168.0.76",
+            "averageCpuUsage": 15.354616117922227,
+            "energyConsumption": 5605.74979323397,
+            "operationalCost": 1681.7249379701914,
+            "apparentWastageCost": 1423.5025295855028,
+            "carbonFootprint": 1121.1499586467942
+        },
+        {
+            "hostId": 285,
+            "hostName": "Dell-PE-SC1425",
+            "IPAddress": "192.168.0.90",
+            "averageCpuUsage": 6.674349610120159,
+            "energyConsumption": 5094.674016358595,
+            "operationalCost": 1528.4022049075784,
+            "apparentWastageCost": 1426.3912983032615,
+            "carbonFootprint": 1018.9348032717189
+        },
+        {
+            "hostId": 288,
+            "hostName": "HP-PL-DL380-G7",
+            "IPAddress": "192.168.0.245",
+            "averageCpuUsage": 2.8036953201401564,
+            "energyConsumption": 2735.511803165264,
+            "operationalCost": 820.6535409495793,
+            "apparentWastageCost": 797.6449160274116,
+            "carbonFootprint": 547.1023606330529
+        },
+        {
+            "hostId": 290,
+            "hostName": "Dell-Lattitude-D820(Centos)",
+            "IPAddress": "192.168.0.83",
+            "averageCpuUsage": 1.4831304893657136,
+            "energyConsumption": 1209.0919493832828,
+            "operationalCost": 362.7275848149849,
+            "apparentWastageCost": 357.347861411254,
+            "carbonFootprint": 241.81838987665657
+        },
+        {
+            "hostId": 287,
+            "hostName": "win-vm",
+            "IPAddress": "192.168.0.51",
+            "averageCpuUsage": 1.982975220256416,
+            "energyConsumption": 2526.0786878571084,
+            "operationalCost": 757.8236063571326,
+            "apparentWastageCost": 742.7961520298171,
+            "carbonFootprint": 505.2157375714217
+        }
+    ],
+    "rackReports": [
+        {
+            "rackId": 293,
+            "rackName": "rack1",
+            "averagePower": 1.6064297719889018,
+            "maxPower": 1.8320178008484982,
+            "pdu": 5
+        },
+        {
+            "rackId": 294,
+            "rackName": "Rack2",
+            "averagePower": 0.7689076804686118,
+            "maxPower": 0.7694453396727126,
+            "pdu": 1
+        }
+    ],
+    "processReports": [
+        {
+            "tags": "[T7]",
+            "hosts": [
+                290
+            ],
+            "names": [
+                "htop"
+            ],
+            "averageCpu": 86.88565601888443,
+            "power": 57.440699339917835,
+            "cost": 11.488139867983605,
+            "averageCpuCount": 1433
+        },
+        {
+            "tags": "[T2]",
+            "hosts": [
+                285
+            ],
+            "names": [
+                "VBoxSVC",
+                "VBoxXPCOMIPCD",
+                "firefox",
+                "Web Content"
+            ],
+            "averageCpu": 28.30462437578338,
+            "power": 223.0143368953672,
+            "cost": 44.60286737907361,
+            "averageCpuCount": 4055
+        },
+        {
+            "tags": "[T1]",
+            "hosts": [
+                283
+            ],
+            "names": [
+                "firefox"
+            ],
+            "averageCpu": 25.805471491240255,
+            "power": 78.21133419800945,
+            "cost": 15.642266839601913,
+            "averageCpuCount": 1428
+        }
+    ],
+    "reportParameter": {
+        "pue": 1.5,
+        "energyCost": 0.2,
+        "carbonCost": 0.2,
+        "startTime": 1544400000,
+        "endTime": 1544486400,
+        "extrapolateYears": 3,
+        "datacenterId": 266,
+        "datacenterName": "new-test-dc"
+    }
+},
+{
+    "id": "39765e0c-4072-46cc-9ba7-6c00e2b07fb0",
+    "createDate": 1484651619,
+    "message": "Do we need this text?",
+    "hostReports": [
+        {
+            "hostId": 283,
+            "hostName": "Dell-PE-1950",
+            "IPAddress": "192.168.0.76",
+            "averageCpuUsage": 2.3693476143811973,
+            "energyConsumption": 5081.06795003628,
+            "operationalCost": 1524.3203850108841,
+            "apparentWastageCost": 1488.2039363331023,
+            "carbonFootprint": 254.05339750181403
+        },
+        {
+            "hostId": 285,
+            "hostName": "Dell-PE-SC1425",
+            "IPAddress": "192.168.0.90",
+            "averageCpuUsage": 17.12182351550845,
+            "energyConsumption": 5208.025265897102,
+            "operationalCost": 1562.4075797691307,
+            "apparentWastageCost": 1294.8949113681333,
+            "carbonFootprint": 260.40126329485514
+        },
+        {
+            "hostId": 286,
+            "hostName": "ubuntu-vm",
+            "IPAddress": "192.168.0.59",
+            "averageCpuUsage": 3.2279484981644084,
+            "energyConsumption": 2531.7825902367445,
+            "operationalCost": 759.5347770710234,
+            "apparentWastageCost": 735.0173856415229,
+            "carbonFootprint": 126.58912951183723
+        },
+        {
+            "hostId": 287,
+            "hostName": "win-vm",
+            "IPAddress": "192.168.0.51",
+            "averageCpuUsage": 2.779196433802912,
+            "energyConsumption": 2530.6744374235413,
+            "operationalCost": 759.2023312270625,
+            "apparentWastageCost": 738.1026071122513,
+            "carbonFootprint": 126.53372187117708
+        }
+    ],
+    "rackReports": [
+        {
+            "rackId": 293,
+            "rackName": "rack1",
+            "averagePower": 1.6093523844014177,
+            "maxPower": 1.8228724401404124,
+            "pdu": 5
+        }
+    ],
+    "processReports": [
+        {
+            "tags": "[T4]",
+            "hosts": [
+                287
+            ],
+            "names": [
+                "wmplayer"
+            ],
+            "averageCpu": 6.2616603341090356,
+            "power": 8.676765953132254,
+            "cost": 1.7353531906264519,
+            "averageCpuCount": 1436
+        },
+        {
+            "tags": "[T3]",
+            "hosts": [
+                286
+            ],
+            "names": [
+                "java"
+            ],
+            "averageCpu": 38.89816468267668,
+            "power": 53.98743389364418,
+            "cost": 10.797486778728874,
+            "averageCpuCount": 1437
+        },
+        {
+            "tags": "[T2]",
+            "hosts": [
+                285
+            ],
+            "names": [
+                "VBoxSVC",
+                "VBoxXPCOMIPCD"
+            ],
+            "averageCpu": 10.76712157709034,
+            "power": 61.42627470637364,
+            "cost": 12.285254941274703,
+            "averageCpuCount": 2872
+        },
+        {
+            "tags": "[T1]",
+            "hosts": [
+                283
+            ],
+            "names": [
+                "firefox"
+            ],
+            "averageCpu": 61.36060695543655,
+            "power": 171.21530186488724,
+            "cost": 34.2430603729775,
+            "averageCpuCount": 1439
+        }
+    ],
+    "reportParameter": {
+        "pue": 1.5,
+        "energyCost": 0.2,
+        "carbonCost": 0.05,
+        "startTime": 1484438400,
+        "endTime": 1484524800,
+        "extrapolateYears": 3,
+        "datacenterId": 266,
+        "datacenterName": "commscope-test-dc"
+    }
+},
+{
+    "id": "b6c57da4-80d9-454d-8ea4-50c81e9353c8",
+    "createDate": 1477642053,
+    "message": "Do we need this text?",
+    "hostReports": [
+        {
+            "hostId": 283,
+            "hostName": "Dell-PE-1950",
+            "IPAddress": "192.168.0.76",
+            "averageCpuUsage": 4.450156876130158,
+            "energyConsumption": 5139.884096085632,
+            "operationalCost": 1541.9652288256898,
+            "apparentWastageCost": 1473.3453571675673,
+            "carbonFootprint": 256.99420480428165
+        },
+        {
+            "hostId": 285,
+            "hostName": "Dell-PE-SC1425",
+            "IPAddress": "192.168.0.90",
+            "averageCpuUsage": 98.96347531934205,
+            "energyConsumption": 5740.755245911108,
+            "operationalCost": 1722.2265737733323,
+            "apparentWastageCost": 17.851303494010324,
+            "carbonFootprint": 287.0377622955554
+        },
+        {
+            "hostId": 286,
+            "hostName": "ubuntu-vm",
+            "IPAddress": "192.168.0.59",
+            "averageCpuUsage": 72.44556463113769,
+            "energyConsumption": 2849.208447332638,
+            "operationalCost": 854.7625341997915,
+            "apparentWastageCost": 235.52499004333123,
+            "carbonFootprint": 142.46042236663192
+        },
+        {
+            "hostId": 287,
+            "hostName": "win-vm",
+            "IPAddress": "192.168.0.51",
+            "averageCpuUsage": 41.57745832728973,
+            "energyConsumption": 2737.449645936778,
+            "operationalCost": 821.2348937810334,
+            "apparentWastageCost": 479.7862980500621,
+            "carbonFootprint": 136.8724822968389
+        }
+    ],
+    "rackReports": [
+        {
+            "rackId": 293,
+            "rackName": "rack1",
+            "averagePower": 1.7408486250615445,
+            "maxPower": 2.1704396465058893,
+            "pdu": 5
+        }
+    ],
+    "processReports": [
+        {
+            "tags": "[T4]",
+            "hosts": [
+                287
+            ],
+            "names": [
+                "wmplayer"
+            ],
+            "averageCpu": 12.331390132622387,
+            "power": 13.467710471241347,
+            "cost": 2.6935420942482735,
+            "averageCpuCount": 1047
+        },
+        {
+            "tags": "[T3]",
+            "hosts": [
+                286
+            ],
+            "names": [
+                "java"
+            ],
+            "averageCpu": 41.64919532156705,
+            "power": 46.169509396243576,
+            "cost": 9.233901879248718,
+            "averageCpuCount": 1019
+        },
+        {
+            "tags": "[T2]",
+            "hosts": [
+                285
+            ],
+            "names": [
+                "VBoxSVC",
+                "VBoxXPCOMIPCD"
+            ],
+            "averageCpu": 10.102528687963682,
+            "power": 63.54292402860891,
+            "cost": 12.708584805721808,
+            "averageCpuCount": 2872
+        },
+        {
+            "tags": "[T1]",
+            "hosts": [
+                283
+            ],
+            "names": [
+                "firefox"
+            ],
+            "averageCpu": 26.866007309474735,
+            "power": 75.08343531275149,
+            "cost": 15.01668706255034,
+            "averageCpuCount": 1438
+        }
+    ],
+    "reportParameter": {
+        "pue": 1.5,
+        "energyCost": 0.2,
+        "carbonCost": 0.05,
+        "startTime": 1477440000,
+        "endTime": 1477526400,
+        "extrapolateYears": 3,
+        "datacenterId": 266,
+        "datacenterName": "commscope-test-dc"
+    }
+},
+{
+    "id": "776db599-67fd-4fe3-9797-5f563c51aa90",
+    "createDate": 1471948848,
+    "message": "Do we need this text?",
+    "hostReports": [
+        {
+            "hostId": 283,
+            "hostName": "Dell-PE-1950",
+            "IPAddress": "192.168.0.76",
+            "averageCpuUsage": 29.506432334970455,
+            "energyConsumption": 5399.505366090261,
+            "operationalCost": 1619.8516098270784,
+            "apparentWastageCost": 1141.8911906465219,
+            "carbonFootprint": 269.97526830451307
+        },
+        {
+            "hostId": 285,
+            "hostName": "Dell-PE-SC1425",
+            "IPAddress": "192.168.0.90",
+            "averageCpuUsage": 67.87655631621308,
+            "energyConsumption": 5508.965162118333,
+            "operationalCost": 1652.6895486355,
+            "apparentWastageCost": 530.9007964237569,
+            "carbonFootprint": 275.44825810591664
+        },
+        {
+            "hostId": 286,
+            "hostName": "ubuntu-vm",
+            "IPAddress": "192.168.0.59",
+            "averageCpuUsage": 44.89771315724341,
+            "energyConsumption": 2827.831107343724,
+            "operationalCost": 848.3493322031172,
+            "apparentWastageCost": 467.45988245917175,
+            "carbonFootprint": 141.3915553671862
+        },
+        {
+            "hostId": 287,
+            "hostName": "win-vm",
+            "IPAddress": "192.168.0.51",
+            "averageCpuUsage": 8.810506122071727,
+            "energyConsumption": 2538.574896025413,
+            "operationalCost": 761.572468807624,
+            "apparentWastageCost": 694.4740798193155,
+            "carbonFootprint": 126.92874480127067
+        }
+    ],
+    "rackReports": [
+        {
+            "rackId": 293,
+            "rackName": "rack1",
+            "averagePower": 1.6143765873177485,
+            "maxPower": 1.8319421492925754,
+            "pdu": 5
+        }
+    ],
+    "processReports": [
+        {
+            "tags": "[T4]",
+            "hosts": [
+                287
+            ],
+            "names": [
+                "wmplayer"
+            ],
+            "averageCpu": 8.036555392178354,
+            "power": 11.091316130913228,
+            "cost": 2.2182632261826436,
+            "averageCpuCount": 1427
+        },
+        {
+            "tags": "[T3]",
+            "hosts": [
+                286
+            ],
+            "names": [
+                "java"
+            ],
+            "averageCpu": 9.944146875412027,
+            "power": 15.338799518707404,
+            "cost": 3.0677599037414827,
+            "averageCpuCount": 1429
+        },
+        {
+            "tags": "[T2]",
+            "hosts": [
+                285
+            ],
+            "names": [
+                "VBoxSVC",
+                "VBoxXPCOMIPCD"
+            ],
+            "averageCpu": 32.545315118304885,
+            "power": 196.5753353962565,
+            "cost": 39.31506707925129,
+            "averageCpuCount": 2876
+        },
+        {
+            "tags": "[T1]",
+            "hosts": [
+                283
+            ],
+            "names": [
+                "firefox"
+            ],
+            "averageCpu": 0.6260495653319407,
+            "power": 1.865670523945177,
+            "cost": 0.3731341047890355,
+            "averageCpuCount": 1439
+        }
+    ],
+    "reportParameter": {
+        "pue": 1.5,
+        "energyCost": 0.2,
+        "carbonCost": 0.05,
+        "startTime": 1471737600,
+        "endTime": 1471824000,
+        "extrapolateYears": 3,
+        "datacenterId": 266,
+        "datacenterName": "commscope-test-dc"
+    }
+}
+
     ]
 }
