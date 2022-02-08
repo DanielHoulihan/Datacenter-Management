@@ -1,56 +1,52 @@
 {% include 'reports/base.html'%}
-{% load static %}
 
-{% block sidebar %}
- <form method="POST" class="post-form"> 
-  {% csrf_token %}
-  <ul class="sidebar-nav">
-    <li><input type="text" name="low"></li>
-    <li><input type="text" name="medium"></li>
-  </ul>
-  <button type="submit" class="save   btn btn-default">Submit</button>
-</form>
-{% endblock %}
+
+<div class="sidenav">
+  <a href="{% url 'get_reports' %}">Home</a>
+  <br><br>
+  <form method="POST" class="post-form"> 
+    {% csrf_token %}
+    <ul style="list-style-type:none">
+      <dev class="white_text">
+      <li> <b> Threshold </b></li>
+    </dev>
+      <br>
+      <li><input style="height:20px" type="text" name="low" placeholder={{threshold.low}} size="10"></li>
+      <li><input style="height:20px" type="text" name="medium" placeholder={{threshold.medium}} size="10"></li>
+    </ul>
+    <div class ="wrapper">
+    <button type="submit" class="save">Submit</button>
+  </div>
+  </form>
+</div>
+
+
+
 
 
 {% block content %}
-  <div class = "container">
-    <div class = "text-center container">
-    </div> 
-    <br><br>
-    <div class="row">
-      {% for host in hosts %}
-        <div class="col-md-4 col-sm-6 col-lg-3">
-          <div class="card">
-            <div style="background-color: rgb(235, 227, 227)">
-            <div class="card-body text-center">
-              <p class="card-title">Host Name: {{ host.hostName }}</p>
-              <hr>
-              <p class="card-text">Host ID: {{ host.hostId }}</p>
-              <p class="card-text">Threshold: {{ threshold.low }}</p>
-              {% if host.cpu_usage > threshold.medium %}
-              <p style="background-color: rgb(235, 59, 59)">CPU Usage: {{ host.cpu_usage }}%</p>
-              {% elif host.cpu_usage < threshold.low %} 
-              <p style="background-color: rgb(11, 226, 58)">CPU Usage: {{ host.cpu_usage }}%</p>
-              {% else %} 
-              <p style="background-color: rgb(235, 188, 59)">CPU Usage: {{ host.cpu_usage }}%</p>
-              {% endif %}
-              <p class="card-text">Report ID: {{ host.reportId }}%</p>
-              <a href="hosts/{{host.id}}"
-              ><input
-                type="submit"
-                value="Host Details"
-                class="btn btn-danger btn-sm"
-                type="button"
-            /></a>
-            </div>
-          </div>
-        </div>
-          <br><br><br>
-        </div>
-      {% endfor %}
+
+  <div class="card-container">
+    {% for host in hosts %}
+    <div class="card">
+      <div style="background-color: rgb(255, 255, 255)">
+        <b>Host Name: {{ host.hostName }}</b>
+        <hr>
+        <p>Host ID: {{ host.hostId }}</p>
+        {% if host.cpu_usage > threshold.medium %}
+          <p style="background-color: rgb(235, 59, 59)" > CPU Usage: {{ host.cpu_usage }}%</p>
+        {% elif host.cpu_usage < threshold.low %} 
+          <p style="background-color: rgb(11, 226, 58)">CPU Usage: {{ host.cpu_usage }}%</p>
+        {% else %} 
+          <p style="background-color: rgb(235, 188, 59)">CPU Usage: {{ host.cpu_usage }}%</p>
+        {% endif %}
+          <p>Report ID: {{ host.reportId }}</p>
+          <a href="hosts/{{host.id}}"><input type="submit" value="Host Details"
+              class="btn btn-danger btn-sm" type="button" /></a>
+      </div>
     </div>
-  </div>
+    {% endfor %}
+  </div>  
 
 {% endblock %}
 <script type="text/javascript" src= "/../../static/js/script.js"></script>

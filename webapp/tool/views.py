@@ -22,7 +22,7 @@ def get_reports(request):
             startTime = datetime.utcfromtimestamp(i['reportParameter']['startTime']).strftime('%Y-%m-%d'),
             endTime = datetime.utcfromtimestamp(i['reportParameter']['endTime']).strftime('%Y-%m-%d'),
         )
-        all_reports = Report.objects.all().order_by('-reportId')          
+        all_reports = Report.objects.all().order_by('-endTime')          
 
     return render (request, 'reports/report.html', { "all_reports": all_reports} )
 

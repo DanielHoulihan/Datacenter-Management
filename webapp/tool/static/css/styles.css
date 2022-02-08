@@ -1,8 +1,72 @@
-.sidebar-nav {
-    margin-top: 30px;
-    padding: 30px;
-    list-style: none;
-    position: absoute;
-    float:left;
+table, th, td {
+    border: 1px solid rgb(255, 255, 255);
+    border-collapse: collapse;
+  }
+  th, td {
+    background-color: #eeeeee;
+  }
+  tr{
+    height: 50px;
+  }
+
+.content { margin-left : 160px; }
+
+.sidenav {
+    height: 100%; 
+    width: 160px;
+    position: fixed;
+    z-index: 1; 
+    top: 0; 
+    left: 0;
+    background-color: rgb(85, 85, 85); 
+    overflow-x: hidden; 
+    padding-top: 20px;
+  }
+  
+.sidenav a {
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #ffffff;
+    display: block;
+  }
+  
+.sidenav a:hover {
+    color: #8f8f8f;
+  }
+  
+.white_text {
+    color: #ffffff
+}
+.wrapper {
+    text-align: center;
 }
 
+.button {
+    position: absolute;
+    top: 50%;
+}
+  /* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
+  @media screen and (max-height: 450px) {
+    .sidenav {padding-top: 15px;}
+    .sidenav a {font-size: 18px;}
+  }
+
+  .card-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    max-width: 1000px;
+    margin: 25px auto;
+    padding: 50px;
+    background-color: rgb(227, 227, 227);
+    }
+    
+    .card {
+    width: 250px;
+    height: 200px;
+    margin: 25px;
+    padding: 10px;
+    background-color: rgb(234, 241, 255);
+    box-shadow: 0 0 12px rgb(63, 63, 63);
+    }

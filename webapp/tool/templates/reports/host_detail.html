@@ -1,12 +1,16 @@
 {% extends 'reports/base.html'%}
-{% load static %}
 {% block content %}
-  <div class = "container">
-    <div class = "text-center container">
-    </div> 
-    <h2 class = "text-center">Available reports {{hosts}}</h2> 
-    <h2 class = "text-center">{{hosts.hostId}}</h2> 
-    <h2 class = "text-center">{{hosts.reportId}}</h2>
-    </div>
-  </div>
+    <h2 class = "text-center">Host ID: {{hosts.hostId}}</h2> 
+    <h2 class = "text-center">Host Name: {{hosts.hostName}}</h2> 
+    <h2 class = "text-center">Parent Report: {{hosts.reportId}}</h2>
+    <h2 class = "text-center">IP Address: {{hosts.IPAddress}}</h2>
+    <h2 class = "text-center">CPU Usage: {{hosts.cpu_usage}}%</h2>
+    <h2 class = "text-center">Energy Consumption: {{hosts.energyConsumption}}</h2>
+    <h2 class = "text-center">Operational Cost: {{hosts.operationalCost}}</h2>
+    <h2 class = "text-center">Apparant Wastage Co: {{hosts.apparentWastageCost}}</h2>
+    <h2 class = "text-center">Parent Report: {{hosts.carbonFootprint}}</h2>
 {% endblock %}
+
+
+
+
