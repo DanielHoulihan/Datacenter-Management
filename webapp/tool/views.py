@@ -24,7 +24,9 @@ def get_reports(request):
         )
         all_reports = Report.objects.all().order_by('-endTime')          
 
-    return render (request, 'reports/report.html', { "all_reports": all_reports} )
+    report_count = Report.objects.count()
+
+    return render (request, 'reports/report.html', { "all_reports": all_reports, "report_count": report_count} )
 
 @csrf_protect
 def report_detail(request, id):

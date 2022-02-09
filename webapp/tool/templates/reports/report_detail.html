@@ -1,8 +1,8 @@
 {% include 'reports/base.html'%}
 
 <div class="sidenav">
-  <img style="padding:12px" src="/../../static/images/logo.png" alt="Beeyon" width="125" height="70">
-  <a href="{% url 'get_reports' %}">Home</a>
+  <br>
+  <a href="{% url 'get_reports' %}">Reports</a>
   <br><br>
   <form method="POST" class="post-form"> 
     {% csrf_token %}
@@ -52,7 +52,6 @@
 </div>
 {% endblock %}
 
-<!-- <script type="text/javascript" src= "/../../static/js/script.js"></script> -->
 <script>
 
   var selectAge = document.getElementById("selectThreshold");

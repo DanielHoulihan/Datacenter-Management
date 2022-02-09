@@ -14,6 +14,11 @@ This is now visible at http://localhost:3002/reports
 
 To run webapp using Django:
 
+Install required packages
+```
+pip3 install -r requirements.txt
+```
+
 ```
 cd webapp
 python3 migrate.py runserver
