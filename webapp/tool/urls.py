@@ -2,7 +2,9 @@ from django.urls import  path
 from . import views
 
 urlpatterns = [
-    path('', views.get_reports, name = "get_reports"),
-    path('reports/<int:id>/',views.report_detail, name = "report_detail"),
-    path('reports/<int:id>/hosts/<int:Id2>',views.host_detail, name = "host_detail")
+    path('', views.get_datacenters, name = "get_datacenters"),
+    path('floors/',views.floors, name = "floors"),
+    path('floors/<floorid>/racks',views.racks, name = "racks"),
+    path('floors/<floorid>/racks/<rackid>/hosts',views.hosts, name = "hosts"),
+    path('floors/<floorid>/racks/<rackid>/hosts/<hostid>',views.host_activity, name = "host_activity"),
 ]

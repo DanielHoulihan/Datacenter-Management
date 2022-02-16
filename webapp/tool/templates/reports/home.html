@@ -1,0 +1,48 @@
+{% include 'reports/base.html'%}
+<head>
+  <link rel="stylesheet" href="/../../static/css/styles.css">
+</head>
+
+
+
+
+
+<div class="content">
+
+  <h2>Selected Data Center: {{current.current}}</h2>
+  <form method="POST">
+    {% csrf_token %}
+    <select name="current">
+    {% for datacenter in datacenters %}
+        <option name="current" selected={{current.current}}>{{ datacenter.datacenterid }}</option>
+    {% endfor %}
+    </select>
+    <button type="submit" class="save">Submit</button>
+    </form>
+
+{% block content %}
+
+<table style="width:100%">
+  <tr>
+    <th>Datacenter ID</th>
+    <th>Name</th>
+    <th>Description</th>
+    <th>Start Time</th>
+  </tr>
+  {% for datacenter in datacenters %}
+  <tr>
+    <td>{{datacenter.datacenterid}}</td>
+    <td>{{datacenter.datacentername}}</td>
+    <td>{{datacenter.description}}</td>
+    <td>{{datacenter.startTime}}</td>
+  </tr>
+  {% endfor %}
+
+</table>
+
+{% endblock %} 
+</div>
+
+
+
+

@@ -1,34 +1,69 @@
 from django.db import models
+from django.urls import reverse
 
-class Report(models.Model):
-    reportId = models.CharField(max_length=75, blank=True, null=True)
-    createDate = models.CharField(max_length=75, blank=True, null=True)
-    message = models.CharField(max_length=75, blank=True, null=True)
-    hosts = models.IntegerField(null=True)
-    racks = models.IntegerField(null=True)
-    data_center_name = models.CharField(max_length=100,null=True)
-    pue = models.FloatField(null=True)
-    startTime = models.CharField(max_length=20,null=True)
-    endTime = models.CharField(max_length=20,null=True)
+class Datacenter(models.Model):
+    datacenterid = models.IntegerField()
+    datacentername = models.CharField(max_length=25, null=True)
+    description = models.CharField(max_length=100, null=True)
+    startTime = models.IntegerField()
 
     def __str__(self):
-        return self.reportId
-        
-class HostReport(models.Model):
-    reportId = models.ForeignKey(Report, on_delete=models.CASCADE)
-    hostId = models.CharField(max_length=10)
-    hostName = models.CharField(max_length=75)
-    IPAddress = models.CharField(max_length=50)
-    cpu_usage = models.FloatField()
-    energyConsumption = models.FloatField(null=True)
-    operationalCost = models.FloatField(null=True)
-    apparentWastageCost = models.FloatField(null=True)
-    carbonFootprint = models.FloatField(null=True)
+        return str(self.datacenterid)
+
+    def get_absolute_url(self):
+        return reverse('datacenterid', args=[str(self.id)])   
+
+class Floor(models.Model):
+    datacenterid = models.IntegerField()
+    floorid = models.IntegerField()
+    floorname = models.CharField(max_length=25, null=True)
+    description = models.CharField(max_length=100, null=True)
+    
+    def __str__(self):
+        return str(self.floorid)
+
+    def get_absolute_url(self):
+        return reverse('floorid', args=[str(self.id)])   
+
+class Rack(models.Model):
+    floorid = models.IntegerField()
+    rackid = models.IntegerField()
+    rackname = models.CharField(max_length=25, null=True)
+    description = models.CharField(max_length=100, null=True)
+    pdu = models.IntegerField(null=True)
+
+    
+    def __str__(self):
+        return str(self.rackid)
+
+    def get_absolute_url(self):
+        return reverse('rackid', args=[str(self.id)]) 
+
+class Host(models.Model):
+    rackid = models.IntegerField()
+    hostid = models.IntegerField()
+    hostname = models.CharField(max_length=30)
+    hostdescription = models.CharField(max_length=50)
+    hostType = models.CharField(max_length=20)
+    processors = models.IntegerField()
+    ipaddress = models.CharField(max_length=25)
 
     def __str__(self):
-        return str(self.hostId)
+        return str(self.hostid)
+
+class Hostactivity(models.Model):
+    hostid = models.IntegerField()
+    activityid = models.IntegerField()
+    power = models.FloatField()
+    power_mode = models.CharField(max_length=25)
+    stat1 = models.FloatField()
+    stat2 = models.FloatField()
+    stat3 = models.FloatField()
+    time = models.IntegerField()
+
+    def __str__(self):
+        return str(self.activityid)
 
 
-class Threshold(models.Model):
-    low = models.IntegerField()
-    medium = models.IntegerField()
+class CurrentDatacenter(models.Model):
+    current = models.IntegerField()
