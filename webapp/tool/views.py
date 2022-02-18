@@ -5,15 +5,19 @@ from . import forms
 from datetime import datetime
 from django.views.decorators.csrf import csrf_protect
 import time
+from django.db.models import Avg, Max
 
 
 def datacenters(request):
     services.get_datacenters()
     if request.method == 'POST':
-        current = request.POST['current']
-        if CurrentDatacenter.objects.count()==0:
-            CurrentDatacenter.objects.create(current=current)
-        else: CurrentDatacenter.objects.update(current=current)
+        form = forms.SelectCurrentForm(request.POST)
+        if form.is_valid():
+
+            current = form.cleaned_data['current_datacenter']
+            if CurrentDatacenter.objects.count()==0:
+                CurrentDatacenter.objects.create(current=current)
+            else: CurrentDatacenter.objects.update(current=current)
 
     datacenters = Datacenter.objects.all()
     configured = ConfiguredDataCenters.objects.all()
@@ -27,7 +31,6 @@ def floors(request):
     if CurrentDatacenter.objects.all().count()==0:
         return render (request, 'reports/pick_data_center.html', { "floors": "Pick a data center", "floor_count": 0} )
     current = CurrentDatacenter.objects.all().values().get()['current'].split('-')[0]
-    print(current)
     services.get_floors(current)
 
     floors = Floor.objects.filter(datacenterid=current).all()
@@ -36,7 +39,6 @@ def floors(request):
 
 
 def racks(request, floorid):
-    print(CurrentDatacenter.objects.all())
     current = CurrentDatacenter.objects.all().values().get()['current'].split('-')[0]
     services.get_racks(current, floorid)
     
@@ -61,29 +63,35 @@ def host_activity(request, floorid, rackid, hostid):
 
     startTime_unix = time.mktime(startTime.timetuple())
     startTime_unix = int(startTime_unix)
-    print("starttime: " + str(startTime_unix))
-    services.get_host_detail(current, floorid, rackid, hostid, startTime_unix)
-
+    
     activities = Hostactivity.objects.filter(
         sub_id = CurrentDatacenter.objects.all().values().get()['current']).filter(
         datacenterid=current).filter(
             floorid=floorid).filter(
                 rackid=rackid).filter(
                     hostid=hostid).all()
+
+    if activities.count()==0:
+        services.get_host_detail(current, floorid, rackid, hostid, startTime_unix)
+    else: 
+        services.get_host_detail(current, floorid, rackid, hostid, activities.aggregate(Max('time')).get('time__max'))
+
     activities_count = activities.count()
 
-    return render (request, 'reports/host_activity.html', { "activities": activities, "activities_count": activities_count} )
+    average = activities.aggregate(Avg('stat1'), Avg('stat2'), Avg('stat3'))# or 0.00
+    return render (request, 'reports/host_activity.html', { "average": average, "activities_count": activities_count} )
 
 
 @csrf_protect
 def configure(request):
     services.get_datacenters()
     if request.method == 'POST':
-        print(request.POST)
-        if 'Delete' in request.POST:
-            to_delete = request.POST['Delete']
-            ConfiguredDataCenters.objects.filter(sub_id=to_delete).delete()
-            CurrentDatacenter.objects.filter(current=to_delete).delete()
+        if 'to_delete' in request.POST:
+            form = forms.DeleteConfigurationForm(request.POST)
+            if form.is_valid():
+                to_delete = form.cleaned_data['to_delete']
+                ConfiguredDataCenters.objects.filter(sub_id=to_delete).delete()
+                CurrentDatacenter.objects.filter(current=to_delete).delete()
         else:
             to_configure = request.POST['to_configure']
             start = request.POST['start']

@@ -10,7 +10,10 @@
 <div class="content">
 
 {% block content %}
-<h1>{{activities_count}}</h1>
+<h1>Responses (minutes): {{activities_count}}</h1>
+<h1>Average CPU% (Stat1): {{average.stat1__avg}}</h1>
+<h1>Average CPU% (Stat2): {{average.stat2__avg}}</h1>
+<h1>Average CPU% (Stat3): {{average.stat3__avg}}</h1>
 {% endblock %} 
 </div>
 

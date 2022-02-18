@@ -1,5 +1,6 @@
 from tool.models import Datacenter, Floor, CurrentDatacenter, Host, Hostactivity, Rack
 import requests
+import time
 
 def get_datacenters():
     url = "http://192.168.56.103:8080/papillonserver/rest/datacenters" 
@@ -112,10 +113,10 @@ def get_hosts(datacenter, floorid, rackid):
 
 def get_host_detail(datacenter, floorid, rackid, hostid, startTime):
     get_hosts(datacenter, floorid, rackid)
-    url = "http://192.168.56.103:8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"+floorid+"/racks/"+rackid+"/hosts/"+hostid+"/activity?starttime="+str(startTime)+"&endtime=1645111761"
+
+    url = "http://192.168.56.103:8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"+floorid+"/racks/"+rackid+"/hosts/"+hostid+"/activity?starttime="+str(startTime)+"&endtime="+str(int(time.time())) 
     response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
     data = response.json()
-
     if data!=None: 
         if isinstance(data['activity'], list):
             for i in data['activity']:
@@ -148,3 +149,56 @@ def get_host_detail(datacenter, floorid, rackid, hostid, startTime):
                 stat3 = data['activity']['stat3'],
                 time = data['activity']['timeStamp']
             )
+
+
+# end = 1645185679
+# start = 1643760000
+
+
+
+
+
+
+
+
+
+
+
+# def get_host_detail(datacenter, floorid, rackid, hostid, startTime):
+#     get_hosts(datacenter, floorid, rackid)
+#     url = "http://192.168.56.103:8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"+floorid+"/racks/"+rackid+"/hosts/"+hostid+"/activity?starttime="+str(startTime)+"&endtime=1645111761"
+#     response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
+#     data = response.json()
+
+#     if data!=None: 
+#         if isinstance(data['activity'], list):
+#             for i in data['activity']:
+#                 Hostactivity.objects.get_or_create(
+#                     sub_id = CurrentDatacenter.objects.all().values().get()['current'],
+#                     datacenterid = datacenter,
+#                     floorid = floorid,
+#                     rackid = rackid,
+#                     hostid = i['hostId'],
+#                     activityid = i['id'],
+#                     power = i['power'],
+#                     power_mode = i['powerMode'],
+#                     stat1 = i['stat1'],
+#                     stat2 = i['stat2'],
+#                     stat3 = i['stat3'],
+#                     time = i['timeStamp'],
+#                 )
+#         else:
+#             Hostactivity.objects.get_or_create(
+#                 sub_id = CurrentDatacenter.objects.all().values().get()['current'],
+#                 datacenterid = datacenter,
+#                 floorid = floorid,
+#                 rackid = rackid,
+#                 hostid = data['activity']['hostId'],
+#                 activityid = data['activity']['id'],
+#                 power = data['activity']['power'],
+#                 power_mode = data['activity']['powerMode'],
+#                 stat1 = data['activity']['stat1'],
+#                 stat2 = data['activity']['stat2'],
+#                 stat3 = data['activity']['stat3'],
+#                 time = data['activity']['timeStamp']
+#             )
