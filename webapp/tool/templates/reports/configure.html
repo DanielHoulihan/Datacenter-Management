@@ -3,49 +3,74 @@
   <link rel="stylesheet" href="/../../static/css/styles.css">
 </head>
 
-<div class="content">
-  <h2>Configured Data Centers: {{configured_count}}</h2>
-  <h2>Go to 'Configure' tab to create one</h2>
 
-  <h2>Selected Data Center: {{current}}</h2>
+
+
+
+<div class="content">
+<h2>Configured Data Centers: {{configured_count}}</h2>
   <form method="POST">
     {% csrf_token %}
-    <select name="current">
-    {% for datacenter in configured %}
-        <option name="current" >{{ datacenter.sub_id }}</option>
+
+    <label for="to_configure">Select Data Center: </label>
+    <select name="to_configure">
+    {% for datacenter in datacenters %}
+        <option name="to_configure" >{{ datacenter.datacenterid }}</option>
     {% endfor %}
     </select>
+    
+
+    <label for="start">Select Start Date:</label>
+    <input type="date" id="start" name="start">
+
+    <label for="pue">PUE:</label>
+    <input type="number" id="pue" name="pue" step="0.1">
+
+    <label for="energy_cost">Energy Cost:</label>
+    <input type="number" id="energy_cost" name="energy_cost" step="0.1">
+
+    <label for="carbon_conversion">Carbon Conversion:</label>
+    <input type="number" id="carbon_conversion" name="carbon_conversion" step="0.1">
+
     <button type="submit" class="save">Submit</button>
     </form>
 
 {% block content %}
+
 <h3> Configured Data Centers </h3>
 <table style="width:100%">
   <tr>
     <th>Datacenter ID</th>
+    <th>Datacenter sub-ID</th>
     <th>PUE</th>
     <th>Energy Cost</th>
     <th>Carbon Conversion</th>
     <th>Start Time</th>
+    <th>t</th>
   </tr>
   {% for datacenter in configured %}
   <tr>
     <td>{{datacenter.datacenterid}}</td>
+    <td>{{datacenter.sub_id}}</td>
     <td>{{datacenter.pue}}</td>
     <td>{{datacenter.energy_cost}}</td>
     <td>{{datacenter.carbon_conversion}}</td>
     <td>{{datacenter.startTime}}</td>
     <td>
-
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit" class="save" name = "Delete" value={{datacenter.sub_id}}>Delete</button>
+    </form>
 
     </td>
   </tr>
   {% endfor %}
 </table>
 
-</table>
-<br>
-<h2>Available Data Centers</h2>
+
+
+<br><br><br><br><br>
+<h3> Available Data Centers </h3>
 <table style="width:100%">
   <tr>
     <th>Datacenter ID</th>

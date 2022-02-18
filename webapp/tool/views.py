@@ -1,72 +1,34 @@
 from django.shortcuts import  render
-from tool.models import Datacenter, Floor, Rack, Host, Hostactivity, CurrentDatacenter
+from tool.models import ConfiguredDataCenters, Datacenter, Floor, Rack, Host, Hostactivity, CurrentDatacenter, Count
 from . import services
-import requests
+from . import forms
 from datetime import datetime
 from django.views.decorators.csrf import csrf_protect
 import time
 
 
-def get_datacenters(request):
-
-    url = "http://192.168.56.103:8080/papillonserver/rest/datacenters" 
-    response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
-    data = response.json()
-    
+def datacenters(request):
+    services.get_datacenters()
     if request.method == 'POST':
         current = request.POST['current']
-        CurrentDatacenter.objects.update(current=current)
-
-    if CurrentDatacenter.objects.count()==0:
-        CurrentDatacenter.objects.create(current = 268)
-
-    if data!=None: 
-        if isinstance(data['datacenter'], list):
-            for i in data['datacenter']:
-                Datacenter.objects.get_or_create(
-                    datacenterid = i['id'],
-                    datacentername = i['name'],
-                    description = i['description'],
-                    startTime = 1644537600,
-                )
-        else:
-            Datacenter.objects.get_or_create(
-                datacenterid = data['datacenter']['id'],
-                datacentername = data['datacenter']['name'],
-                description = data['datacenter']['description'],
-                startTime = 1644537600,
-            )
+        if CurrentDatacenter.objects.count()==0:
+            CurrentDatacenter.objects.create(current=current)
+        else: CurrentDatacenter.objects.update(current=current)
 
     datacenters = Datacenter.objects.all()
-    current = CurrentDatacenter.objects.all().get()
-    return render (request, 'reports/home.html', { "datacenters": datacenters, "current": current} )
+    configured = ConfiguredDataCenters.objects.all()
+    configured_count = ConfiguredDataCenters.objects.all().count()
+    if CurrentDatacenter.objects.count()!=0:
+        current = CurrentDatacenter.objects.all().values().get()['current']
+        return render (request, 'reports/home.html', { "datacenters": datacenters, "current": current, "configured":configured, "configured_count": configured_count} )
+    else: return render (request, 'reports/home.html', { "datacenters": datacenters, "current": "Not selected", "configured":configured, "configured_count": configured_count} )
 
-# @csrf_protect
 def floors(request):
-    get_datacenters(request)
-
-    current = str(CurrentDatacenter.objects.all().values().get()['current'])
-    url = "http://192.168.56.103:8080/papillonserver/rest/datacenters/"+current+"/floors"
-    response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
-    data = response.json()
-    
-    if data!=None: 
-        if isinstance(data['floor'], list):
-            for i in data['floor']:
-                Datacenter.objects.get_or_create(
-                    datacenterid = i['datacenterId'],
-                    floorid = i['id'],
-                    floorname = i['name'],
-                    description = i['description']
-                )
-        else:
-            Floor.objects.get_or_create(
-                datacenterid = data['floor']['datacenterId'],
-                floorid = data['floor']['id'],
-                floorname = data['floor']['name'],
-                description = data['floor']['description']
-            )
-
+    if CurrentDatacenter.objects.all().count()==0:
+        return render (request, 'reports/pick_data_center.html', { "floors": "Pick a data center", "floor_count": 0} )
+    current = CurrentDatacenter.objects.all().values().get()['current'].split('-')[0]
+    print(current)
+    services.get_floors(current)
 
     floors = Floor.objects.filter(datacenterid=current).all()
     floor_count = Floor.objects.filter(datacenterid=current).all().count()
@@ -74,107 +36,79 @@ def floors(request):
 
 
 def racks(request, floorid):
-    floors(request)
-    current = str(CurrentDatacenter.objects.all().values().get()['current'])
-    url = "http://192.168.56.103:8080/papillonserver/rest/datacenters/"+current+"/floors/"+floorid+"/racks"
-    response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
-    data = response.json()
+    print(CurrentDatacenter.objects.all())
+    current = CurrentDatacenter.objects.all().values().get()['current'].split('-')[0]
+    services.get_racks(current, floorid)
     
-    if data!=None: 
-        if isinstance(data['rack'], list):
-            for i in data['rack']:
-                Rack.objects.get_or_create(
-                    floorid = i['floorId'],
-                    rackid = i['id'],
-                    rackname = i['name'],
-                    description = i['description'],
-                    pdu = i['pdu'],
-                )
-        else:
-            Rack.objects.get_or_create(
-                floorid = data['rack']['floorId'],
-                rackid = data['rack']['id'],
-                rackname = data['rack']['name'],
-                description = data['rack']['description'],
-                pdu = data['rack']['pdu']
-            )
-
-
-    racks = Rack.objects.all()
-    rack_count = Rack.objects.all().count()
+    racks = Rack.objects.filter(datacenterid=current).filter(floorid=floorid).all()
+    rack_count = racks.count()
     return render (request, 'reports/racks.html', { "racks": racks, "rack_count": rack_count} )
 
 
 def hosts(request, floorid, rackid):
-    racks(request, floorid)
-    current = str(CurrentDatacenter.objects.all().values().get()['current'])
-    url = "http://192.168.56.103:8080/papillonserver/rest/datacenters/"+current+"/floors/"+floorid+"/racks/"+rackid+"/hosts"
-    response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
-    data = response.json()
-    
-    if data!=None: 
-        if isinstance(data['host'], list):
-            for i in data['host']:
-                Host.objects.get_or_create(
-                    rackid = i['rackId'],
-                    hostid = i['id'],
-                    hostname = i['name'],
-                    hostdescription = i['description'],
-                    hostType = i['hostType'],
-                    processors = i['processorCount'],
-                    ipaddress = i['IPAddress']
-                )
-        else:
-            Host.objects.get_or_create(
-                rackid = data['host']['rackId'],
-                hostid = data['host']['id'],
-                hostname = data['host']['name'],
-                hostdescription = data['host']['description'],
-                hostType = data['host']['hostType'],
-                processors = data['host']['processorCount'],
-                ipaddress = data['host']['IPAddress']
-            )
+    current = str(CurrentDatacenter.objects.all().values().get()['current'].split('-')[0])
+    services.get_hosts(current, floorid, rackid)
 
-
-    hosts = Host.objects.all()
-    host_count = Host.objects.all().count()
+    hosts = Host.objects.filter(datacenterid=current).filter(floorid=floorid).filter(rackid=rackid).all()
+    host_count = hosts.count()
     return render (request, 'reports/hosts.html', { "hosts": hosts, "host_count": host_count} )
     
 
 
 def host_activity(request, floorid, rackid, hostid):
-    racks(request, floorid)
-    current = str(CurrentDatacenter.objects.all().values().get()['current'])
-    url = "http://192.168.56.103:8080/papillonserver/rest/datacenters/"+current+"/floors/"+floorid+"/racks/"+rackid+"/hosts/"+hostid+"/activity?starttime=1644537600&endtime=1645046167"
-    response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
-    data = response.json()
-    
-    if data!=None: 
-        if isinstance(data['activity'], list):
-            for i in data['activity']:
-                Hostactivity.objects.get_or_create(
-                    hostid = i['hostId'],
-                    activityid = i['id'],
-                    power = i['power'],
-                    power_mode = i['powerMode'],
-                    stat1 = i['stat1'],
-                    stat2 = i['stat2'],
-                    stat3 = i['stat3'],
-                    time = i['timeStamp'],
-                )
+    startTime = ConfiguredDataCenters.objects.all().filter(sub_id = CurrentDatacenter.objects.all().values().get()['current']).values().get()['startTime']
+    current = CurrentDatacenter.objects.all().values().get()['current'].split('-')[0]
+
+    startTime_unix = time.mktime(startTime.timetuple())
+    startTime_unix = int(startTime_unix)
+    print("starttime: " + str(startTime_unix))
+    services.get_host_detail(current, floorid, rackid, hostid, startTime_unix)
+
+    activities = Hostactivity.objects.filter(
+        sub_id = CurrentDatacenter.objects.all().values().get()['current']).filter(
+        datacenterid=current).filter(
+            floorid=floorid).filter(
+                rackid=rackid).filter(
+                    hostid=hostid).all()
+    activities_count = activities.count()
+
+    return render (request, 'reports/host_activity.html', { "activities": activities, "activities_count": activities_count} )
+
+
+@csrf_protect
+def configure(request):
+    services.get_datacenters()
+    if request.method == 'POST':
+        print(request.POST)
+        if 'Delete' in request.POST:
+            to_delete = request.POST['Delete']
+            ConfiguredDataCenters.objects.filter(sub_id=to_delete).delete()
+            CurrentDatacenter.objects.filter(current=to_delete).delete()
         else:
-            Hostactivity.objects.get_or_create(
-                hostid = data['activity']['hostId'],
-                activityid = data['activity']['id'],
-                power = data['activity']['power'],
-                power_mode = data['activity']['powerMode'],
-                stat1 = data['activity']['stat1'],
-                stat2 = data['activity']['stat2'],
-                stat3 = data['activity']['stat3'],
-                time = data['activity']['timeStamp']
+            to_configure = request.POST['to_configure']
+            start = request.POST['start']
+            pue = request.POST['pue']
+            energy_cost = request.POST['energy_cost']
+            carbon_conversion = request.POST['carbon_conversion']
+            if Count.objects.all().count()==0:
+                Count.objects.create(configured=0)
+            else: 
+                Count.objects.update(configured = Count.objects.all().values().get()['configured']+1)
+            ConfiguredDataCenters.objects.get_or_create(
+                sub_id = str(to_configure)+"-"+str(Count.objects.all().values().get()['configured']+1),
+                datacenterid = to_configure,
+                startTime = start,
+                pue = pue,
+                energy_cost = energy_cost,
+                carbon_conversion = carbon_conversion
             )
 
 
-    activities = Hostactivity.objects.all()
-    activities_count = Hostactivity.objects.all().count()
-    return render (request, 'reports/host_activity.html', { "activities": activities, "activities_count": activities_count} )
+    configured = ConfiguredDataCenters.objects.all()
+    datacenters = Datacenter.objects.all()
+    configured_count = ConfiguredDataCenters.objects.all().count()
+    return render (request, 'reports/configure.html', { "datacenters": datacenters, "configured_count": configured_count, "configured": configured} )
+
+
+def budget(request):
+    return render (request, 'reports/budget.html', { "budget": "Budget will be here"} )
