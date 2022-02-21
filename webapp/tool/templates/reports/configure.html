@@ -8,6 +8,17 @@
 
 
 <div class="content">
+
+  <h3>Current master: {{master}}</h3>
+  <form method="POST">
+    {% csrf_token %}
+    <label for="ip">IP Address of master:</label>
+    <input type="text" id="ip" name="ip">
+    <button type="submit" class="save" onclick="window.location.reload();">Enter</button>
+  </form>
+  
+
+
 <h2>Configured Data Centers: {{configured_count}}</h2>
   <form method="POST">
     {% csrf_token %}
@@ -33,7 +44,7 @@
     <input type="number" id="carbon_conversion" name="carbon_conversion" step="0.1">
 
     <button type="submit" class="save">Submit</button>
-    </form>
+  </form>
 
 {% block content %}
 
@@ -67,8 +78,6 @@
   {% endfor %}
 </table>
 
-
-
 <br><br><br><br><br>
 <h3> Available Data Centers </h3>
 <table style="width:100%">
@@ -76,14 +85,12 @@
     <th>Datacenter ID</th>
     <th>Name</th>
     <th>Description</th>
-    <th>Start Time</th>
   </tr>
   {% for datacenter in datacenters %}
   <tr>
     <td>{{datacenter.datacenterid}}</td>
     <td>{{datacenter.datacentername}}</td>
     <td>{{datacenter.description}}</td>
-    <td>{{datacenter.startTime}}</td>
   </tr>
   {% endfor %}
 

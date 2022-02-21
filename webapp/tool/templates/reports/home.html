@@ -4,6 +4,8 @@
 </head>
 
 <div class="content">
+
+  <h2>IP of master: {{master}}</h2>
   <h2>Configured Data Centers: {{configured_count}}</h2>
   <h2>Go to 'Configure' tab to create one</h2>
 
@@ -16,7 +18,7 @@
     {% endfor %}
     </select>
     <button type="submit" class="save">Submit</button>
-    </form>
+  </form>
 
 {% block content %}
 <h3> Configured Data Centers </h3>
@@ -53,14 +55,12 @@
     <th>Datacenter ID</th>
     <th>Name</th>
     <th>Description</th>
-    <th>Start Time</th>
   </tr>
   {% for datacenter in datacenters %}
   <tr>
     <td>{{datacenter.datacenterid}}</td>
     <td>{{datacenter.datacentername}}</td>
     <td>{{datacenter.description}}</td>
-    <td>{{datacenter.startTime}}</td>
   </tr>
   {% endfor %}
 

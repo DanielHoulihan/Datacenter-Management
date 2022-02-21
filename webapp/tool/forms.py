@@ -7,8 +7,6 @@ class SelectCurrentForm(forms.Form):
         data = self.cleaned_data['current_datacenter']
         return data
 
-
-
 class DeleteConfigurationForm(forms.Form):
     to_delete = forms.CharField(required=True)
 

@@ -2,10 +2,10 @@ from django.db import models
 from django.urls import reverse
 
 class Datacenter(models.Model):
+    masterip = models.CharField(null=True, max_length=25)
     datacenterid = models.CharField(max_length=20,null=True)
     datacentername = models.CharField(max_length=25, null=True)
     description = models.CharField(max_length=100, null=True)
-    startTime = models.IntegerField()
 
     def __str__(self):
         return str(self.datacenterid)
@@ -14,6 +14,7 @@ class Datacenter(models.Model):
         return reverse('datacenterid', args=[str(self.id)])   
 
 class Floor(models.Model):
+    masterip = models.CharField(null=True, max_length=25)
     datacenterid = models.CharField(max_length=20,null=True)
     floorid = models.IntegerField()
     floorname = models.CharField(max_length=25, null=True)
@@ -26,6 +27,7 @@ class Floor(models.Model):
         return reverse('floorid', args=[str(self.id)])   
 
 class Rack(models.Model):
+    masterip = models.CharField(null=True, max_length=25)
     datacenterid = models.CharField(max_length=20,null=True)
     floorid = models.IntegerField()
     rackid = models.IntegerField()
@@ -41,6 +43,7 @@ class Rack(models.Model):
         return reverse('rackid', args=[str(self.id)]) 
 
 class Host(models.Model):
+    masterip = models.CharField(null=True, max_length=25)
     datacenterid = models.CharField(max_length=20,null=True)
     floorid = models.IntegerField(null=True)
     rackid = models.IntegerField()
@@ -55,6 +58,7 @@ class Host(models.Model):
         return str(self.hostid)
 
 class Hostactivity(models.Model):
+    masterip = models.CharField(null=True, max_length=25)
     sub_id = models.CharField(null=True,max_length=15)
     datacenterid = models.CharField(max_length=20,null=True)
     floorid = models.IntegerField(null=True)
@@ -71,11 +75,12 @@ class Hostactivity(models.Model):
     def __str__(self):
         return str(self.activityid)
 
-
 class CurrentDatacenter(models.Model):
+    masterip = models.CharField(null=True, max_length=25)
     current = models.CharField(null=True, max_length=25)
 
 class ConfiguredDataCenters(models.Model):
+    masterip = models.CharField(null=True, max_length=25)
     sub_id = models.CharField(max_length=15, null=True)
     datacenterid = models.CharField(max_length=20)
     startTime = models.DateField()
@@ -83,11 +88,11 @@ class ConfiguredDataCenters(models.Model):
     energy_cost = models.FloatField()
     carbon_conversion = models.FloatField()
 
-
 class Count(models.Model):
     configured = models.IntegerField(null=True)
 
-
+class MasterIP(models.Model):
+    master = models.CharField(null=True, max_length=25)
 
 
 
