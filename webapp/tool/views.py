@@ -96,8 +96,8 @@ def configure(request):
         elif 'ip' in request.POST:
             ip = request.POST['ip']
             MasterIP.objects.update(master = ip)
+            services.get_datacenters()
         else:
-            print("heyy")
             to_configure = request.POST['to_configure']
             start = request.POST['start']
             pue = request.POST['pue']
@@ -107,14 +107,15 @@ def configure(request):
                 Count.objects.create(configured=0)
             else: 
                 Count.objects.update(configured = Count.objects.all().values().get()['configured']+1)
-                ConfiguredDataCenters.objects.get_or_create(
-                    masterip = master,
-                    sub_id = str(to_configure)+"-"+str(Count.objects.all().values().get()['configured']+1),
-                    datacenterid = to_configure,
-                    startTime = start,
-                    pue = pue,
-                    energy_cost = energy_cost,
-                    carbon_conversion = carbon_conversion
+                
+            ConfiguredDataCenters.objects.get_or_create(
+                masterip = master,
+                sub_id = str(to_configure)+"-"+str(Count.objects.all().values().get()['configured']+1),
+                datacenterid = to_configure,
+                startTime = start,
+                pue = pue,
+                energy_cost = energy_cost,
+                carbon_conversion = carbon_conversion
             )
 
     master = MasterIP.objects.all().values().get()["master"]

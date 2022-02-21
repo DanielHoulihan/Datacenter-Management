@@ -16,6 +16,8 @@ Install required packages (in Linux it may be pip instead of pip3 - depends on d
 pip3 install -r requirements.txt
 ```
 
+Run the app (in Linux it may be python instead of python3 - depends on distro)
+
 ```
 python3 manage.py runserver
 ```
