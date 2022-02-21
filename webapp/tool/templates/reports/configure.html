@@ -14,7 +14,7 @@
     {% csrf_token %}
     <label for="ip">IP Address of master:</label>
     <input type="text" id="ip" name="ip">
-    <button type="submit" class="save" onclick="window.location.reload();">Enter</button>
+    <button type="submit" class="save" >Enter</button>
   </form>
   
 
@@ -30,7 +30,6 @@
     {% endfor %}
     </select>
     
-
     <label for="start">Select Start Date:</label>
     <input type="date" id="start" name="start">
 
@@ -57,7 +56,7 @@
     <th>Energy Cost</th>
     <th>Carbon Conversion</th>
     <th>Start Time</th>
-    <th>t</th>
+    <th></th>
   </tr>
   {% for datacenter in configured %}
   <tr>
