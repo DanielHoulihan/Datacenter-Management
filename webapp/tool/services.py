@@ -1,4 +1,4 @@
-from tool.models import Datacenter, Floor, CurrentDatacenter, Host, Hostactivity, MasterIP, Rack
+from tool.models import Datacenter, Floor, CurrentDatacenter, Host, MasterIP, Rack, ConfiguredDataCenters
 import requests
 import time
 
@@ -89,91 +89,45 @@ def get_racks(datacenter, floorid):
             )
 
 
-def get_hosts(master, datacenter, floorid, rackid):
+def get_hosts(master, datacenter, floorid, rackid, startTime, endTime):
     get_racks(datacenter, floorid)
-    url = "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"+floorid+"/racks/"+rackid+"/hosts"
+    current = CurrentDatacenter.objects.all().values().get()['current']
+    url = "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"+floorid+"/racks/"+rackid+"/hosts/"
     response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
     data = response.json()
-    
+
     if data!=None: 
-        if isinstance(data['host'], list):
+        if not isinstance(data['host'], list):
+            return
+        else:
             for i in data['host']:
-                Host.objects.get_or_create(
-                    masterip = master,
-                    datacenterid = datacenter,
-                    floorid = floorid,
-                    rackid = i['rackId'],
-                    hostid = i['id'],
-                    hostname = i['name'],
-                    hostdescription = i['description'],
-                    hostType = i['hostType'],
-                    processors = i['processorCount'],
-                    ipaddress = i['IPAddress']
-                )
-        else:
-            Host.objects.get_or_create(
-                masterip = master,
-                datacenterid = datacenter,
-                floorid = floorid,
-                rackid = data['host']['rackId'],
-                hostid = data['host']['id'],
-                hostname = data['host']['name'],
-                hostdescription = data['host']['description'],
-                hostType = data['host']['hostType'],
-                processors = data['host']['processorCount'],
-                ipaddress = data['host']['IPAddress']
-            )
-
-
-def get_host_detail(datacenter, floorid, rackid, hostid, startTime):
-    master = MasterIP.objects.all().values().get()["master"]
-    get_hosts(master, datacenter, floorid, rackid)
-    url = "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"+floorid+"/racks/"+rackid+"/hosts/"+hostid+"/activity?starttime="+str(startTime)+"&endtime="+str(int(time.time())) 
-    response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
-    data = response.json()
-    if data!=None: 
-        if isinstance(data['activity'], list):
-            for i in data['activity']:
-                Hostactivity.objects.get_or_create(
-                    masterip = master,
-                    sub_id = CurrentDatacenter.objects.all().values().get()['current'],
-                    datacenterid = datacenter,
-                    floorid = floorid,
-                    rackid = rackid,
-                    hostid = i['hostId'],
-                    activityid = i['id'],
-                    power = i['power'],
-                    power_mode = i['powerMode'],
-                    stat1 = i['stat1'],
-                    stat2 = i['stat2'],
-                    stat3 = i['stat3'],
-                    time = i['timeStamp'],
-                )
-        else:
-            Hostactivity.objects.get_or_create(
-                masterip = master,
-                sub_id = CurrentDatacenter.objects.all().values().get()['current'],
-                datacenterid = datacenter,
-                floorid = floorid,
-                rackid = rackid,
-                hostid = data['activity']['hostId'],
-                activityid = data['activity']['id'],
-                power = data['activity']['power'],
-                power_mode = data['activity']['powerMode'],
-                stat1 = data['activity']['stat1'],
-                stat2 = data['activity']['stat2'],
-                stat3 = data['activity']['stat3'],
-                time = data['activity']['timeStamp']
-            )
-
-from collections import defaultdict
-
-def get_tco(datacenter, master):
-    base = "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors"
-    response = requests.get(base,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
-    data = response.json()
-
-
-    response = requests.get(base,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
-    data = response.json()
-    #print(floors)
+                new_url = url + i['id'] +"/activity?starttime="+str(startTime)+"&endtime="+str(endTime)
+                response = requests.get(new_url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
+                data2 = response.json()
+                cpu_total = 0
+                cpu_count = 0
+                for activity in data2['activity']:
+                    cpu_total += float(activity['stat1'])
+                    cpu_count += 1
+                avg_cpu = cpu_total/cpu_count
+                host = Host.objects.filter(masterip=master).filter(sub_id = current).filter(floorid=floorid).filter(rackid=rackid).filter(hostid=i['id'])
+                if host.count()==0:
+                    Host.objects.get_or_create(
+                        masterip = master,
+                        sub_id = CurrentDatacenter.objects.all().values().get()['current'],
+                        datacenterid = datacenter,
+                        floorid = floorid,
+                        rackid = i['rackId'],
+                        hostid = i['id'],
+                        hostname = i['name'],
+                        hostdescription = i['description'],
+                        hostType = i['hostType'],
+                        processors = i['processorCount'],
+                        ipaddress = i['IPAddress'],
+                        lastTime = data2['activity'][-1:][0]['timeStamp'],
+                        cpu_usage = avg_cpu,
+                        responses = cpu_count,
+                        total_cpu = cpu_total
+                    )
+                else: 
+                    host.update(cpu_usage=avg_cpu, responses = cpu_count, total_cpu = cpu_total)

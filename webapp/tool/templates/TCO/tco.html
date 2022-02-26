@@ -1,4 +1,4 @@
-{% include 'reports/base.html'%}
+{% include 'home/base.html'%}
 <head>
     <link rel="stylesheet" href="/../../static/css/styles.css">
 </head>
@@ -9,7 +9,7 @@
     <h2>All hosts in data center: {{tco_count}}</h2>
     <div class="card-container">
       {% for host in tco %}
-      <div class="card3">
+      <div class="card2">
         <div style="background-color: rgb(255, 255, 255)">
           <b>Host ID: {{ host.hostid }}</b>
           <hr>
@@ -23,7 +23,7 @@
             <input type="text" id="ip" name="ip">
             <button type="submit" class="save" >Calculate TCO</button>
           </form>
-          
+
         </div>
       </div>
       {% endfor %}

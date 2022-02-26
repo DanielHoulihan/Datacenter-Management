@@ -1,4 +1,4 @@
-{% include 'reports/base.html'%}
+{% include 'home/base.html'%}
 <head>
   <link rel="stylesheet" href="/../../static/css/styles.css">
 </head>
@@ -33,6 +33,10 @@
     <label for="start">Select Start Date:</label>
     <input type="date" id="start" name="start">
 
+    <label for="endTime">Select End Date:</label>
+    <input type="date" id="endTime" name="endTime">
+    <!-- <input type="checkbox" id="endTime" name="endTime"><label for="horns">Horns</label> -->
+
     <label for="pue">PUE:</label>
     <input type="number" id="pue" name="pue" step="0.1">
 
@@ -56,7 +60,7 @@
     <th>Energy Cost</th>
     <th>Carbon Conversion</th>
     <th>Start Time</th>
-    <th></th>
+    <th>End Time</th>
   </tr>
   {% for datacenter in configured %}
   <tr>
@@ -66,6 +70,7 @@
     <td>{{datacenter.energy_cost}}</td>
     <td>{{datacenter.carbon_conversion}}</td>
     <td>{{datacenter.startTime}}</td>
+    <td>{{datacenter.endTime}}</td>
     <td>
     <form method="POST">
         {% csrf_token %}

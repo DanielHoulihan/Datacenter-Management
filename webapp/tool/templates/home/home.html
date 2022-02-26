@@ -1,4 +1,4 @@
-{% include 'reports/base.html'%}
+{% include 'home/base.html'%}
 <head>
   <link rel="stylesheet" href="/../../static/css/styles.css">
 </head>
@@ -40,7 +40,7 @@
     <td>{{datacenter.energy_cost}}</td>
     <td>{{datacenter.carbon_conversion}}</td>
     <td>{{datacenter.startTime}}</td>
-    <td>Current Time</td>
+    <td>{{datacenter.endTime}}</td>
   </tr>
   {% endfor %}
 </table>

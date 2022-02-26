@@ -44,6 +44,7 @@ class Rack(models.Model):
 
 class Host(models.Model):
     masterip = models.CharField(null=True, max_length=25)
+    sub_id = models.CharField(null=True,max_length=15)
     datacenterid = models.CharField(max_length=20,null=True)
     floorid = models.IntegerField(null=True)
     rackid = models.IntegerField()
@@ -53,27 +54,13 @@ class Host(models.Model):
     hostType = models.CharField(max_length=20)
     processors = models.IntegerField()
     ipaddress = models.CharField(max_length=25)
+    lastTime = models.CharField(max_length=25, null=True)
+    cpu_usage = models.FloatField(null=True)
+    responses = models.IntegerField(null=True)
+    total_cpu = models.FloatField(null=True)
 
     def __str__(self):
         return str(self.hostid)
-
-class Hostactivity(models.Model):
-    masterip = models.CharField(null=True, max_length=25)
-    sub_id = models.CharField(null=True,max_length=15)
-    datacenterid = models.CharField(max_length=20,null=True)
-    floorid = models.IntegerField(null=True)
-    rackid = models.IntegerField(null=True)
-    hostid = models.IntegerField()
-    activityid = models.IntegerField()
-    power = models.FloatField()
-    power_mode = models.CharField(max_length=25)
-    stat1 = models.FloatField()
-    stat2 = models.FloatField()
-    stat3 = models.FloatField()
-    time = models.IntegerField()
-
-    def __str__(self):
-        return str(self.activityid)
 
 class CurrentDatacenter(models.Model):
     masterip = models.CharField(null=True, max_length=25)
@@ -84,6 +71,7 @@ class ConfiguredDataCenters(models.Model):
     sub_id = models.CharField(max_length=15, null=True)
     datacenterid = models.CharField(max_length=20)
     startTime = models.DateField()
+    endTime = models.DateField(null=True)
     pue = models.FloatField()
     energy_cost = models.FloatField()
     carbon_conversion = models.FloatField()
@@ -106,3 +94,28 @@ class HostEnergy(models.Model):
     ops_cons = models.FloatField(null=True)
 
 
+class Threshold(models.Model):
+    low = models.FloatField(null=True, max_length=25)
+    medium = models.FloatField(null=True, max_length=25)
+
+
+
+
+
+# class Hostactivity(models.Model):
+#     masterip = models.CharField(null=True, max_length=25)
+#     sub_id = models.CharField(null=True,max_length=15)
+#     datacenterid = models.CharField(max_length=20,null=True)
+#     floorid = models.IntegerField(null=True)
+#     rackid = models.IntegerField(null=True)
+#     hostid = models.IntegerField()
+#     activityid = models.IntegerField()
+#     power = models.FloatField()
+#     power_mode = models.CharField(max_length=25)
+#     stat1 = models.FloatField()
+#     stat2 = models.FloatField()
+#     stat3 = models.FloatField()
+#     time = models.IntegerField()
+
+#     def __str__(self):
+#         return str(self.activityid)
