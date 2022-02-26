@@ -3,8 +3,6 @@ import requests
 import time
 
 
-
-
 def get_datacenters():
     if MasterIP.objects.count()==0:
         MasterIP.objects.create(master="localhost")
@@ -31,7 +29,6 @@ def get_datacenters():
                 datacentername = data['datacenter']['name'],
                 description = data['datacenter']['description'],
             )
-
 
 
 def get_floors(datacenter):
@@ -92,9 +89,8 @@ def get_racks(datacenter, floorid):
             )
 
 
-def get_hosts(datacenter, floorid, rackid):
+def get_hosts(master, datacenter, floorid, rackid):
     get_racks(datacenter, floorid)
-    master = MasterIP.objects.all().values().get()["master"]
     url = "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"+floorid+"/racks/"+rackid+"/hosts"
     response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
     data = response.json()
@@ -128,9 +124,10 @@ def get_hosts(datacenter, floorid, rackid):
                 ipaddress = data['host']['IPAddress']
             )
 
+
 def get_host_detail(datacenter, floorid, rackid, hostid, startTime):
-    get_hosts(datacenter, floorid, rackid)
     master = MasterIP.objects.all().values().get()["master"]
+    get_hosts(master, datacenter, floorid, rackid)
     url = "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"+floorid+"/racks/"+rackid+"/hosts/"+hostid+"/activity?starttime="+str(startTime)+"&endtime="+str(int(time.time())) 
     response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
     data = response.json()
@@ -168,3 +165,15 @@ def get_host_detail(datacenter, floorid, rackid, hostid, startTime):
                 stat3 = data['activity']['stat3'],
                 time = data['activity']['timeStamp']
             )
+
+from collections import defaultdict
+
+def get_tco(datacenter, master):
+    base = "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors"
+    response = requests.get(base,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
+    data = response.json()
+
+
+    response = requests.get(base,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
+    data = response.json()
+    #print(floors)

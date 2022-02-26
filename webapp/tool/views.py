@@ -1,5 +1,6 @@
 from django.shortcuts import  render
-from tool.models import ConfiguredDataCenters, Datacenter, Floor, Rack, Host, Hostactivity, CurrentDatacenter, Count, MasterIP
+from tool import tco_services
+from tool.models import ConfiguredDataCenters, Datacenter, Floor, Rack, Host, Hostactivity, CurrentDatacenter, Count, MasterIP, HostEnergy
 from . import services
 from . import forms
 from datetime import datetime
@@ -51,9 +52,10 @@ def racks(request, floorid):
 
 
 def hosts(request, floorid, rackid):
+    master=MasterIP.objects.all().values().get()["master"]
     current = str(CurrentDatacenter.objects.all().values().get()['current'].split('-')[0])
-    services.get_hosts(current, floorid, rackid)
-    hosts = Host.objects.filter(datacenterid=current).filter(floorid=floorid).filter(masterip=MasterIP.objects.all().values().get()["master"]).filter(rackid=rackid).all()
+    services.get_hosts(master, current, floorid, rackid)
+    hosts = Host.objects.filter(datacenterid=current).filter(floorid=floorid).filter(masterip=master).filter(rackid=rackid).all()
     host_count = hosts.count()
     return render (request, 'reports/hosts.html', { "hosts": hosts, "host_count": host_count} )
     
@@ -127,3 +129,12 @@ def configure(request):
 
 def budget(request):
     return render (request, 'reports/budget.html', { "budget": "Budget will be here"} )
+
+
+def tco(request):
+    current = str(CurrentDatacenter.objects.all().values().get()['current'].split('-')[0])
+    master = MasterIP.objects.all().values().get()["master"]
+    tco_services.find_all_available_hosts(master, current)
+    all_available = HostEnergy.objects.filter(datacenterid=current).filter(masterip=master).all()
+    tco_count = all_available.count()
+    return render (request, 'reports/tco.html', { "tco": all_available, "tco_count": tco_count} )

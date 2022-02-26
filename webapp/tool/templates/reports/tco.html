@@ -1,0 +1,32 @@
+{% include 'reports/base.html'%}
+<head>
+    <link rel="stylesheet" href="/../../static/css/styles.css">
+</head>
+  
+  {% block content %}
+  
+  <div class="content">
+    <h2>All hosts in data center: {{tco_count}}</h2>
+    <div class="card-container">
+      {% for host in tco %}
+      <div class="card3">
+        <div style="background-color: rgb(255, 255, 255)">
+          <b>Host ID: {{ host.hostid }}</b>
+          <hr>
+          <p>Floor: {{ host.floorid }}</p>
+          <p>Rack: {{ host.rackid }}</p>
+          <p>IP Address: {{ host.ipaddress }}</p><hr>
+
+          <form method="POST">
+            {% csrf_token %}
+            <label for="ip">Capital Cost</label>
+            <input type="text" id="ip" name="ip">
+            <button type="submit" class="save" >Calculate TCO</button>
+          </form>
+          
+        </div>
+      </div>
+      {% endfor %}
+    </div>  
+  </div>
+  {% endblock %}

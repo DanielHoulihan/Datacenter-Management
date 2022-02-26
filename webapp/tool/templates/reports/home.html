@@ -29,7 +29,8 @@
     <th>PUE</th>
     <th>Energy Cost</th>
     <th>Carbon Conversion</th>
-    <th>Start Time</th>
+    <th>Start Date</th>
+    <th>End Date</th>
   </tr>
   {% for datacenter in configured %}
   <tr>
@@ -39,10 +40,7 @@
     <td>{{datacenter.energy_cost}}</td>
     <td>{{datacenter.carbon_conversion}}</td>
     <td>{{datacenter.startTime}}</td>
-    <td>
-
-
-    </td>
+    <td>Current Time</td>
   </tr>
   {% endfor %}
 </table>

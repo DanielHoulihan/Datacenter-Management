@@ -94,26 +94,15 @@ class Count(models.Model):
 class MasterIP(models.Model):
     master = models.CharField(null=True, max_length=25)
 
+class HostEnergy(models.Model):
+    masterip = models.CharField(null=True, max_length=25)
+    datacenterid = models.CharField(max_length=20,null=True)
+    floorid = models.IntegerField(null=True)
+    rackid = models.IntegerField()
+    hostid = models.IntegerField()
+    ipaddress = models.CharField(max_length=25)
+    TCO = models.FloatField(null=True)
+    carbon_footprint = models.FloatField(null=True)
+    ops_cons = models.FloatField(null=True)
 
 
-
-
-
-
-
-# class Hostactivity(models.Model):
-#     sub_id = models.CharField(null=True,max_length=15)
-#     datacenterid = models.CharField(max_length=20,null=True)
-#     floorid = models.IntegerField(null=True)
-#     rackid = models.IntegerField(null=True)
-#     hostid = models.IntegerField()
-#     activityid = models.IntegerField()
-#     power = models.FloatField()
-#     power_mode = models.CharField(max_length=25)
-#     stat1 = models.FloatField()
-#     stat2 = models.FloatField()
-#     stat3 = models.FloatField()
-#     time = models.IntegerField()
-
-#     def __str__(self):
-#         return str(self.activityid)

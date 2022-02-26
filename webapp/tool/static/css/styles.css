@@ -118,3 +118,6 @@ table, th, td {
   box-shadow: 0 0 12px rgb(63, 63, 63);
   }
 
+  #progress-bar {
+    margin-top: 1em;
+  }
