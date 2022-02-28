@@ -1,4 +1,5 @@
 from django.db import models
+from django.http import HttpResponseBadRequest
 from django.urls import reverse
 
 class Datacenter(models.Model):
@@ -85,6 +86,7 @@ class MasterIP(models.Model):
 class HostEnergy(models.Model):
     masterip = models.CharField(null=True, max_length=25)
     datacenterid = models.CharField(max_length=20,null=True)
+    sub_id = models.CharField(max_length=20,null=True)
     floorid = models.IntegerField(null=True)
     rackid = models.IntegerField()
     hostid = models.IntegerField()
@@ -92,6 +94,11 @@ class HostEnergy(models.Model):
     TCO = models.FloatField(null=True)
     carbon_footprint = models.FloatField(null=True)
     ops_cons = models.FloatField(null=True)
+    total_watts = models.FloatField(null=True)
+    minutes = models.FloatField(null=True)
+    hours = models.FloatField(null=True)
+    kWh = models.FloatField(null=True)
+    watt_hour = models.FloatField(null=True)
 
 
 class Threshold(models.Model):

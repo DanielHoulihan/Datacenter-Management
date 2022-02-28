@@ -9,7 +9,7 @@
     <h2>All hosts in data center: {{tco_count}}</h2>
     <div class="card-container">
       {% for host in tco %}
-      <div class="card2">
+      <div class="card4">
         <div style="background-color: rgb(255, 255, 255)">
           <b>Host ID: {{ host.hostid }}</b>
           <hr>
@@ -19,14 +19,26 @@
 
           <form method="POST">
             {% csrf_token %}
-            <label for="ip">Capital Cost</label>
-            <input type="text" id="ip" name="ip">
-            <button type="submit" class="save" >Calculate TCO</button>
+            <label for="capital">Capital Cost</label>
+            <input type="text" id="capital" name="capital">
+            <input type=hidden id=host name= host value={{host.hostid}}>
+            <input type=hidden id=rack name= rack value={{host.rackid}}>
+            <input type=hidden id=floor name= floor value={{host.floorid}}>
+            <button type="submit" class="save">Calculate TCO</button>
           </form>
 
+          <hr>
+          <p>TCO: {{ host.TCO }}</p>
+          <p>Carbon Footprint: {{ host.carbon_footprint }}</p>
+          <p>sum of watts: {{ host.total_watts }}</p>
+          <p>Total minutes: {{ host.minutes }}</p>
+          <p>Total hours: {{ host.hours }}</p>
+          <p>Total watt hour: {{ host.watt_hour }}</p>
+          <p>Total kWh: {{ host.kWh }}</p>
         </div>
       </div>
       {% endfor %}
     </div>  
   </div>
   {% endblock %}
+

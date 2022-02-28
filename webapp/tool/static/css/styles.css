@@ -121,3 +121,12 @@ table, th, td {
   #progress-bar {
     margin-top: 1em;
   }
+
+.card4 {
+  width: 250px;
+  height: 500px;
+  margin: 25px;
+  padding: 10px;
+  background-color: rgb(0, 217, 255);
+  box-shadow: 0 0 12px rgb(63, 63, 63);
+  }

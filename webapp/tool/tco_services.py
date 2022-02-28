@@ -1,6 +1,6 @@
 import requests
 import time
-from tool.models import HostEnergy
+from tool.models import HostEnergy, CurrentDatacenter
 
 def find_available_floors(master, current):
     url = "http://"+master+":8080/papillonserver/rest/datacenters/"+current+"/floors/"
@@ -41,6 +41,7 @@ def find_all_available_hosts(master, current):
                 
 
 def get_hosts_tco(master, datacenter, floorid, rackid):
+    current = CurrentDatacenter.objects.all().values().get()['current']
     url = "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"+floorid+"/racks/"+rackid+"/hosts"
     response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
     data = response.json()
@@ -50,6 +51,7 @@ def get_hosts_tco(master, datacenter, floorid, rackid):
             for i in data['host']:
                 HostEnergy.objects.get_or_create(
                     masterip = master,
+                    sub_id = current,
                     datacenterid = datacenter,
                     floorid = floorid,
                     rackid = i['rackId'],
@@ -59,9 +61,30 @@ def get_hosts_tco(master, datacenter, floorid, rackid):
         else:
             HostEnergy.objects.get_or_create(
                 masterip = master,
+                sub_id = current,
                 datacenterid = datacenter,
                 floorid = floorid,
                 rackid = data['host']['rackId'],
                 hostid = data['host']['id'],
                 ipaddress = data['host']['IPAddress']
             )
+
+
+def get_energy_usage(master, datacenter, floorid, rackid, hostid, startTime, endTime):
+    current = CurrentDatacenter.objects.all().values().get()['current']
+    url = "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"+floorid+"/racks/"+rackid+"/hosts/"+hostid+"/power/app?starttime="+startTime+"&endtime="+endTime
+    response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
+    data = response.json()
+    total_watts = 0
+    minutes = 0
+    for item in data['appPower']:
+        for power in item['powerList']['power']:
+            minutes+=1
+            total_watts+=float(power['power'])
+    hours = minutes/60
+    watt_hour = total_watts/hours
+    kWh = total_watts/hours/1000
+
+    host = HostEnergy.objects.filter(masterip=master).filter(sub_id = current).filter(floorid=floorid).filter(rackid=rackid).filter(hostid=hostid)
+    host.update(total_watts=total_watts, minutes = minutes, hours = hours, kWh=kWh, watt_hour = watt_hour)
+

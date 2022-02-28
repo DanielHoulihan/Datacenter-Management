@@ -134,15 +134,41 @@ def configure(request):
 def budget(request):
     return render (request, 'budget/budget.html', { "budget": "Budget will be here"} )
 
+
+
+
+@csrf_protect
 def tco(request):
     master = MasterIP.objects.all().values().get()["master"]
     if CurrentDatacenter.objects.filter(masterip=master).all().count()==0:
         return render (request, 'pick_datacenter/pick_data_center.html', { "floors": "Pick a data center", "floor_count": 0} )
     current = str(CurrentDatacenter.objects.all().values().get()['current'].split('-')[0])
+    if request.method == 'POST':
+        if 'capital' in request.POST:
+            capital = request.POST['capital']
+            rack = request.POST['rack']
+            floor = request.POST['floor']
+            host = request.POST['host']
+            startTime = ConfiguredDataCenters.objects.all().filter(sub_id = CurrentDatacenter.objects.all().values().get()['current']).values().get()['startTime']
+            startTime = str(int(time.mktime(startTime.timetuple())))
+            if ConfiguredDataCenters.objects.all().filter(sub_id = CurrentDatacenter.objects.all().values().get()['current']).values().get()['endTime']==None:
+                endTime = str(int(time.time()))
+            else:
+                endTime = ConfiguredDataCenters.objects.all().filter(sub_id = CurrentDatacenter.objects.all().values().get()['current']).values().get()['endTime']
+                endTime = str(int(time.mktime(endTime.timetuple())))
+            tco_services.get_energy_usage(master, current, floor, rack, host, startTime, endTime)
+
+
+    current = str(CurrentDatacenter.objects.all().values().get()['current'].split('-')[0])
     tco_services.find_all_available_hosts(master, current)
+
     all_available = HostEnergy.objects.filter(datacenterid=current).filter(masterip=master).all()
     tco_count = all_available.count()
+
     return render (request, 'TCO/tco.html', { "tco": all_available, "tco_count": tco_count} )
+
+
+
 
 
 

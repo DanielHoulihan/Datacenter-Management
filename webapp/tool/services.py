@@ -64,7 +64,6 @@ def get_racks(datacenter, floorid):
     url = "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"+floorid+"/racks"
     response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
     data = response.json()
-
     if data!=None: 
         if isinstance(data['rack'], list):
             for i in data['rack']:
@@ -90,6 +89,7 @@ def get_racks(datacenter, floorid):
 
 
 def get_hosts(master, datacenter, floorid, rackid, startTime, endTime):
+    start = time.time()
     get_racks(datacenter, floorid)
     current = CurrentDatacenter.objects.all().values().get()['current']
     url = "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"+floorid+"/racks/"+rackid+"/hosts/"
@@ -106,9 +106,13 @@ def get_hosts(master, datacenter, floorid, rackid, startTime, endTime):
                 data2 = response.json()
                 cpu_total = 0
                 cpu_count = 0
-                for activity in data2['activity']:
-                    cpu_total += float(activity['stat1'])
-                    cpu_count += 1
+                if not isinstance(data2['activity'], list):
+                    cpu_total = float(data2['activity']['stat1'])
+                    cpu_count = 1
+                else:
+                    for activity in data2['activity']:
+                        cpu_total += float(activity['stat1'])
+                        cpu_count += 1 
                 avg_cpu = cpu_total/cpu_count
                 host = Host.objects.filter(masterip=master).filter(sub_id = current).filter(floorid=floorid).filter(rackid=rackid).filter(hostid=i['id'])
                 if host.count()==0:
@@ -129,5 +133,6 @@ def get_hosts(master, datacenter, floorid, rackid, startTime, endTime):
                         responses = cpu_count,
                         total_cpu = cpu_total
                     )
-                else: 
-                    host.update(cpu_usage=avg_cpu, responses = cpu_count, total_cpu = cpu_total)
+                host.update(cpu_usage=avg_cpu, responses=cpu_count, total_cpu = cpu_total)
+    end = time.time()
+    print("Time taken to get CPU % (s) -> " + str(end-start))
