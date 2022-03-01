@@ -3,17 +3,13 @@
   <link rel="stylesheet" href="/../../static/css/styles.css">
 </head>
 
-
-
-
-
 <div class="content">
 
   <div class="sidenav">
     <h3>Master IP</h3>
     <form method="POST">
       {% csrf_token %}
-      <input type="text" id="ip" name="ip">
+      <input type="text" id="ip" name="ip" placeholder={{master}}>
       <button type="submit" class="save" >Change</button>
     </form><hr>
 
@@ -81,11 +77,10 @@
     <td>{{datacenter.startTime}}</td>
     <td>{{datacenter.endTime}}</td>
     <td>
-    <form method="POST">
-        {% csrf_token %}
-        <button type="submit" class="save" name = "to_delete" value={{datacenter.sub_id}}>Delete</button>
-    </form>
-
+      <form method="POST">
+          {% csrf_token %}
+          <button type="submit" class="save" name = "to_delete" value={{datacenter.sub_id}}>Delete</button>
+      </form>
     </td>
   </tr>
   {% endfor %}

@@ -8,7 +8,8 @@
   <h2>Selected Data Center: {{current}}</h2>
   <form method="POST">
     {% csrf_token %}
-    <select name="current_datacenter">
+    <select name="current_datacenter" >
+      <option value={{current}} disabled selected>{{current}}</option>
     {% for datacenter in configured %}
         <option name="current_datacenter" >{{ datacenter.sub_id }}</option>
     {% endfor %}

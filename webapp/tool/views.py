@@ -128,9 +128,6 @@ def configure(request):
 def budget(request):
     return render (request, 'budget/budget.html', { "budget": "Budget will be here", "master": services.get_master(), "current": services.get_current_for_html(), "configured": services.get_configured(), "page":"budget"} )
 
-
-
-
 @csrf_protect
 def tco(request):
     master = services.get_master()
@@ -161,26 +158,3 @@ def tco(request):
     tco_count = all_available.count()
 
     return render (request, 'TCO/tco.html', { "tco": all_available, "tco_count": tco_count, "master": master, "current": services.get_current_for_html(), "configured": services.get_configured(), "page":"tco"} )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
