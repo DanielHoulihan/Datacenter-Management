@@ -71,7 +71,7 @@ def get_hosts_tco(master, datacenter, floorid, rackid):
             )
 
 
-def get_energy_usage(master, datacenter, floorid, rackid, hostid, startTime, endTime):
+def get_energy_usage(master, datacenter, floorid, rackid, hostid, startTime, endTime, capital):
     current = services.get_current_sub_id()
     url = "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"+floorid+"/racks/"+rackid+"/hosts/"+hostid+"/power/app?starttime="+startTime+"&endtime="+endTime
     response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
@@ -88,5 +88,5 @@ def get_energy_usage(master, datacenter, floorid, rackid, hostid, startTime, end
     kWh = total_watts/hours/1000
 
     host = HostEnergy.objects.filter(masterip=master).filter(sub_id = current).filter(floorid=floorid).filter(rackid=rackid).filter(hostid=hostid)
-    host.update(total_watts=total_watts, minutes = minutes, hours = hours, kWh=kWh, watt_hour = watt_hour)
+    host.update(total_watts=total_watts, minutes = minutes, hours = hours, kWh=kWh, watt_hour = watt_hour, capital=capital)
 

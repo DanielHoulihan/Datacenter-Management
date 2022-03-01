@@ -99,6 +99,7 @@ class HostEnergy(models.Model):
     hours = models.FloatField(null=True)
     kWh = models.FloatField(null=True)
     watt_hour = models.FloatField(null=True)
+    capital = models.IntegerField(null=True)
 
 
 class Threshold(models.Model):

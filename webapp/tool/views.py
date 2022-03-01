@@ -139,7 +139,7 @@ def tco(request):
     current = str(services.get_current_datacenter())
     if request.method == 'POST':
         if 'capital' in request.POST:
-            #capital = request.POST['capital']
+            capital = request.POST['capital']
             rack = request.POST['rack']
             floor = request.POST['floor']
             host = request.POST['host']
@@ -150,7 +150,8 @@ def tco(request):
             else:
                 endTime = ConfiguredDataCenters.objects.all().filter(sub_id = services.get_current_sub_id()).values().get()['endTime']
                 endTime = str(int(time.mktime(endTime.timetuple())))
-            tco_services.get_energy_usage(master, current, floor, rack, host, startTime, endTime)
+            
+            tco_services.get_energy_usage(master, current, floor, rack, host, startTime, endTime, capital)
 
 
     current_sub = services.get_current_sub_id()
