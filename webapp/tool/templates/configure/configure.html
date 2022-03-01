@@ -9,20 +9,16 @@
 
 <div class="content">
 
-  <h3>Current master: {{master}}</h3>
+  <h3>Change Master IP</h3>
   <form method="POST">
     {% csrf_token %}
-    <label for="ip">IP Address of master:</label>
     <input type="text" id="ip" name="ip">
-    <button type="submit" class="save" >Enter</button>
+    <button type="submit" class="save" >Change</button>
   </form>
   
-
-
-<h2>Configured Data Centers: {{configured_count}}</h2>
+  <h3>Configure New Datacenter</h3>
   <form method="POST">
     {% csrf_token %}
-
     <label for="to_configure">Select Data Center: </label>
     <select name="to_configure">
     {% for datacenter in datacenters %}
@@ -50,11 +46,11 @@
 
 {% block content %}
 
-<h3> Configured Data Centers </h3>
+<h3> Configured Data Centers {{configured_count}}</h3>
 <table style="width:100%">
   <tr>
     <th>Datacenter ID</th>
-    <th>Datacenter sub-ID</th>
+    <th>Instance</th>
     <th>PUE</th>
     <th>Energy Cost</th>
     <th>Carbon Conversion</th>

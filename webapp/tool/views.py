@@ -1,7 +1,7 @@
 from django.shortcuts import  render
 from tool import tco_services
 from tool.models import ConfiguredDataCenters, Datacenter, Floor, Rack, Host, CurrentDatacenter, Count, MasterIP, HostEnergy, Threshold
-from . import services
+from . import asset_services
 from . import forms
 from datetime import datetime
 from django.views.decorators.csrf import csrf_protect
@@ -10,9 +10,8 @@ from django.db.models import Avg, Max
 
 
 def datacenters(request):
-
-    services.get_datacenters()
-    master = MasterIP.objects.all().values().get()["master"]
+    asset_services.get_datacenters()
+    master = asset_services.get_master()
 
     if request.method == 'POST':
         form = forms.SelectCurrentForm(request.POST)
@@ -23,32 +22,30 @@ def datacenters(request):
             else: CurrentDatacenter.objects.update(masterip = master, current=current)
 
     datacenters = Datacenter.objects.filter(masterip=master).all()
-    configured = ConfiguredDataCenters.objects.filter(masterip=master).all()
+    #configured = ConfiguredDataCenters.objects.filter(masterip=master).all()
+    configured = asset_services.get_configured()
     configured_count = configured.count()
-
-    if CurrentDatacenter.objects.all().count()!=0 and CurrentDatacenter.objects.all().values().get()['masterip'] == master:
-        current = CurrentDatacenter.objects.filter(masterip=master).all().values().get()['current']
-        return render (request, 'home/home.html', { "datacenters": datacenters, "current": current, "configured":configured, "configured_count": configured_count, "master":master} )
-    else: return render (request, 'home/home.html', { "datacenters": datacenters, "current": "Not selected", "configured":configured, "configured_count": configured_count, "master":master} )
+    
+    return render (request, 'home/home.html', { "datacenters": datacenters, "current": asset_services.get_current_for_html(), "configured":configured, "configured_count": configured_count, "master":master} )
 
 def floors(request):
-    master = MasterIP.objects.all().values().get()["master"]
+    master = asset_services.get_master()
     if CurrentDatacenter.objects.filter(masterip=master).all().count()==0:
-        return render (request, 'pick_datacenter/pick_data_center.html', { "floors": "Pick a data center", "floor_count": 0} )
-    current = CurrentDatacenter.objects.all().values().get()['current'].split('-')[0]
-    services.get_floors(current)
+        return render (request, 'pick_datacenter/pick_data_center.html', { "floors": "Pick a data center", "floor_count": 0, "master": asset_services.get_master(), "current": asset_services.get_current_for_html(), "configured": asset_services.get_configured()} )
+    current = asset_services.get_current_datacenter()
+    asset_services.get_floors(current)
 
     floors = Floor.objects.filter(datacenterid=current).filter(masterip=master).all()
     floor_count = floors.count()
-    return render (request, 'assets/floors.html', { "floors": floors, "floor_count": floor_count} )
+    return render (request, 'assets/floors.html', { "floors": floors, "floor_count": floor_count, "master":master, "current": asset_services.get_current_for_html(), "configured": asset_services.get_configured()} )
 
 
 def racks(request, floorid):
-    current = CurrentDatacenter.objects.all().values().get()['current'].split('-')[0]
-    services.get_racks(current, floorid)
-    racks = Rack.objects.filter(datacenterid=current).filter(floorid=floorid).filter(masterip=MasterIP.objects.all().values().get()["master"]).all()
+    current = asset_services.get_current_datacenter()
+    asset_services.get_racks(current, floorid)
+    racks = Rack.objects.filter(datacenterid=current).filter(floorid=floorid).filter(masterip=asset_services.get_master()).all()
     rack_count = racks.count()
-    return render (request, 'assets/racks.html', { "racks": racks, "rack_count": rack_count} )
+    return render (request, 'assets/racks.html', { "racks": racks, "rack_count": rack_count, "master":asset_services.get_master(), "current": asset_services.get_current_for_html(), "configured": asset_services.get_configured()} )
 
 
 def hosts(request, floorid, rackid):
@@ -60,28 +57,28 @@ def hosts(request, floorid, rackid):
         medium = request.POST['medium']
         Threshold.objects.update(low=low,medium=medium)
 
-    startTime = ConfiguredDataCenters.objects.all().filter(sub_id = CurrentDatacenter.objects.all().values().get()['current']).values().get()['startTime']
+    startTime = ConfiguredDataCenters.objects.all().filter(sub_id = asset_services.get_current_sub_id()).values().get()['startTime']
     startTime_unix = int(time.mktime(startTime.timetuple()))
-    if ConfiguredDataCenters.objects.all().filter(sub_id = CurrentDatacenter.objects.all().values().get()['current']).values().get()['endTime']==None:
+    if ConfiguredDataCenters.objects.all().filter(sub_id = asset_services.get_current_sub_id()).values().get()['endTime']==None:
         endTime = str(int(time.time()))
     else:
-        endTime = ConfiguredDataCenters.objects.all().filter(sub_id = CurrentDatacenter.objects.all().values().get()['current']).values().get()['endTime']
+        endTime = ConfiguredDataCenters.objects.all().filter(sub_id = asset_services.get_current_sub_id()).values().get()['endTime']
         endTime = int(time.mktime(endTime.timetuple()))
 
-    master=MasterIP.objects.all().values().get()["master"]
-    current = str(CurrentDatacenter.objects.all().values().get()['current'].split('-')[0])
+    master=asset_services.get_master()
+    current = str(asset_services.get_current_datacenter())
 
 
-    services.get_hosts(master, current, floorid, rackid, startTime_unix, endTime)
-    hosts = Host.objects.filter(sub_id=str(CurrentDatacenter.objects.all().values().get()['current'])).filter(floorid=floorid).filter(masterip=master).filter(rackid=rackid).all()
+    asset_services.get_hosts(master, current, floorid, rackid, startTime_unix, endTime)
+    hosts = Host.objects.filter(sub_id=str(asset_services.get_current_sub_id())).filter(floorid=floorid).filter(masterip=master).filter(rackid=rackid).all()
     host_count = hosts.count()
     threshold = Threshold.objects.all().get()
-    return render (request, 'assets/hosts.html', { "hosts": hosts, "host_count": host_count, "threshold": threshold} )
+    return render (request, 'assets/hosts.html', { "hosts": hosts, "host_count": host_count, "threshold": threshold, "master":asset_services.get_master(), "current": asset_services.get_current_for_html(), "configured": asset_services.get_configured()} )
     
 @csrf_protect
 def configure(request):
-    services.get_datacenters()
-    master = MasterIP.objects.all().values().get()["master"]
+    asset_services.get_datacenters()
+    master = asset_services.get_master()
     if request.method == 'POST':
         if 'to_delete' in request.POST:
             form = forms.DeleteConfigurationForm(request.POST)
@@ -92,7 +89,7 @@ def configure(request):
         elif 'ip' in request.POST:
             ip = request.POST['ip']
             MasterIP.objects.update(master = ip)
-            services.get_datacenters()
+            asset_services.get_datacenters()
         elif 'to_configure' in request.POST:
             to_configure = request.POST['to_configure']
             start = request.POST['start']
@@ -125,47 +122,47 @@ def configure(request):
                     carbon_conversion = carbon_conversion
                 )
 
-    master = MasterIP.objects.all().values().get()["master"]
+    master = asset_services.get_master()
     configured = ConfiguredDataCenters.objects.filter(masterip=master).all()
     datacenters = Datacenter.objects.filter(masterip=master).all()
     configured_count = ConfiguredDataCenters.objects.filter(masterip=master).all().count()
-    return render (request, 'configure/configure.html', { "datacenters": datacenters, "configured_count": configured_count, "configured": configured, "master":master} )
+    return render (request, 'configure/configure.html', { "datacenters": datacenters, "configured_count": configured_count, "configured": configured, "master":master, "current": asset_services.get_current_for_html()} )
 
 def budget(request):
-    return render (request, 'budget/budget.html', { "budget": "Budget will be here"} )
+    return render (request, 'budget/budget.html', { "budget": "Budget will be here", "master": asset_services.get_master(), "current": asset_services.get_current_for_html(), "configured": asset_services.get_configured()} )
 
 
 
 
 @csrf_protect
 def tco(request):
-    master = MasterIP.objects.all().values().get()["master"]
+    master = asset_services.get_master()
     if CurrentDatacenter.objects.filter(masterip=master).all().count()==0:
-        return render (request, 'pick_datacenter/pick_data_center.html', { "floors": "Pick a data center", "floor_count": 0} )
-    current = str(CurrentDatacenter.objects.all().values().get()['current'].split('-')[0])
+        return render (request, 'pick_datacenter/pick_data_center.html', { "floors": "Pick a data center", "master": asset_services.get_master(), "current": asset_services.get_current_for_html(), "configured": asset_services.get_configured()} )
+    current = str(asset_services.get_current_datacenter())
     if request.method == 'POST':
         if 'capital' in request.POST:
             capital = request.POST['capital']
             rack = request.POST['rack']
             floor = request.POST['floor']
             host = request.POST['host']
-            startTime = ConfiguredDataCenters.objects.all().filter(sub_id = CurrentDatacenter.objects.all().values().get()['current']).values().get()['startTime']
+            startTime = ConfiguredDataCenters.objects.all().filter(sub_id = asset_services.get_current_sub_id()).values().get()['startTime']
             startTime = str(int(time.mktime(startTime.timetuple())))
-            if ConfiguredDataCenters.objects.all().filter(sub_id = CurrentDatacenter.objects.all().values().get()['current']).values().get()['endTime']==None:
+            if ConfiguredDataCenters.objects.all().filter(sub_id = asset_services.get_current_sub_id()).values().get()['endTime']==None:
                 endTime = str(int(time.time()))
             else:
-                endTime = ConfiguredDataCenters.objects.all().filter(sub_id = CurrentDatacenter.objects.all().values().get()['current']).values().get()['endTime']
+                endTime = ConfiguredDataCenters.objects.all().filter(sub_id = asset_services.get_current_sub_id()).values().get()['endTime']
                 endTime = str(int(time.mktime(endTime.timetuple())))
             tco_services.get_energy_usage(master, current, floor, rack, host, startTime, endTime)
 
 
-    current = str(CurrentDatacenter.objects.all().values().get()['current'].split('-')[0])
+    current_sub = asset_services.get_current_sub_id()
     tco_services.find_all_available_hosts(master, current)
 
-    all_available = HostEnergy.objects.filter(datacenterid=current).filter(masterip=master).all()
+    all_available = HostEnergy.objects.filter(sub_id=current_sub).filter(masterip=master).all()
     tco_count = all_available.count()
 
-    return render (request, 'TCO/tco.html', { "tco": all_available, "tco_count": tco_count} )
+    return render (request, 'TCO/tco.html', { "tco": all_available, "tco_count": tco_count, "master": master, "current": asset_services.get_current_for_html(), "configured": asset_services.get_configured()} )
 
 
 
@@ -189,24 +186,3 @@ def tco(request):
 
 
 
-# def host_activity(request, floorid, rackid, hostid):
-#     startTime = ConfiguredDataCenters.objects.all().filter(sub_id = CurrentDatacenter.objects.all().values().get()['current']).values().get()['startTime']
-#     current = CurrentDatacenter.objects.all().values().get()['current'].split('-')[0]
-
-#     startTime_unix = int(time.mktime(startTime.timetuple()))
-    
-#     activities = Hostactivity.objects.filter(
-#         masterip=MasterIP.objects.all().values().get()["master"]).filter(
-#         sub_id = CurrentDatacenter.objects.all().values().get()['current']).filter(
-#         datacenterid=current).filter(
-#             floorid=floorid).filter(
-#                 rackid=rackid).filter(
-#                     hostid=hostid).all()
-
-#     if activities.count()==0:
-#         services.get_host_detail(current, floorid, rackid, hostid, startTime_unix)
-#     else: 
-#         services.get_host_detail(current, floorid, rackid, hostid, activities.aggregate(Max('time')).get('time__max'))
-#     activities_count = activities.count()
-#     average = activities.aggregate(Avg('stat1'), Avg('stat2'), Avg('stat3'))# or 0.00
-#     return render (request, 'reports/host_activity.html', { "average": average, "activities_count": activities_count} )

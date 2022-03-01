@@ -1,6 +1,7 @@
 import requests
 import time
 from tool.models import HostEnergy, CurrentDatacenter
+from . import asset_services
 
 def find_available_floors(master, current):
     url = "http://"+master+":8080/papillonserver/rest/datacenters/"+current+"/floors/"
@@ -41,7 +42,7 @@ def find_all_available_hosts(master, current):
                 
 
 def get_hosts_tco(master, datacenter, floorid, rackid):
-    current = CurrentDatacenter.objects.all().values().get()['current']
+    current = asset_services.get_current_sub_id()
     url = "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"+floorid+"/racks/"+rackid+"/hosts"
     response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
     data = response.json()
@@ -71,12 +72,13 @@ def get_hosts_tco(master, datacenter, floorid, rackid):
 
 
 def get_energy_usage(master, datacenter, floorid, rackid, hostid, startTime, endTime):
-    current = CurrentDatacenter.objects.all().values().get()['current']
+    current = asset_services.get_current_sub_id()
     url = "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"+floorid+"/racks/"+rackid+"/hosts/"+hostid+"/power/app?starttime="+startTime+"&endtime="+endTime
     response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
     data = response.json()
     total_watts = 0
     minutes = 0
+    print(url)
     for item in data['appPower']:
         for power in item['powerList']['power']:
             minutes+=1

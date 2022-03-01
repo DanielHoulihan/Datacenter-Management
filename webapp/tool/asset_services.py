@@ -6,7 +6,7 @@ import time
 def get_datacenters():
     if MasterIP.objects.count()==0:
         MasterIP.objects.create(master="localhost")
-    master = MasterIP.objects.all().values().get()["master"]
+    master = get_master()
     url = "http://"+master+":8080/papillonserver/rest/datacenters" 
     try:
         response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
@@ -33,7 +33,7 @@ def get_datacenters():
 
 def get_floors(datacenter):
     get_datacenters()
-    master = MasterIP.objects.all().values().get()["master"]
+    master = get_master()
     url = "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors"
     response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
     data = response.json()
@@ -60,7 +60,7 @@ def get_floors(datacenter):
 
 def get_racks(datacenter, floorid):
     get_floors(datacenter)
-    master = MasterIP.objects.all().values().get()["master"]
+    master = get_master()
     url = "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"+floorid+"/racks"
     response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
     data = response.json()
@@ -91,7 +91,7 @@ def get_racks(datacenter, floorid):
 def get_hosts(master, datacenter, floorid, rackid, startTime, endTime):
     start = time.time()
     get_racks(datacenter, floorid)
-    current = CurrentDatacenter.objects.all().values().get()['current']
+    current = get_current_sub_id()
     url = "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"+floorid+"/racks/"+rackid+"/hosts/"
     response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
     data = response.json()
@@ -118,7 +118,7 @@ def get_hosts(master, datacenter, floorid, rackid, startTime, endTime):
                 if host.count()==0:
                     Host.objects.get_or_create(
                         masterip = master,
-                        sub_id = CurrentDatacenter.objects.all().values().get()['current'],
+                        sub_id = get_current_sub_id(),
                         datacenterid = datacenter,
                         floorid = floorid,
                         rackid = i['rackId'],
@@ -136,3 +136,22 @@ def get_hosts(master, datacenter, floorid, rackid, startTime, endTime):
                 host.update(cpu_usage=avg_cpu, responses=cpu_count, total_cpu = cpu_total)
     end = time.time()
     print("Time taken to get CPU % (s) -> " + str(end-start))
+
+
+def get_current_sub_id():
+    return CurrentDatacenter.objects.all().values().get()['current']
+
+def get_current_datacenter():
+    return CurrentDatacenter.objects.all().values().get()['current'].split('-')[0]
+
+def get_master():
+    return MasterIP.objects.all().values().get()["master"]
+
+def get_current_for_html():
+    current = "-"
+    if CurrentDatacenter.objects.all().count()!=0:
+        current = CurrentDatacenter.objects.filter(masterip=get_master()).all().values().get()['current']
+    return current
+
+def get_configured():
+    return ConfiguredDataCenters.objects.filter(masterip=get_master()).all()

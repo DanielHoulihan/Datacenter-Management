@@ -6,25 +6,32 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="/../../static/css/styles.css">
+
 </head>
 
-
-<div class="sidenav">
-  <br>
-  <a href="{% url 'datacenters' %}">Home</a><br>
-  <a href="{% url 'floors' %}">Assets</a><br>
-  <a href="{% url 'budget' %}">Budget</a><br>
-  <a href="{% url 'tco' %}">TCO</a><br>
-  <a href="{% url 'configure' %}">Configure</a><br>
-</div>
-
-
-
 <div class="topnav">
-  <h2>Data Center Management Tool</h2>
+  <h2><img alt="My Image" src="/../../static/media/logo3.png" height="70" width="210"/></h2>
+  <br><br>
+  
+  <h3>Master IP: {{master}}</h3>
+  <h3>Datacenter: {{current}}</h3>
 </div>
+
+<div class="topnav3">
+  <a class="active" href="{% url 'datacenters' %}">Home</a>
+  <a href="{% url 'floors' %}">Assets</a>
+  <a href="{% url 'budget' %}">Budget</a>
+  <a href="{% url 'tco' %}">TCO</a>
+  <a href="{% url 'configure' %}">Configure</a>
+</div>
+
 
 <div class="content">
-  {% block content %}{% endblock %}
+
+  {% block content %}
+  {% endblock %}
 </div>
 </html>
+
+
+
