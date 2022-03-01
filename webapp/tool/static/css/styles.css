@@ -44,18 +44,26 @@ table, th, td {
   margin-left : 20px; 
   margin-right : 20px; 
   margin-top:160px;
+  margin-bottom:30px;
+  }
+
+.configure_content { 
+  margin-left : 280px; 
   }
 
 .sidenav {
     height: 100%; 
-    width: 160px;
+    width: 280px;
     position: fixed;
     z-index: 0; 
     top: 0; 
     left: 0;
-    background-color: rgb(184, 184, 184); 
+    background-color: rgb(188, 224, 255); 
     overflow-x: hidden; 
-    top:130px;
+    top:148px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius:20px;
   }
   
 .sidenav a {
@@ -63,6 +71,14 @@ table, th, td {
     text-decoration: none;
     font-size: 25px;
     color: #ffffff;
+    display: block;
+  }
+
+  .sidenav h3 {
+    padding: 6px 8px 6px 16px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #454545;
     display: block;
   }
   
@@ -92,7 +108,7 @@ table, th, td {
   flex-wrap: wrap;
   justify-content: flex-start;
   margin: 25px auto;
-  padding: 50px;
+  padding: 10px;
   background-color: rgb(255, 255, 255);
   }
   

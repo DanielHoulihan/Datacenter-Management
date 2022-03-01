@@ -104,25 +104,3 @@ class HostEnergy(models.Model):
 class Threshold(models.Model):
     low = models.FloatField(null=True, max_length=25)
     medium = models.FloatField(null=True, max_length=25)
-
-
-
-
-
-# class Hostactivity(models.Model):
-#     masterip = models.CharField(null=True, max_length=25)
-#     sub_id = models.CharField(null=True,max_length=15)
-#     datacenterid = models.CharField(max_length=20,null=True)
-#     floorid = models.IntegerField(null=True)
-#     rackid = models.IntegerField(null=True)
-#     hostid = models.IntegerField()
-#     activityid = models.IntegerField()
-#     power = models.FloatField()
-#     power_mode = models.CharField(max_length=25)
-#     stat1 = models.FloatField()
-#     stat2 = models.FloatField()
-#     stat3 = models.FloatField()
-#     time = models.IntegerField()
-
-#     def __str__(self):
-#         return str(self.activityid)

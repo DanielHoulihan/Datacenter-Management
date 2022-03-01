@@ -9,43 +9,57 @@
 
 <div class="content">
 
-  <h3>Change Master IP</h3>
-  <form method="POST">
-    {% csrf_token %}
-    <input type="text" id="ip" name="ip">
-    <button type="submit" class="save" >Change</button>
-  </form>
-  
-  <h3>Configure New Datacenter</h3>
-  <form method="POST">
-    {% csrf_token %}
-    <label for="to_configure">Select Data Center: </label>
-    <select name="to_configure">
-    {% for datacenter in datacenters %}
-        <option name="to_configure" >{{ datacenter.datacenterid }}</option>
-    {% endfor %}
-    </select>
-    
-    <label for="start">Select Start Date:</label>
-    <input type="date" id="start" name="start">
+  <div class="sidenav">
+    <h3>Master IP</h3>
+    <form method="POST">
+      {% csrf_token %}
+      <input type="text" id="ip" name="ip">
+      <button type="submit" class="save" >Change</button>
+    </form><hr>
 
-    <label for="endTime">Select End Date:</label>
-    <input type="date" id="endTime" name="endTime">
 
-    <label for="pue">PUE:</label>
-    <input type="number" id="pue" name="pue" step="0.1">
+    <h3>Configure New Datacenter</h3>
 
-    <label for="energy_cost">Energy Cost:</label>
-    <input type="number" id="energy_cost" name="energy_cost" step="0.1">
+    <form method="POST">
+      {% csrf_token %}
+      <ul>
+        <li>
+          <label for="to_configure">Data Center: </label>
+          <select name="to_configure">
+          {% for datacenter in datacenters %}
+              <option name="to_configure" >{{ datacenter.datacenterid }}</option>
+          {% endfor %}
+          </select>
+        </li>
+        <li>
+          <label for="start">Start Date:</label>
+          <input type="date" id="start" name="start">
+        </li>
+        <li>
+          <label for="endTime">End Date:</label>
+          <input type="date" id="endTime" name="endTime">
+        </li>
+        <li>
+          <label for="pue">PUE:</label>
+          <input type="number" id="pue" name="pue" step="0.1">
+        </li>
+        <li>
+          <label for="energy_cost">Energy Cost:</label>
+          <input type="number" id="energy_cost" name="energy_cost" step="0.1">
+        </li>
+        <li>
+          <label for="carbon_conversion">Carbon Conversion:</label>
+          <input type="number" id="carbon_conversion" name="carbon_conversion" step="0.1">
+        </li>
 
-    <label for="carbon_conversion">Carbon Conversion:</label>
-    <input type="number" id="carbon_conversion" name="carbon_conversion" step="0.1">
+      <button type="submit" class="save">Submit</button>
+    </ul>
+    </form>
+  </div>
 
-    <button type="submit" class="save">Submit</button>
-  </form>
 
 {% block content %}
-
+<div class="configure_content">
 <h3> Configured Data Centers {{configured_count}}</h3>
 <table style="width:100%">
   <tr>
@@ -77,7 +91,7 @@
   {% endfor %}
 </table>
 
-<br><br><br><br><br>
+<br><br>
 <h3> Available Data Centers </h3>
 <table style="width:100%">
   <tr>
@@ -97,7 +111,7 @@
 
 {% endblock %} 
 </div>
-
+</div>
 
 
 
