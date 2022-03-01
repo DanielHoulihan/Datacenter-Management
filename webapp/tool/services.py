@@ -12,7 +12,7 @@ def get_master():
 
 def get_current_for_html():
     current = "-"
-    if CurrentDatacenter.objects.all().count()!=0:
+    if CurrentDatacenter.objects.filter(masterip=get_master()).all().count()!=0:
         current = CurrentDatacenter.objects.filter(masterip=get_master()).all().values().get()['current']
     return current
 
