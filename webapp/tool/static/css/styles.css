@@ -194,12 +194,29 @@ body {
 
 
 .configure_card {
-  width: 230px;
-  height: 500px;
+  width: 215px;
+  height: 350px;
   margin: 15px;
-  padding: 5px;
-  background-color: #06dd8e;
+  padding: 15px;
+  background-color: #F0FFFF;
   box-shadow: 0 0 12px rgb(63, 63, 63);
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius:20px;
+  border-bottom-left-radius:20px;
+  }
+
+.change_master_card {
+  width: 215px;
+  height: 130px;
+  margin: 15px;
+  padding: 15px;
+  background-color: #F0FFFF;
+  box-shadow: 0 0 12px rgb(63, 63, 63);
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius:20px;
+  border-bottom-left-radius:20px;
   }
 
 ul.no-bullets {
