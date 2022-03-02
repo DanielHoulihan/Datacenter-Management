@@ -10,17 +10,18 @@
     {% csrf_token %}
     <select name="current_datacenter" >
       <option value={{current}} disabled selected>{{current}}</option>
-    {% for datacenter in configured %}
+      {% for datacenter in configured %}
         <option name="current_datacenter" >{{ datacenter.sub_id }}</option>
-    {% endfor %}
+      {% endfor %}
     </select>
     <button type="submit" class="save">Submit</button>
   </form>
 
 {% block content %}
+
 <h3> Configured Data Centers: {{configured_count}}</h3>
 <table style="width:100%">
-  <tr>
+  <tr style="background-color: #b4b4b4;">
     <th>Datacenter ID</th>
     <th>Instance</th>
     <th>PUE</th>
@@ -29,8 +30,13 @@
     <th>Start Date</th>
     <th>End Date</th>
   </tr>
-  {% for datacenter in configured %}
-  <tr>
+  {% for datacenter in configured %} 
+
+  {% if datacenter.sub_id == current %} 
+  <tr style="background-color: #293db1;">
+  {% else %}
+  <tr style="background-color: #293db1;">
+  {% endif %}
     <td>{{datacenter.datacenterid}}</td>
     <td>{{datacenter.sub_id}}</td>
     <td>{{datacenter.pue}}</td>
@@ -58,7 +64,6 @@
     <td>{{datacenter.description}}</td>
   </tr>
   {% endfor %}
-
 </table>
 
 {% endblock %} 

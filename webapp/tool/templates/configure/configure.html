@@ -15,10 +15,10 @@
 
 
     <h3>Configure New Datacenter</h3>
-
+    <div class="configure_card">
     <form method="POST">
       {% csrf_token %}
-      <ul>
+      <ul class="no-bullets">
         <li>
           <label for="to_configure">Data Center: </label>
           <select name="to_configure">
@@ -27,30 +27,36 @@
           {% endfor %}
           </select>
         </li>
+        <br>
         <li>
           <label for="start">Start Date:</label>
           <input type="date" id="start" name="start">
         </li>
+        <br>
         <li>
           <label for="endTime">End Date:</label>
           <input type="date" id="endTime" name="endTime">
         </li>
+        <br>
         <li>
-          <label for="pue">PUE:</label>
+          <label width="1px" for="pue">PUE:</label>
           <input type="number" id="pue" name="pue" step="0.1">
         </li>
+        <br>
         <li>
           <label for="energy_cost">Energy Cost:</label>
           <input type="number" id="energy_cost" name="energy_cost" step="0.1">
         </li>
+        <br>
         <li>
           <label for="carbon_conversion">Carbon Conversion:</label>
           <input type="number" id="carbon_conversion" name="carbon_conversion" step="0.1">
         </li>
-
+        <br>
       <button type="submit" class="save">Submit</button>
     </ul>
     </form>
+  </div>
   </div>
 
 
@@ -66,6 +72,7 @@
     <th>Carbon Conversion</th>
     <th>Start Time</th>
     <th>End Time</th>
+    <th></th>
   </tr>
   {% for datacenter in configured %}
   <tr>

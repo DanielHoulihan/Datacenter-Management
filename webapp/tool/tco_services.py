@@ -76,6 +76,7 @@ def get_energy_usage(master, datacenter, floorid, rackid, hostid, startTime, end
     url = "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"+floorid+"/racks/"+rackid+"/hosts/"+hostid+"/power/app?starttime="+startTime+"&endtime="+endTime
     response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
     data = response.json()
+    print(url)
     minutes=0
     total_watts=0
     for item in data['appPower']:

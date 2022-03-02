@@ -3,8 +3,7 @@
     <link rel="stylesheet" href="/../../static/css/styles.css">
 </head>
   
-  {% block content %}
-
+{% block content %}
   <div class="content">
     <form method="POST" class="post-form"> 
       {% csrf_token %}
@@ -20,8 +19,7 @@
       {% for host in hosts %}
       <div class="card3">
         <div style="background-color: rgb(255, 255, 255)">
-          <b>Host ID: {{ host.hostid }}</b>
-          <hr>
+          <b>Host ID: {{ host.hostid }}</b><hr>
           <p>Rack ID: {{ host.rackid }}</p>
           <p>Host Name: {{ host.hostname }}</p>
           <p>Host Description: {{ host.hostdescription }}</p>
@@ -30,11 +28,11 @@
           <p>IP Address: {{ host.ipaddress }}</p>
 
           {% if host.cpu_usage > threshold.medium %}
-          <p style="background-color: rgb(235, 59, 59)">CPU Usage: {{ host.cpu_usage }}%</p>
+            <p style="background-color: rgb(235, 59, 59)">CPU Usage: {{ host.cpu_usage }}%</p>
           {% elif host.cpu_usage < threshold.low %} 
-          <p style="background-color: rgb(11, 226, 58)">CPU Usage: {{ host.cpu_usage }}%</p>
+            <p style="background-color: rgb(11, 226, 58)">CPU Usage: {{ host.cpu_usage }}%</p>
           {% else %} 
-          <p style="background-color: rgb(235, 188, 59)">CPU Usage: {{ host.cpu_usage }}%</p>
+            <p style="background-color: rgb(235, 188, 59)">CPU Usage: {{ host.cpu_usage }}%</p>
           {% endif %}
 
           <p>Responses (mins): {{ host.responses }}</p>
@@ -44,4 +42,4 @@
       {% endfor %}
     </div>  
   </div>
-  {% endblock %}
+{% endblock %}
