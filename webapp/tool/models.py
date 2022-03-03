@@ -92,7 +92,7 @@ class HostEnergy(models.Model):
     hostid = models.IntegerField()
     ipaddress = models.CharField(max_length=25)
     TCO = models.FloatField(null=True)
-    carbon_footprint = models.FloatField(null=True)
+    carbon_footprint_3 = models.FloatField(null=True)
     ops_cons = models.FloatField(null=True)
     total_watts = models.FloatField(null=True)
     minutes = models.FloatField(null=True)
@@ -100,6 +100,8 @@ class HostEnergy(models.Model):
     kWh = models.FloatField(null=True)
     watt_hour = models.FloatField(null=True)
     capital = models.IntegerField(null=True)
+    ops_cons_3 = models.FloatField(null=True)
+    op_cost_3 = models.FloatField(null=True)
 
 
 class Threshold(models.Model):

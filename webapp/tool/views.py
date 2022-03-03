@@ -63,11 +63,11 @@ def hosts(request, floorid, rackid):
         endTime = int(time.mktime(endTime.timetuple()))
 
     master=services.get_master()
-    current = str(services.get_current_datacenter())
+    current = services.get_current_datacenter()
 
 
     asset_services.get_hosts(master, current, floorid, rackid, startTime_unix, endTime)
-    hosts = Host.objects.filter(sub_id=str(services.get_current_sub_id())).filter(floorid=floorid).filter(masterip=master).filter(rackid=rackid).all()
+    hosts = Host.objects.filter(sub_id=services.get_current_sub_id()).filter(floorid=floorid).filter(masterip=master).filter(rackid=rackid).all()
     host_count = hosts.count()
     threshold = Threshold.objects.all().get()
     return render (request, 'assets/hosts.html', { "hosts": hosts, "host_count": host_count, "threshold": threshold, "master":services.get_master(), "current": services.get_current_for_html(), "configured": services.get_configured(), "page":"assets"} )
@@ -133,7 +133,7 @@ def tco(request):
     master = services.get_master()
     if CurrentDatacenter.objects.filter(masterip=master).all().count()==0:
         return render (request, 'pick_datacenter/pick_data_center.html', { "floors": "Pick a data center", "master": services.get_master(), "current": services.get_current_for_html(), "configured": services.get_configured()} )
-    current = str(services.get_current_datacenter())
+    current = services.get_current_datacenter()
     if request.method == 'POST':
         if 'capital' in request.POST:
             capital = request.POST['capital']

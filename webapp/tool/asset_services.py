@@ -3,7 +3,6 @@ import requests
 import time
 from . import services
 
-
 def get_datacenters():
     if MasterIP.objects.count()==0:
         MasterIP.objects.create(master="localhost")
@@ -11,7 +10,7 @@ def get_datacenters():
     url = "http://"+master+":8080/papillonserver/rest/datacenters" 
     try:
         response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
-    except:
+    except Exception:
         return 
     data = response.json()
     if data!=None: 
@@ -107,6 +106,21 @@ def get_hosts(master, datacenter, floorid, rackid, startTime, endTime):
                 data2 = response.json()
                 cpu_total = 0
                 cpu_count = 0
+                if data2==None:
+                    Host.objects.get_or_create(
+                        masterip = master,
+                        sub_id = services.get_current_sub_id(),
+                        datacenterid = datacenter,
+                        floorid = floorid,
+                        rackid = i['rackId'],
+                        hostid = i['id'],
+                        hostname = i['name'],
+                        hostdescription = i['description'],
+                        hostType = i['hostType'],
+                        processors = i['processorCount'],
+                        ipaddress = i['IPAddress'],
+                    )
+                    continue
                 if not isinstance(data2['activity'], list):
                     cpu_total = float(data2['activity']['stat1'])
                     cpu_count = 1
@@ -135,5 +149,7 @@ def get_hosts(master, datacenter, floorid, rackid, startTime, endTime):
                         total_cpu = cpu_total
                     )
                 host.update(cpu_usage=avg_cpu, responses=cpu_count, total_cpu = cpu_total)
+
+
     end = time.time()
     print("Time taken to get CPU % (s) -> " + str(end-start))

@@ -1,6 +1,6 @@
 import requests
 import time
-from tool.models import HostEnergy, CurrentDatacenter
+from tool.models import ConfiguredDataCenters, HostEnergy, CurrentDatacenter
 from . import asset_services, services
 
 def find_available_floors(master, current):
@@ -79,15 +79,23 @@ def get_energy_usage(master, datacenter, floorid, rackid, hostid, startTime, end
     print(url)
     minutes=0
     total_watts=0
-    for item in data['appPower']:
-        for power in item['powerList']['power']:        
-            if isinstance(power,dict):              # if any app has only one item it's not recorded
-                total_watts+=float(power['power'])
-                minutes+=1
-    hours = minutes/60
-    watt_hour = total_watts/hours
-    kWh = total_watts/hours/1000
+    if data != None:
+        for item in data['appPower']:
+            for power in item['powerList']['power']:        
+                if isinstance(power,dict):              # if any app has only one item it's not recorded
+                    total_watts+=float(power['power'])
+                    minutes+=1
+        hours = minutes/60
+        watt_hour = total_watts/hours
+        kWh = total_watts/hours/1000
+        ops_cons_3 =24*7*kWh*52*3
+        pue = services.get_pue()
+        carbon_conversion = services.get_carbon_conversion()
+        energy_cost = services.get_energy_cost()
+        op_cost_3 = ops_cons_3*pue*energy_cost
+        carbon_footprint_3=ops_cons_3*carbon_conversion
+        tco_3=int(capital)+(energy_cost*ops_cons_3)
 
-    host = HostEnergy.objects.filter(masterip=master).filter(sub_id = current).filter(floorid=floorid).filter(rackid=rackid).filter(hostid=hostid)
-    host.update(total_watts=total_watts, minutes = minutes, hours = hours, kWh=kWh, watt_hour = watt_hour, capital=capital)
+        host = HostEnergy.objects.filter(masterip=master).filter(sub_id = current).filter(floorid=floorid).filter(rackid=rackid).filter(hostid=hostid)
+        host.update(TCO=tco_3,total_watts=total_watts, minutes = minutes, hours = hours, kWh=kWh, watt_hour = watt_hour, capital=capital, ops_cons_3=ops_cons_3, carbon_footprint_3=carbon_footprint_3, op_cost_3=op_cost_3)
 
