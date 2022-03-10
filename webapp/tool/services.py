@@ -1,4 +1,5 @@
 from tool.models import CurrentDatacenter, MasterIP, ConfiguredDataCenters
+import pandas as pd
 
 def get_current_sub_id():
     return str(CurrentDatacenter.objects.all().values().get()['current'])
@@ -26,3 +27,13 @@ def get_energy_cost():
 
 def get_carbon_conversion():
     return ConfiguredDataCenters.objects.filter(masterip=get_master()).filter(sub_id=get_current_sub_id()).all().values().get()['carbon_conversion']
+
+def unix_range(startTime,endTime):
+    start=int(startTime)
+    range1 = int((int(endTime)-start)/86400)
+    dates=[]
+    for i in range(0,range1):
+        dates.append(start)
+        start+=86400
+    base_df = pd.DataFrame(dates, columns=['day'])
+    return base_df

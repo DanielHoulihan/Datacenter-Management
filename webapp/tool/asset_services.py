@@ -37,7 +37,6 @@ def get_floors(datacenter):
     url = "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors"
     response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
     data = response.json()
-
     if data!=None: 
         if isinstance(data['floor'], list):
             for i in data['floor']:

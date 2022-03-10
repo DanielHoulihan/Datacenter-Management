@@ -1,10 +1,12 @@
 from django.shortcuts import  render
 from tool import tco_services
 from tool.models import ConfiguredDataCenters, Datacenter, Floor, Rack, Host, CurrentDatacenter, Count, MasterIP, HostEnergy, Threshold
-from . import asset_services, services
+from . import asset_services, services, budget_services
 from . import forms
 from django.views.decorators.csrf import csrf_protect
 import time
+import matplotlib.pyplot as plt
+import mpld3
 
 
 def datacenters(request):
@@ -125,8 +127,6 @@ def configure(request):
     configured_count = ConfiguredDataCenters.objects.filter(masterip=master).all().count()
     return render (request, 'configure/configure.html', { "datacenters": datacenters, "configured_count": configured_count, "configured": configured, "master":master, "current": services.get_current_for_html(), "page":"configure"} )
 
-def budget(request):
-    return render (request, 'budget/budget.html', { "budget": "Budget will be here", "master": services.get_master(), "current": services.get_current_for_html(), "configured": services.get_configured(), "page":"budget"} )
 
 @csrf_protect
 def tco(request):
@@ -157,4 +157,27 @@ def tco(request):
     all_available = HostEnergy.objects.filter(sub_id=current_sub).filter(masterip=master).all()
     tco_count = all_available.count()
 
+
+    
+
     return render (request, 'TCO/tco.html', { "tco": all_available, "tco_count": tco_count, "master": master, "current": services.get_current_for_html(), "configured": services.get_configured(), "page":"tco"} )
+
+
+def budget(request):
+    master = services.get_master()
+    current_sub = services.get_current_sub_id()
+    current = services.get_current_datacenter()
+    tco_services.find_all_available_hosts(master, current)
+    df = budget_services.get_hosts(master,current_sub)
+    plt.switch_backend('Agg') 
+    
+    plt.figure(figsize=(12,8))
+    for column in df.columns[1:]:
+        plt.plot(df['day'], df[column])
+    fig = plt.gcf()
+    g = mpld3.fig_to_html(fig)
+    fig.savefig("tool/static/media/graph.png")
+    context = {'g': g}
+
+    return render(request, 'budget/budget.html', context)
+ 

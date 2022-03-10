@@ -107,3 +107,11 @@ class HostEnergy(models.Model):
 class Threshold(models.Model):
     low = models.FloatField(null=True, max_length=25)
     medium = models.FloatField(null=True, max_length=25)
+
+
+class Budget(models.Model):
+    masterip = models.CharField(max_length=20,null=True)
+    sub_id = models.CharField(max_length=20,null=True)
+    carbon_used = models.FloatField(null=True)
+    energy_used = models.FloatField(null=True)
+    time = models.IntegerField(null=True)

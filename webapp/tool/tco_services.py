@@ -73,18 +73,19 @@ def get_hosts_tco(master, datacenter, floorid, rackid):
 
 def get_energy_usage(master, datacenter, floorid, rackid, hostid, startTime, endTime, capital):
     current = services.get_current_sub_id()
-    url = "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"+floorid+"/racks/"+rackid+"/hosts/"+hostid+"/power/app?starttime="+startTime+"&endtime="+endTime
+    url = "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"+floorid+"/racks/"+rackid+"/hosts/"+hostid+"/power?starttime="+startTime+"&endtime="+endTime
     response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
     data = response.json()
-    print(url)
     minutes=0
     total_watts=0
     if data != None:
-        for item in data['appPower']:
-            for power in item['powerList']['power']:        
-                if isinstance(power,dict):              # if any app has only one item it's not recorded
-                    total_watts+=float(power['power'])
-                    minutes+=1
+
+        total_watts = 0
+        minutes = 0
+        for power in data['power']:
+            total_watts += float(power['power'])
+            minutes+=1
+
         hours = minutes/60
         watt_hour = total_watts/hours
         kWh = total_watts/hours/1000
