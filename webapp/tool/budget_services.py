@@ -29,7 +29,6 @@ def get_hosts(master, current_sub):
         start=int(startTime)
 
         
-        print(host['hostid'])
         energy = defaultdict(list)
         temp = 0
         minutes=0
@@ -66,28 +65,46 @@ import matplotlib.dates as mdates
 def plot_usage(table):
     plt.switch_backend('Agg') 
     startTime, endTime = services.get_start_end()
-    plt.figure(figsize=(5,4))
-    ax = plt.axes()
-    
-    plt.xlim([pd.to_datetime(startTime,unit='s'), pd.to_datetime(endTime,unit='s')])
+    startTime=int(startTime)-10000
+    plt.figure(figsize=(5,4))    
+    plt.xlim([pd.to_datetime(startTime,unit='s'), pd.to_datetime(endTime,unit='s')])   
     for column in table.columns[1:]:
         plt.plot(table['day'], table[column], label=column)
-    plt.legend()
+    plt.legend(loc='upper left')
     plt.ylabel('kWh', fontsize=16)
     plt.xlabel('Date', fontsize=18)
     fig2 = plt.gcf()
-    g2 = mpld3.fig_to_html(fig2)
-    return g2
+    g = mpld3.fig_to_html(fig2)
+    return g
+
+def plot_carbon_total(table):
+    plt.switch_backend('Agg') 
+    startTime, endTime = services.get_start_end()
+    startTime=int(startTime)-10000
+    table['budget']=services.get_budget()
+    plt.figure(figsize=(5,4))    
+    plt.xlim([pd.to_datetime(startTime,unit='s'), pd.to_datetime(endTime,unit='s')])   
+    plt.ylim(0,services.get_budget()) 
+    for column in table.columns[1:]:
+        plt.plot(table['day'], table[column], label=column)
+    plt.legend(loc='upper left')
+    plt.ylabel('kWh', fontsize=16)
+    plt.xlabel('Date', fontsize=18)
+    fig2 = plt.gcf()
+    g = mpld3.fig_to_html(fig2)
+    return g
 
 
 def carbon_usage(table):
+    temp = table.copy()
     carbon = services.get_carbon_conversion()
-    for col in table.columns[1:]:
-        table[col] = table[col]*carbon
-    return table
+    for col in temp.columns[1:]:
+        temp[col] = temp[col]*carbon
+    return temp
 
 def cost_estimate(table):
+    temp = table.copy()
     cost = services.get_energy_cost()
-    for col in table.columns[1:]:
-        table[col] = table[col]*cost
-    return table
+    for col in temp.columns[1:]:
+        temp[col] = temp[col]*cost
+    return temp

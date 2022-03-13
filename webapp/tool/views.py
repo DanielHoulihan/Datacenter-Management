@@ -90,7 +90,6 @@ def configure(request):
             MasterIP.objects.update(master = ip)
             asset_services.get_datacenters()
         elif 'to_configure' in request.POST:
-            print(request.POST['to_configure'])
             to_configure = request.POST['to_configure']
             start = request.POST['start']
             pue = request.POST['pue']
@@ -205,12 +204,13 @@ def budget(request):
     g1 = budget_services.plot_usage(total)
     g2 = budget_services.plot_usage(df)
     
-    g3 = budget_services.plot_usage(budget_services.carbon_usage(total))
+    if ConfiguredDataCenters.objects.filter(masterip=master).filter(sub_id=current_sub).values().get()['budget'] == None:
+        g3 = budget_services.plot_usage(budget_services.carbon_usage(total))
+    else: g3 = budget_services.plot_carbon_total(budget_services.carbon_usage(total))
     g4 = budget_services.plot_usage(budget_services.carbon_usage(df))
 
     g5 = budget_services.plot_usage(budget_services.cost_estimate(total))
     g6 = budget_services.plot_usage(budget_services.cost_estimate(df))
-    
 
     context = {'g1':g1,'g2':g2,"g3":g3,"g4":g4,"g5":g5,"g6":g6,"page":"budget","master": master, "current": services.get_current_for_html(), "configured": services.get_configured()}
 

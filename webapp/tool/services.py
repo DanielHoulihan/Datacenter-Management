@@ -31,6 +31,10 @@ def get_energy_cost():
 def get_carbon_conversion():
     return ConfiguredDataCenters.objects.filter(masterip=get_master()).filter(sub_id=get_current_sub_id()).all().values().get()['carbon_conversion']
 
+def get_budget():
+    return ConfiguredDataCenters.objects.filter(masterip=get_master()).filter(sub_id=get_current_sub_id()).all().values().get()['budget']
+
+
 def unix_range(startTime,endTime):
     start=int(startTime)
     range1 = int((int(endTime)-start)/86400)
@@ -51,5 +55,6 @@ def get_start_end():
         endTime = ConfiguredDataCenters.objects.all().filter(sub_id = get_current_sub_id()).values().get()['endTime']
         endTime = str(int(time.mktime(endTime.timetuple())))
     return startTime, endTime
+
 
 

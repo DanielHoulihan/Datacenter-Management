@@ -82,7 +82,7 @@ text-align: left;
     position: fixed;
     z-index: 0; 
     left: 6px;
-    background-color: #abcfc2; 
+    background-color: #4a4a4a; 
     overflow-x: hidden; 
     top:152px;
     border-top-left-radius: 20px;
@@ -310,4 +310,44 @@ border-bottom-left-radius:20px;
 
 .img_container{
   float:left;
+}
+
+
+body {font-family: Arial;}
+  
+/* Style the tab */
+.tab {
+  overflow: hidden;
+  border: 1px solid rgb(255, 255, 255);
+  background-color: #f1f1f1;
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+  font-size: 17px;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  padding: 6px 12px;
+  border: 1px solid rgb(255, 255, 255);
+  border-top: none;
 }

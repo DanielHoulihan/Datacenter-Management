@@ -88,7 +88,6 @@ def get_racks(datacenter, floorid):
 
 
 def get_hosts(master, datacenter, floorid, rackid, startTime, endTime):
-    start = time.time()
     get_racks(datacenter, floorid)
     current = services.get_current_sub_id()
     url = "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"+floorid+"/racks/"+rackid+"/hosts/"
@@ -150,5 +149,3 @@ def get_hosts(master, datacenter, floorid, rackid, startTime, endTime):
                 host.update(cpu_usage=avg_cpu, responses=cpu_count, total_cpu = cpu_total)
 
 
-    end = time.time()
-    print("Time taken to get CPU % (s) -> " + str(end-start))
