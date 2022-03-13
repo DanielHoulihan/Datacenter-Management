@@ -7,7 +7,7 @@ from django.views.decorators.csrf import csrf_protect
 import time
 import matplotlib.pyplot as plt
 import mpld3
-
+import pandas as pd
 
 def datacenters(request):
     asset_services.get_datacenters()
@@ -90,16 +90,18 @@ def configure(request):
             MasterIP.objects.update(master = ip)
             asset_services.get_datacenters()
         elif 'to_configure' in request.POST:
+            print(request.POST['to_configure'])
             to_configure = request.POST['to_configure']
             start = request.POST['start']
             pue = request.POST['pue']
             energy_cost = request.POST['energy_cost']
             carbon_conversion = request.POST['carbon_conversion']
+            budget = request.POST['budget']
             if Count.objects.all().count()==0:
                 Count.objects.create(configured=0)
             else: 
                 Count.objects.update(configured = Count.objects.all().values().get()['configured']+1)
-            if request.POST['endTime']: 
+            if request.POST['endTime'] and not request.POST['budget']: 
                 ConfiguredDataCenters.objects.get_or_create(
                 masterip = master,
                 sub_id = str(to_configure)+"-"+str(Count.objects.all().values().get()['configured']+1),
@@ -109,6 +111,29 @@ def configure(request):
                 pue = pue,
                 energy_cost = energy_cost,
                 carbon_conversion = carbon_conversion
+            )
+            if request.POST['endTime'] and request.POST['budget']: 
+                ConfiguredDataCenters.objects.get_or_create(
+                masterip = master,
+                sub_id = str(to_configure)+"-"+str(Count.objects.all().values().get()['configured']+1),
+                datacenterid = to_configure,
+                startTime = start,
+                endTime = request.POST['endTime'],
+                pue = pue,
+                energy_cost = energy_cost,
+                carbon_conversion = carbon_conversion,
+                budget = budget
+            )
+            if not request.POST['endTime'] and request.POST['budget']: 
+                ConfiguredDataCenters.objects.get_or_create(
+                masterip = master,
+                sub_id = str(to_configure)+"-"+str(Count.objects.all().values().get()['configured']+1),
+                datacenterid = to_configure,
+                startTime = start,
+                pue = pue,
+                energy_cost = energy_cost,
+                carbon_conversion = carbon_conversion,
+                budget = budget
             )
             else:
                 ConfiguredDataCenters.objects.get_or_create(
@@ -120,12 +145,21 @@ def configure(request):
                     energy_cost = energy_cost,
                     carbon_conversion = carbon_conversion
                 )
+        elif 'current_datacenter' in request.POST:
+            form = forms.SelectCurrentForm(request.POST)
+            if form.is_valid():
+                current = form.cleaned_data['current_datacenter']
+                if CurrentDatacenter.objects.count()==0:
+                    CurrentDatacenter.objects.create(masterip = master, current=current)
+                else: CurrentDatacenter.objects.update(masterip = master, current=current)
+
 
     master = services.get_master()
     configured = ConfiguredDataCenters.objects.filter(masterip=master).all()
     datacenters = Datacenter.objects.filter(masterip=master).all()
     configured_count = ConfiguredDataCenters.objects.filter(masterip=master).all().count()
-    return render (request, 'configure/configure.html', { "datacenters": datacenters, "configured_count": configured_count, "configured": configured, "master":master, "current": services.get_current_for_html(), "page":"configure"} )
+
+    return render (request, 'configure/configure.html', { "datacenters": datacenters, "configured_count": configured_count, "configured": configured, "master":master, "current": services.get_current_for_html(), "page":"home"} )
 
 
 @csrf_protect
@@ -157,9 +191,6 @@ def tco(request):
     all_available = HostEnergy.objects.filter(sub_id=current_sub).filter(masterip=master).all()
     tco_count = all_available.count()
 
-
-    
-
     return render (request, 'TCO/tco.html', { "tco": all_available, "tco_count": tco_count, "master": master, "current": services.get_current_for_html(), "configured": services.get_configured(), "page":"tco"} )
 
 
@@ -168,16 +199,20 @@ def budget(request):
     current_sub = services.get_current_sub_id()
     current = services.get_current_datacenter()
     tco_services.find_all_available_hosts(master, current)
-    df = budget_services.get_hosts(master,current_sub)
-    plt.switch_backend('Agg') 
+
+    df, total = budget_services.get_hosts(master,current_sub)
+
+    g1 = budget_services.plot_usage(total)
+    g2 = budget_services.plot_usage(df)
     
-    plt.figure(figsize=(12,8))
-    for column in df.columns[1:]:
-        plt.plot(df['day'], df[column])
-    fig = plt.gcf()
-    g = mpld3.fig_to_html(fig)
-    fig.savefig("tool/static/media/graph.png")
-    context = {'g': g}
+    g3 = budget_services.plot_usage(budget_services.carbon_usage(total))
+    g4 = budget_services.plot_usage(budget_services.carbon_usage(df))
+
+    g5 = budget_services.plot_usage(budget_services.cost_estimate(total))
+    g6 = budget_services.plot_usage(budget_services.cost_estimate(df))
+    
+
+    context = {'g1':g1,'g2':g2,"g3":g3,"g4":g4,"g5":g5,"g6":g6,"page":"budget","master": master, "current": services.get_current_for_html(), "configured": services.get_configured()}
 
     return render(request, 'budget/budget.html', context)
  

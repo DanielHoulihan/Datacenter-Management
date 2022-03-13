@@ -76,6 +76,7 @@ class ConfiguredDataCenters(models.Model):
     pue = models.FloatField()
     energy_cost = models.FloatField()
     carbon_conversion = models.FloatField()
+    budget = models.IntegerField(null=True)
 
 class Count(models.Model):
     configured = models.IntegerField(null=True)
@@ -94,11 +95,11 @@ class HostEnergy(models.Model):
     TCO = models.FloatField(null=True)
     carbon_footprint_3 = models.FloatField(null=True)
     ops_cons = models.FloatField(null=True)
-    total_watts = models.FloatField(null=True)
+    total_watt_hour = models.FloatField(null=True)
     minutes = models.FloatField(null=True)
     hours = models.FloatField(null=True)
-    kWh = models.FloatField(null=True)
-    watt_hour = models.FloatField(null=True)
+    avg_kWh = models.FloatField(null=True)
+    avg_watt_hour = models.FloatField(null=True)
     capital = models.IntegerField(null=True)
     ops_cons_3 = models.FloatField(null=True)
     op_cost_3 = models.FloatField(null=True)
@@ -115,3 +116,4 @@ class Budget(models.Model):
     carbon_used = models.FloatField(null=True)
     energy_used = models.FloatField(null=True)
     time = models.IntegerField(null=True)
+    

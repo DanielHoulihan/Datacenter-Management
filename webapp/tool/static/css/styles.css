@@ -32,17 +32,36 @@ input[type=number]{
   text-decoration: none;
 }
 
-table{
+table.table1{
     border: 1px solid rgb(207, 207, 207);
     border-collapse: collapse;
   }
-td {
-  border: 1px solid rgb(202, 42, 42);
+table.table1 td {
+  border: 1px solid rgb(0, 0, 0);
   background-color: #e3e3e3;
 }
-tr{
+table.table1 tr{
   background-color: #b4b4b4;
   height: 50px;
+}
+
+table.table2{
+  border: 1px solid rgb(255, 255, 255);
+  border-collapse: collapse;
+  text-align: left;
+}
+
+
+table.table2 td {
+border: 1px solid rgb(255, 255, 255);
+background-color: #ffffff;
+text-align: left;
+}
+
+table.table2 tr{
+background-color: #ffffff;
+height: 25px;
+text-align: left;
 }
 
 
@@ -63,29 +82,31 @@ tr{
     position: fixed;
     z-index: 0; 
     left: 6px;
-    background-color: rgb(188, 224, 255); 
+    background-color: #abcfc2; 
     overflow-x: hidden; 
     top:152px;
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
     border-bottom-right-radius:20px;
+    font-size:12px
   }
   
 .sidenav a {
     padding: 6px 8px 6px 16px;
     text-decoration: none;
-    font-size: 25px;
+    font-size: 12px;
     color: #ffffff;
     display: block;
   }
 
 .sidenav h3 {
-  padding: 6px 8px 6px 16px;
+  padding: 0px 0px 0px 6px;
   text-decoration: none;
-  font-size: 25px;
-  color: #454545;
+  font-size: 15px;
+  color: #000000;
   display: block;
 }
+
   
 .sidenav a:hover {
     color: #8f8f8f;
@@ -194,10 +215,10 @@ body {
 
 
 .configure_card {
-  width: 215px;
-  height: 350px;
+  width: 235px;
+  height: 265px;
   margin: 15px;
-  padding: 15px;
+  padding: 5px;
   background-color: #F0FFFF;
   box-shadow: 0 0 12px rgb(63, 63, 63);
   border-top-left-radius: 20px;
@@ -207,10 +228,10 @@ body {
   }
 
 .change_master_card {
-  width: 215px;
-  height: 130px;
+  width: 235px;
+  height: 69px;
   margin: 15px;
-  padding: 15px;
+  padding: 5px;
   background-color: #F0FFFF;
   box-shadow: 0 0 12px rgb(63, 63, 63);
   border-top-left-radius: 20px;
@@ -223,4 +244,70 @@ ul.no-bullets {
   list-style-type: none;
   margin: 0;
   padding: 0;
+}
+
+
+.form{
+  float:left;  
+   list-style:none;
+ }
+.hidden-form{
+  visibility:hidden;
+  }
+.show-form{
+visibility: visible !important;
+}
+
+.change_current_card {
+width: 235px;
+height: 68px;
+margin: 15px;
+padding: 5px;
+background-color: #F0FFFF;
+box-shadow: 0 0 12px rgb(63, 63, 63);
+border-top-left-radius: 20px;
+border-top-right-radius: 20px;
+border-bottom-right-radius:20px;
+border-bottom-left-radius:20px;
+}
+
+
+.styled-table {
+  border-collapse: collapse;
+  margin: 25px 0;
+  font-size: 0.9em;
+  font-family: sans-serif;
+  min-width: 400px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+.styled-table thead tr {
+  background-color: #009879;
+  color: #ffffff;
+  text-align: left;
+}
+.styled-table th,
+.styled-table td {
+    padding: 12px 15px;
+}
+
+.styled-table tbody tr {
+  border-bottom: 1px solid #dddddd;
+}
+
+.styled-table tbody tr:nth-of-type(even) {
+  background-color: #f3f3f3;
+}
+
+.styled-table tbody tr:last-of-type {
+  border-bottom: 2px solid #009879;
+}
+
+.styled-table tbody tr.active-row {
+  font-weight: bold;
+  color: #009879;
+}
+
+.img_container{
+  float:left;
 }

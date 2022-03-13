@@ -1,5 +1,8 @@
 from tool.models import CurrentDatacenter, MasterIP, ConfiguredDataCenters
 import pandas as pd
+import time
+import matplotlib.pyplot as plt 
+import mpld3
 
 def get_current_sub_id():
     return str(CurrentDatacenter.objects.all().values().get()['current'])
@@ -37,3 +40,16 @@ def unix_range(startTime,endTime):
         start+=86400
     base_df = pd.DataFrame(dates, columns=['day'])
     return base_df
+
+
+def get_start_end():
+    startTime = ConfiguredDataCenters.objects.all().filter(sub_id = get_current_sub_id()).values().get()['startTime']
+    startTime = str(int(time.mktime(startTime.timetuple())))
+    if ConfiguredDataCenters.objects.all().filter(sub_id = get_current_sub_id()).values().get()['endTime']==None:
+        endTime = str(int(time.time()))
+    else:
+        endTime = ConfiguredDataCenters.objects.all().filter(sub_id = get_current_sub_id()).values().get()['endTime']
+        endTime = str(int(time.mktime(endTime.timetuple())))
+    return startTime, endTime
+
+

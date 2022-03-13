@@ -9,18 +9,18 @@
 </head>
 
 <div class="topnav">
-  <a href="{% url 'datacenters' %}"><h2><img alt="My Image" src="/../../static/media/logo3.png" height="70" width="210"/></h2></a>
+  <a href="{% url 'configure' %}"><h2><img alt="My Image" src="/../../static/media/logo3.png" height="70" width="210"/></h2></a>
   <br><br>
   <h3>Master IP: {{master}}</h3>
   <h3>Datacenter: {{current}}</h3>
 </div>
 
 <div class="topnav3">
-  {% if page == "home" %}<a class="active" href="{% url 'datacenters' %}">Home</a>{% else %} <a href="{% url 'datacenters' %}">Home</a>{% endif %}
+  {% if page == "home" %}<a class="active" href="{% url 'configure' %}">Home</a>{% else %} <a href="{% url 'configure' %}">Home</a>{% endif %}
   {% if page == "assets" %}<a class="active" href="{% url 'floors' %}">Assets</a>{% else %} <a href="{% url 'floors' %}">Assets</a>{% endif %}
   {% if page == "budget" %}<a class="active" href="{% url 'budget' %}">Budget</a>{% else %} <a href="{% url 'budget' %}">Budget</a>{% endif %}
   {% if page == "tco" %}<a class="active" href="{% url 'tco' %}">TCO</a>{% else %} <a href="{% url 'tco' %}">TCO</a>{% endif %}
-  {% if page == "configure" %}<a class="active" href="{% url 'configure' %}">Configure</a>{% else %} <a href="{% url 'configure' %}">Configure</a>{% endif %}
+  <!-- {% if page == "configure" %}<a class="active" href="{% url 'configure' %}">Configure</a>{% else %} <a href="{% url 'configure' %}">Configure</a>{% endif %} -->
 </div>
 
 

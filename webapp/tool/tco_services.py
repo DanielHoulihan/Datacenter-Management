@@ -98,5 +98,5 @@ def get_energy_usage(master, datacenter, floorid, rackid, hostid, startTime, end
         tco_3=int(capital)+(energy_cost*ops_cons_3)
 
         host = HostEnergy.objects.filter(masterip=master).filter(sub_id = current).filter(floorid=floorid).filter(rackid=rackid).filter(hostid=hostid)
-        host.update(TCO=tco_3,total_watts=total_watts, minutes = minutes, hours = hours, kWh=kWh, watt_hour = watt_hour, capital=capital, ops_cons_3=ops_cons_3, carbon_footprint_3=carbon_footprint_3, op_cost_3=op_cost_3)
+        host.update(TCO=tco_3,total_watt_hour=total_watts, minutes = minutes, hours = hours, avg_kWh=kWh, avg_watt_hour = watt_hour, capital=capital, ops_cons_3=ops_cons_3, carbon_footprint_3=carbon_footprint_3, op_cost_3=op_cost_3)
 
