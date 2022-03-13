@@ -7,6 +7,13 @@ import pandas as pd
 from functools import reduce
 import matplotlib.pyplot as plt
 import mpld3
+import base64
+import io
+import matplotlib.dates as mdates 
+
+
+
+plt.switch_backend('Agg') 
 
 def get_hosts(master, current_sub):
 
@@ -60,39 +67,75 @@ def get_hosts(master, current_sub):
     return hosts[hosts.columns[:-1]], hosts[[hosts.columns[0], hosts.columns[-1]]]
 
 
-import matplotlib.dates as mdates
-
 def plot_usage(table):
-    plt.switch_backend('Agg') 
     startTime, endTime = services.get_start_end()
     startTime=int(startTime)-10000
-    plt.figure(figsize=(5,4))    
-    plt.xlim([pd.to_datetime(startTime,unit='s'), pd.to_datetime(endTime,unit='s')])   
+    fig, ax = plt.subplots(figsize=(6,3))
     for column in table.columns[1:]:
-        plt.plot(table['day'], table[column], label=column)
-    plt.legend(loc='upper left')
-    plt.ylabel('kWh', fontsize=16)
-    plt.xlabel('Date', fontsize=18)
-    fig2 = plt.gcf()
-    g = mpld3.fig_to_html(fig2)
-    return g
+        ax.plot(table['day'], table[column], label=column, markerfacecolor='blue')
+    plt.xlim([pd.to_datetime(startTime,unit='s'), pd.to_datetime(endTime,unit='s')])  
+    # plt.axhline(y=20, c='r')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    x = (pd.to_datetime(endTime,unit='s') - pd.to_datetime(startTime,unit='s')).days/4
+    ax.xaxis.set_major_locator(mdates.DayLocator(interval=int(x)))
+    buf = io.BytesIO()
+    fig.savefig(buf)
+    return base64.b64encode(buf.getvalue()).decode()
+
+
+    # startTime, endTime = services.get_start_end()
+    # startTime=int(startTime)-10000
+    # plt.figure(figsize=(5,4))    
+    # plt.xlim([pd.to_datetime(startTime,unit='s'), pd.to_datetime(endTime,unit='s')])   
+    # for column in table.columns[1:]:
+    #     plt.plot(table['day'], table[column], label=column)
+    # plt.legend(loc='upper left')
+    # plt.ylabel('kWh', fontsize=16)
+    # plt.xlabel('Date', fontsize=18)
+    # plt.gca().set_ylim(ymin=0)
+    # fig = plt.gcf()
+
+    # buf = io.BytesIO()
+    # fig.savefig(buf,format='png')
+    # string = base64.b64encode(buf.read())
+    # uri=urllib.parse.quote(string)
+    # return uri
+    # g = mpld3.fig_to_html(fig)
+    # return g
 
 def plot_carbon_total(table):
-    plt.switch_backend('Agg') 
     startTime, endTime = services.get_start_end()
     startTime=int(startTime)-10000
-    table['budget']=services.get_budget()
-    plt.figure(figsize=(5,4))    
-    plt.xlim([pd.to_datetime(startTime,unit='s'), pd.to_datetime(endTime,unit='s')])   
-    plt.ylim(0,services.get_budget()) 
+    fig, ax = plt.subplots(figsize=(5,3))
     for column in table.columns[1:]:
-        plt.plot(table['day'], table[column], label=column)
-    plt.legend(loc='upper left')
-    plt.ylabel('kWh', fontsize=16)
-    plt.xlabel('Date', fontsize=18)
-    fig2 = plt.gcf()
-    g = mpld3.fig_to_html(fig2)
-    return g
+        ax.plot(table['day'], table[column], label=column, markerfacecolor='blue')
+    plt.xlim([pd.to_datetime(startTime,unit='s'), pd.to_datetime(endTime,unit='s')])  
+    # plt.axhline(y=20, c='r')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    x = (pd.to_datetime(endTime,unit='s') - pd.to_datetime(startTime,unit='s')).days/4
+    ax.xaxis.set_major_locator(mdates.DayLocator(interval=int(x)))
+    plt.axhline(y=services.get_budget(), c='r')
+    buf = io.BytesIO()
+    fig.savefig(buf)
+    return base64.b64encode(buf.getvalue()).decode()
+
+    # startTime, endTime = services.get_start_end()
+    # startTime=int(startTime)-10000
+    # table['Budget']=services.get_budget()
+    # plt.figure(figsize=(5,4))    
+    # plt.xlim([pd.to_datetime(startTime,unit='s'), pd.to_datetime(endTime,unit='s')])   
+    # # plt.ylim(0,services.get_budget()) 
+    # for column in table.columns[1:]:
+    #     plt.plot(table['day'], table[column], label=column)
+    # plt.legend(loc='upper left')
+    # plt.ylabel('kWh', fontsize=16)
+    # plt.xlabel('Date', fontsize=18)
+    # plt.gca().set_ylim(ymin=0)  
+    # fig2 = plt.gcf()
+    # g = mpld3.fig_to_html(fig2)
+    # return g
 
 
 def carbon_usage(table):

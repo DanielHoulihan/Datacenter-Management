@@ -4,10 +4,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <html>
-{% block content %}
 
 <div class="content">
-  <body>
 
   <div class="tab">
     <button class="tablinks" onclick="openCity(event, 'Carbon')" id="defaultOpen">Carbon</button>
@@ -18,41 +16,39 @@
   <div id="Carbon" class="tabcontent">
     <div class="img_container"> 
       <h3>Total Usage (KgCo2)</h3>
-      {{g3|safe}} 
+      <img src="data:image/png;base64,{{ g1 }}" alt="">
     </div>
     <div class="img_container"> 
       <h3>Host Usage (KgCo2)</h3>
-      {{g4|safe}} 
-    </div>
-  </div>
-
-  <div id="Energy" class="tabcontent">
-    <div class="img_container"> 
-      <h3>Total Usage (kWh)</h3>
-      {{g1|safe}} 
-    </div>
-    <div class="img_container"> 
-      <h3>Host Usage (kWh)</h3>
-      {{g2|safe}} 
+      <img src="data:image/png;base64,{{ g2 }}" alt="">
     </div>
   </div>
   
-
+  <div id="Energy" class="tabcontent">
+    <div class="img_container"> 
+      <h3>Total Usage (kWh)</h3>
+      <img src="data:image/png;base64,{{ g3 }}" alt="">
+    </div>
+    <div class="img_container"> 
+      <h3>Host Usage (kWh)</h3>
+      <img src="data:image/png;base64,{{ g4 }}" alt="">
+    </div>
+  </div>
 
   <div id="Cost" class="tabcontent">
     <div class="img_container"> 
       <h3>Total Estimated Cost (Euro)</h3>
-      {{g5|safe}} 
+      <img src="data:image/png;base64,{{ g5 }}" alt="">
+
     </div>
     <div class="img_container"> 
       <h3>Hosts Estimated Cost (Euro)</h3>
-      {{g6|safe}} 
+      <img src="data:image/png;base64,{{ g6 }}" alt="">
+
     </div>
   </div>
-  
   <script src="/../../static/js/tabs.js"></script>
-  </body>
+  <!-- </body> -->
 </div>
 
-{% endblock %}
 </html> 

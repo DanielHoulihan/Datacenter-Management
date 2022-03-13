@@ -8,6 +8,8 @@ import time
 import matplotlib.pyplot as plt
 import mpld3
 import pandas as pd
+import io
+import urllib, base64
 
 def datacenters(request):
     asset_services.get_datacenters()
@@ -201,17 +203,34 @@ def budget(request):
 
     df, total = budget_services.get_hosts(master,current_sub)
 
-    g1 = budget_services.plot_usage(total)
-    g2 = budget_services.plot_usage(df)
-    
+    # g1 = budget_services.plot_usage(total)
     if ConfiguredDataCenters.objects.filter(masterip=master).filter(sub_id=current_sub).values().get()['budget'] == None:
-        g3 = budget_services.plot_usage(budget_services.carbon_usage(total))
-    else: g3 = budget_services.plot_carbon_total(budget_services.carbon_usage(total))
-    g4 = budget_services.plot_usage(budget_services.carbon_usage(df))
+        g1 = budget_services.plot_usage(budget_services.carbon_usage(total))
+    else: g1 = budget_services.plot_carbon_total(budget_services.carbon_usage(total))
+    g2 = budget_services.plot_usage(budget_services.carbon_usage(df))
+
+    g3 = budget_services.plot_usage(total)
+    g4 = budget_services.plot_usage(df)
+    
+
 
     g5 = budget_services.plot_usage(budget_services.cost_estimate(total))
     g6 = budget_services.plot_usage(budget_services.cost_estimate(df))
 
+    # fig, ax = plt.subplots(figsize=(10,10))
+    # ax.figsize=(20,8)
+    # for column in df.columns[1:]:
+    #     ax.plot(df['day'], df[column], label=column,marker='o', markerfacecolor='blue')
+    # plt.axhline(y=20, c='r')
+    # ax.spines['top'].set_visible(False)
+    # ax.spines['right'].set_visible(False)
+    # buf = io.BytesIO()
+    # fig.savefig(buf)
+    # string = base64.b64encode(buf.getvalue()).decode()
+    # g1=urllib.parse.quote(string)
+    #return uri
+
+    # context = {'g1':g1,"g2":g2, "page":"budget","master": master, "current": services.get_current_for_html(), "configured": services.get_configured()}
     context = {'g1':g1,'g2':g2,"g3":g3,"g4":g4,"g5":g5,"g6":g6,"page":"budget","master": master, "current": services.get_current_for_html(), "configured": services.get_configured()}
 
     return render(request, 'budget/budget.html', context)
