@@ -103,6 +103,7 @@ class HostEnergy(models.Model):
     capital = models.IntegerField(null=True)
     ops_cons_3 = models.FloatField(null=True)
     op_cost_3 = models.FloatField(null=True)
+    kWh_consumed = models.FloatField(null=True)
 
 
 class Threshold(models.Model):

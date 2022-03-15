@@ -78,7 +78,7 @@ text-align: left;
 
 .sidenav {
     height: 90%; 
-    width: 280px;
+    width: 265px;
     position: fixed;
     z-index: 0; 
     left: 6px;
@@ -215,7 +215,7 @@ body {
 
 
 .configure_card {
-  width: 235px;
+  width: 227px;
   height: 265px;
   margin: 15px;
   padding: 5px;
@@ -228,7 +228,7 @@ body {
   }
 
 .change_master_card {
-  width: 235px;
+  width: 227px;
   height: 69px;
   margin: 15px;
   padding: 5px;
@@ -259,7 +259,7 @@ visibility: visible !important;
 }
 
 .change_current_card {
-width: 235px;
+width: 227px;
 height: 68px;
 margin: 15px;
 padding: 5px;
@@ -320,6 +320,7 @@ body {font-family: Arial;}
   overflow: hidden;
   border: 1px solid rgb(255, 255, 255);
   background-color: #f1f1f1;
+  width: 250px;
 }
 
 /* Style the buttons inside the tab */
@@ -351,3 +352,36 @@ body {font-family: Arial;}
   border: 1px solid rgb(255, 255, 255);
   border-top: none;
 } */
+
+
+
+.bar {
+  padding: 10px;
+  margin: 10px;
+  color: #333;
+  background: #fafafa;
+  border: 1px solid #ccc;
+}
+
+/* (B) THE VARIATIONS */
+.info {
+  color: #204a8e;
+  background: #c9ddff;
+  border: 1px solid #4c699b;
+}
+.success {
+  color: #2b7515;
+  background: #ecffd6;
+  border: 1px solid #617c42;
+}
+.warn {
+  color: #756e15;
+  background: #fffbd1;
+  border: 1px solid #87803e;
+}
+.error {
+  color: #ba3939;
+  background: #ffe0e0;
+  border: 1px solid #a33a3a;
+  width:27%;
+}

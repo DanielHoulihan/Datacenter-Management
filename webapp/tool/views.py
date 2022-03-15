@@ -1,15 +1,10 @@
-from django.shortcuts import  render
+from django.shortcuts import render
 from tool import tco_services
 from tool.models import ConfiguredDataCenters, Datacenter, Floor, Rack, Host, CurrentDatacenter, Count, MasterIP, HostEnergy, Threshold
 from . import asset_services, services, budget_services
 from . import forms
 from django.views.decorators.csrf import csrf_protect
-import time
-import matplotlib.pyplot as plt
-import mpld3
-import pandas as pd
-import io
-import urllib, base64
+
 
 def datacenters(request):
     asset_services.get_datacenters()
@@ -50,31 +45,41 @@ def racks(request, floorid):
 
 
 def hosts(request, floorid, rackid):
+
+    context = {}
+
     if Threshold.objects.count()==0:
         Threshold.objects.create(low=15,medium=30)
 
     if request.method == 'POST':
-        low = request.POST['low']
-        medium = request.POST['medium']
-        Threshold.objects.update(low=low,medium=medium)
+        form = forms.ChanegThresholdForm(request.POST)
+        if form.is_valid():
+            low,medium=form.cleaned_data
+            Threshold.objects.update(low=low,medium=medium)
+        context["error"] = form
 
-    startTime = ConfiguredDataCenters.objects.all().filter(sub_id = services.get_current_sub_id()).values().get()['startTime']
-    startTime_unix = int(time.mktime(startTime.timetuple()))
-    if ConfiguredDataCenters.objects.all().filter(sub_id = services.get_current_sub_id()).values().get()['endTime']==None:
-        endTime = str(int(time.time()))
-    else:
-        endTime = ConfiguredDataCenters.objects.all().filter(sub_id = services.get_current_sub_id()).values().get()['endTime']
-        endTime = int(time.mktime(endTime.timetuple()))
+
+    startTime, endTime = services.get_start_end()
 
     master=services.get_master()
     current = services.get_current_datacenter()
 
 
-    asset_services.get_hosts(master, current, floorid, rackid, startTime_unix, endTime)
+    asset_services.get_hosts(master, current, floorid, rackid, startTime, endTime)
     hosts = Host.objects.filter(sub_id=services.get_current_sub_id()).filter(floorid=floorid).filter(masterip=master).filter(rackid=rackid).all()
     host_count = hosts.count()
     threshold = Threshold.objects.all().get()
-    return render (request, 'assets/hosts.html', { "hosts": hosts, "host_count": host_count, "threshold": threshold, "master":services.get_master(), "current": services.get_current_for_html(), "configured": services.get_configured(), "page":"assets"} )
+
+    # context.append({ "hosts": hosts, "host_count": host_count, "threshold": threshold, "master":services.get_master(), "current": services.get_current_for_html(), "configured": services.get_configured(), "page":"assets"})
+    context["hosts"] = hosts
+    context["host_count"] = host_count
+    context["threshold"] = threshold
+    context["master"] = services.get_master()
+    context["current"] = services.get_current_for_html()
+    context["configured"] = services.get_configured()
+    context["page"] = "assets"
+
+    return render (request, 'assets/hosts.html', context )
     
 @csrf_protect
 def configure(request):
@@ -85,8 +90,11 @@ def configure(request):
             form = forms.DeleteConfigurationForm(request.POST)
             if form.is_valid():
                 to_delete = form.cleaned_data['to_delete']
-                ConfiguredDataCenters.objects.filter(sub_id=to_delete).delete()
-                CurrentDatacenter.objects.filter(current=to_delete).delete()
+                ConfiguredDataCenters.objects.filter(sub_id=to_delete).filter(masterip=master).delete()
+                CurrentDatacenter.objects.filter(current=to_delete).filter(masterip=master).delete()
+                Host.objects.filter(sub_id=to_delete).filter(masterip=master).delete()
+                HostEnergy.objects.filter(sub_id=to_delete).filter(masterip=master).delete()
+
         elif 'ip' in request.POST:
             ip = request.POST['ip']
             MasterIP.objects.update(master = ip)
@@ -166,8 +174,10 @@ def configure(request):
 @csrf_protect
 def tco(request):
     master = services.get_master()
+
     if CurrentDatacenter.objects.filter(masterip=master).all().count()==0:
-        return render (request, 'pick_datacenter/pick_data_center.html', { "floors": "Pick a data center", "master": services.get_master(), "current": services.get_current_for_html(), "configured": services.get_configured()} )
+        return services.prompt_configuration(request,"tco")
+
     current = services.get_current_datacenter()
     if request.method == 'POST':
         if 'capital' in request.POST:
@@ -175,13 +185,7 @@ def tco(request):
             rack = request.POST['rack']
             floor = request.POST['floor']
             host = request.POST['host']
-            startTime = ConfiguredDataCenters.objects.all().filter(sub_id = services.get_current_sub_id()).values().get()['startTime']
-            startTime = str(int(time.mktime(startTime.timetuple())))
-            if ConfiguredDataCenters.objects.all().filter(sub_id = services.get_current_sub_id()).values().get()['endTime']==None:
-                endTime = str(int(time.time()))
-            else:
-                endTime = ConfiguredDataCenters.objects.all().filter(sub_id = services.get_current_sub_id()).values().get()['endTime']
-                endTime = str(int(time.mktime(endTime.timetuple())))
+            startTime,endTime = services.get_start_end()
             
             tco_services.get_energy_usage(master, current, floor, rack, host, startTime, endTime, capital)
 
@@ -199,38 +203,25 @@ def budget(request):
     master = services.get_master()
     current_sub = services.get_current_sub_id()
     current = services.get_current_datacenter()
+
+    if CurrentDatacenter.objects.filter(masterip=master).all().count()==0:
+        return services.prompt_configuration(request,"budget")
+
     tco_services.find_all_available_hosts(master, current)
 
     df, total = budget_services.get_hosts(master,current_sub)
 
-    # g1 = budget_services.plot_usage(total)
     if ConfiguredDataCenters.objects.filter(masterip=master).filter(sub_id=current_sub).values().get()['budget'] == None:
-        g1 = budget_services.plot_usage(budget_services.carbon_usage(total))
+        g1 = budget_services.plot_usage(budget_services.carbon_usage(total), ylabel="KgCo2")
     else: g1 = budget_services.plot_carbon_total(budget_services.carbon_usage(total))
-    g2 = budget_services.plot_usage(budget_services.carbon_usage(df))
+    g2 = budget_services.plot_usage(budget_services.carbon_usage(df), ylabel="KgCo2")
 
-    g3 = budget_services.plot_usage(total)
-    g4 = budget_services.plot_usage(df)
+    g3 = budget_services.plot_usage(total, ylabel="kWh")
+    g4 = budget_services.plot_usage(df, ylabel="kWh")
     
+    g5 = budget_services.plot_usage(budget_services.cost_estimate(total), ylabel="Euro")
+    g6 = budget_services.plot_usage(budget_services.cost_estimate(df), ylabel="Euro")
 
-
-    g5 = budget_services.plot_usage(budget_services.cost_estimate(total))
-    g6 = budget_services.plot_usage(budget_services.cost_estimate(df))
-
-    # fig, ax = plt.subplots(figsize=(10,10))
-    # ax.figsize=(20,8)
-    # for column in df.columns[1:]:
-    #     ax.plot(df['day'], df[column], label=column,marker='o', markerfacecolor='blue')
-    # plt.axhline(y=20, c='r')
-    # ax.spines['top'].set_visible(False)
-    # ax.spines['right'].set_visible(False)
-    # buf = io.BytesIO()
-    # fig.savefig(buf)
-    # string = base64.b64encode(buf.getvalue()).decode()
-    # g1=urllib.parse.quote(string)
-    #return uri
-
-    # context = {'g1':g1,"g2":g2, "page":"budget","master": master, "current": services.get_current_for_html(), "configured": services.get_configured()}
     context = {'g1':g1,'g2':g2,"g3":g3,"g4":g4,"g5":g5,"g6":g6,"page":"budget","master": master, "current": services.get_current_for_html(), "configured": services.get_configured()}
 
     return render(request, 'budget/budget.html', context)

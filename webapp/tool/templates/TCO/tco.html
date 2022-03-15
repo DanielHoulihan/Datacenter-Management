@@ -29,27 +29,24 @@
 
           <hr>
           <p>Capital cost: {{ host.capital }}</p>
-          <p>TCO 3yrs: {{ host.TCO }}</p>
+          <p>TCO 3yrs: {{host.TCO}}</p>
           <p>Carbon Footprint 3yrs: {{ host.carbon_footprint_3 }}</p>
-          <p>Total watt hour: {{ host.total_watt_hour }}</p>
-          <p>Total minutes: {{ host.minutes }}</p>
-          <p>Total hours: {{ host.hours }}</p>
-          <p>Avg watt hour: {{ host.avg_watt_hour }}</p>
-          <p>average kWh: {{ host.avg_kWh }}</p>
-          <p>ops_cons_3: {{host.ops_cons_3}}</p>
-          <p>op_cost_3: {{host.op_cost_3}}</p>
+          <p>Time up (mins): {{ host.minutes }}</p>
+          <p>kWh consumed: {{host.kWh_consumed}}</p>
+          <p>Operational consumption 3yrs: {{host.ops_cons_3}}</p>
+          <p>Operational Cost 3yrs: {{host.op_cost_3}}</p>
+
+
+          <!-- <script type="text/javascript">
+            var myVar = "{{host.TCO}}";
+            document.getElementById('TCO').innerHTML = Math.round(myVar).toFixed(2);
+          </script> -->
+          
         </div>
       </div>
       {% endfor %}
     </div>  
-    <h4>TCO = capital + (energy_cost * ops_cons_3)</h4>
-    <h4>carbon_footprint_3 = ops_cons_3 * carbon_conversion</h4>
-    <h4>sum_of_watts = sum of all watts from api response</h4>
-    <h4>Total minutes = count of all minutes returned in response (not unique count)</h4>
-    <h4>Total hours = total minutes / 60</h4>
-    <h4>watt_hour = sum_of_watts / total hours</h4>
-    <h4>kWh = watt_hour / 1000</h4>
-    <h4>ops_cons_3 = (24 * 7 * kWh) * (52 * 3)</h4>
-    <h4>op_cost_3 = ops_cons_3 * PUE * carbon_conversion</h4>
   </div>
+
   {% endblock %}
+

@@ -12,7 +12,13 @@
       Upper Threshold
       <input type="text" name="medium">
       <button type="submit" class="save   btn btn-default">Submit</button>
+
+      {% if error.non_field_errors %}<div class="bar error">{{error.non_field_errors}}</div>{% endif %}
+
     </form>
+
+    
+    <!-- <div class="bar error">Hey</div> -->
 
     <h2>Available Hosts: {{host_count}}</h2>
     <div class="card-container">

@@ -5,7 +5,8 @@ from . import asset_services, services
 
 def find_available_floors(master, current):
     url = "http://"+master+":8080/papillonserver/rest/datacenters/"+current+"/floors/"
-    response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
+    response = services.get_reponse(url)
+    # response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
     data = response.json()
     floors = []
     if data!=None: 
@@ -14,13 +15,13 @@ def find_available_floors(master, current):
                 floors.append(i['id'])  
         else:
             floors.append(data['floor']['id'])
-            
     return floors
 
 
 def find_available_racks(master, current, floorid):
     url = "http://"+master+":8080/papillonserver/rest/datacenters/"+current+"/floors/"+floorid+"/racks"
-    response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
+    response = services.get_reponse(url)
+    # response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
     data = response.json()
     racks = []
     if data!=None: 
@@ -44,7 +45,8 @@ def find_all_available_hosts(master, current):
 def get_hosts_tco(master, datacenter, floorid, rackid):
     current = services.get_current_sub_id()
     url = "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"+floorid+"/racks/"+rackid+"/hosts"
-    response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
+    response = services.get_reponse(url)
+    # response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
     data = response.json()
     
     if data!=None: 
@@ -74,7 +76,8 @@ def get_hosts_tco(master, datacenter, floorid, rackid):
 def get_energy_usage(master, datacenter, floorid, rackid, hostid, startTime, endTime, capital):
     current = services.get_current_sub_id()
     url = "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"+floorid+"/racks/"+rackid+"/hosts/"+hostid+"/power?starttime="+startTime+"&endtime="+endTime
-    response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
+    response = services.get_reponse(url)
+    # response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
     data = response.json()
     minutes=0
     total_watts=0
@@ -96,7 +99,8 @@ def get_energy_usage(master, datacenter, floorid, rackid, hostid, startTime, end
         op_cost_3 = ops_cons_3*pue*energy_cost
         carbon_footprint_3=ops_cons_3*carbon_conversion
         tco_3=int(capital)+(energy_cost*ops_cons_3)
+        kWh_consumed = total_watts/1000
 
         host = HostEnergy.objects.filter(masterip=master).filter(sub_id = current).filter(floorid=floorid).filter(rackid=rackid).filter(hostid=hostid)
-        host.update(TCO=tco_3,total_watt_hour=total_watts, minutes = minutes, hours = hours, avg_kWh=kWh, avg_watt_hour = watt_hour, capital=capital, ops_cons_3=ops_cons_3, carbon_footprint_3=carbon_footprint_3, op_cost_3=op_cost_3)
+        host.update(TCO=tco_3,total_watt_hour=total_watts, minutes = minutes, hours = hours, avg_kWh=kWh, avg_watt_hour = watt_hour, capital=capital, ops_cons_3=ops_cons_3, carbon_footprint_3=carbon_footprint_3, op_cost_3=op_cost_3, kWh_consumed=kWh_consumed)
 
