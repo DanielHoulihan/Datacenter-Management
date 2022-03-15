@@ -8,6 +8,7 @@
   <div class="content">
     <h2>All hosts in data centers: {{tco_count}}</h2>
     <div class="card-container">
+      {% if error.non_field_errors %}<div class="bar error2">{{error.non_field_errors}}</div>{% endif %}
       {% for host in tco %}
       <div class="card4">
         <div style="background-color: rgb(255, 255, 255)">
@@ -19,12 +20,12 @@
 
           <form method="POST">
             {% csrf_token %}
-            <label for="capital">Capital Cost</label>
-            <input type="text" id="capital" name="capital">
+            <label for="capital" >Capital Cost</label>
+            <input type="number" id="capital" name="capital" required>
             <input type=hidden id=host name= host value={{host.hostid}}>
             <input type=hidden id=rack name= rack value={{host.rackid}}>
             <input type=hidden id=floor name= floor value={{host.floorid}}>
-            <button type="submit" class="save">Calculate TCO</button>
+            <button type="submit" class="save" >Calculate TCO</button>
           </form>
 
           <hr>

@@ -345,17 +345,9 @@ body {font-family: Arial;}
   background-color: #ccc;
 }
 
-/* Style the tab content */
-/* .tabcontent {
-  display: none;
-  padding: 6px 12px;
-  border: 1px solid rgb(255, 255, 255);
-  border-top: none;
-} */
 
 
-
-.bar {
+/* .bar {
   padding: 10px;
   margin: 10px;
   color: #333;
@@ -364,6 +356,7 @@ body {font-family: Arial;}
 }
 
 /* (B) THE VARIATIONS */
+/*
 .info {
   color: #204a8e;
   background: #c9ddff;
@@ -378,10 +371,17 @@ body {font-family: Arial;}
   color: #756e15;
   background: #fffbd1;
   border: 1px solid #87803e;
-}
+} */
 .error {
   color: #ba3939;
   background: #ffe0e0;
   border: 1px solid #a33a3a;
-  width:27%;
+  width:36%;
+}
+
+.error2 {
+  color: #ba3939;
+  background: #ffe0e0;
+  border: 1px solid #a33a3a;
+  width:100%;
 }

@@ -8,9 +8,9 @@
     <form method="POST" class="post-form"> 
       {% csrf_token %}
       Lower Threshold
-      <input type="text" name="low">
+      <input type="text" name="low" required>
       Upper Threshold
-      <input type="text" name="medium">
+      <input type="text" name="medium" required>
       <button type="submit" class="save   btn btn-default">Submit</button>
 
       {% if error.non_field_errors %}<div class="bar error">{{error.non_field_errors}}</div>{% endif %}

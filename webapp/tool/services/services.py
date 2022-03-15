@@ -1,4 +1,4 @@
-from tool.models import CurrentDatacenter, MasterIP, ConfiguredDataCenters, Threshold
+from tool.models import CurrentDatacenter, MasterIP, ConfiguredDataCenters, Threshold, Count
 import pandas as pd
 import time
 import requests
@@ -86,3 +86,9 @@ def create_or_update_current(master,current):
 def set_threshold():
     if Threshold.objects.count()==0:
         Threshold.objects.create(low=15,medium=30)
+
+def increment_count():
+    if Count.objects.all().count()==0:
+        Count.objects.create(configured=0)
+    else: 
+        Count.objects.update(configured = Count.objects.all().values().get()['configured']+1)

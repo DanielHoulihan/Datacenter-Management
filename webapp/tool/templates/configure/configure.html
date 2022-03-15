@@ -43,7 +43,7 @@
         <th>* Datacenter</th>
         <td>            
           <label for="to_configure"></label>
-          <select name="to_configure">
+          <select name="to_configure" required>
           {% for datacenter in datacenters %}
               <option name="to_configure" >{{ datacenter.datacenterid }}</option>
           {% endfor %}
@@ -54,7 +54,7 @@
         <th>* Start Date</th>
         <td>            
           <label for="start"></label>
-          <input type="date" id="start" name="start">
+          <input type="date" id="start" name="start" required>
         </td>
       </tr>
       
@@ -70,7 +70,7 @@
         <th>* PUE</th>
         <td>            
           <label width="1px" for="pue"></label>
-          <input type="number" id="pue" name="pue" step="0.1">
+          <input type="number" id="pue" name="pue" step="0.1" required>
         </td>
       </tr>
 
@@ -78,7 +78,7 @@
         <th>* Energy Cost</th>
         <td>            
           <label for="energy_cost"></label>
-          <input type="number" id="energy_cost" name="energy_cost" step="0.1">
+          <input type="number" id="energy_cost" name="energy_cost" step="0.1" required>
         </td>
       </tr>
 
@@ -86,7 +86,7 @@
         <th>* Carbon Conversion</th>
         <td>            
           <label for="carbon_conversion"></label>
-          <input type="number" id="carbon_conversion" name="carbon_conversion" step="0.1">
+          <input type="number" id="carbon_conversion" name="carbon_conversion" step="0.1" required>
         </td>
       </tr>
 
@@ -106,8 +106,9 @@
     </table>
     
     </form>
+    {% if error.non_field_errors %}<div class="bar error2">{{error.non_field_errors}}</div>{% endif %}
   </div>
-  </div>
+</div>
 
 
 {% block content %}
