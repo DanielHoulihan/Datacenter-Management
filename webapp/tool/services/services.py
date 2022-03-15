@@ -1,4 +1,4 @@
-from tool.models import CurrentDatacenter, MasterIP, ConfiguredDataCenters
+from tool.models import CurrentDatacenter, MasterIP, ConfiguredDataCenters, Threshold
 import pandas as pd
 import time
 import requests
@@ -65,7 +65,9 @@ def get_start_end():
     except: return ConfiguredDataCenters.DoesNotExist
 
 def get_reponse(url):
-    return requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
+    try:
+        return requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
+    except: return ConnectionError
 
 def check_master():
     if MasterIP.objects.count()==0:
@@ -74,3 +76,13 @@ def check_master():
 def prompt_configuration(request,page):
     context = {"page":page,"master": get_master(), "current": get_current_for_html()}
     return render(request, 'pick_datacenter/pick_data_center.html', context) 
+
+
+def create_or_update_current(master,current):
+    if CurrentDatacenter.objects.count()==0:
+        CurrentDatacenter.objects.create(masterip = master, current=current)
+    else: CurrentDatacenter.objects.update(masterip = master, current=current)
+
+def set_threshold():
+    if Threshold.objects.count()==0:
+        Threshold.objects.create(low=15,medium=30)

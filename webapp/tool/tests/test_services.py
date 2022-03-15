@@ -1,6 +1,6 @@
 import datetime
 from django.test import TestCase
-from tool import services
+from tool.services import services
 from django.core.exceptions import ObjectDoesNotExist
 from tool.models import CurrentDatacenter, MasterIP, ConfiguredDataCenters
 
@@ -49,9 +49,9 @@ class ServicesTestEmpty(TestCase):
         self.assertEqual(ConfiguredDataCenters.DoesNotExist, test)
 
     def test_get_reponse(self):
-        url="arbitrary_address"
+        url="http://arbitrary_address"
         test = services.get_reponse(url)
-        self.assertEqual(test, None)
+        self.assertEqual(ConnectionError, test)
 
 
 

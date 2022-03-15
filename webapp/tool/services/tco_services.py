@@ -1,7 +1,8 @@
 import requests
 import time
+from . import asset_services
 from tool.models import ConfiguredDataCenters, HostEnergy, CurrentDatacenter
-from . import asset_services, services
+from . import services
 
 def find_available_floors(master, current):
     url = "http://"+master+":8080/papillonserver/rest/datacenters/"+current+"/floors/"

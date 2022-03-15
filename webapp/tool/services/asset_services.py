@@ -1,4 +1,4 @@
-from tool import model_services
+from . import model_services
 from tool.models import Datacenter, Floor, CurrentDatacenter, Host, MasterIP, Rack, ConfiguredDataCenters
 import requests
 import time

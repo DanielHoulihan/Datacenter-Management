@@ -1,55 +1,47 @@
 from django.shortcuts import render
-from tool import tco_services
 from tool.models import ConfiguredDataCenters, Datacenter, Floor, Rack, Host, CurrentDatacenter, Count, MasterIP, HostEnergy, Threshold
-from . import asset_services, services, budget_services
+from .services import services, asset_services, budget_services, tco_services, model_services
 from . import forms
 from django.views.decorators.csrf import csrf_protect
 
 
-def datacenters(request):
-    asset_services.get_datacenters()
-    master = services.get_master()
-
-    if request.method == 'POST':
-        form = forms.SelectCurrentForm(request.POST)
-        if form.is_valid():
-            current = form.cleaned_data['current_datacenter']
-            if CurrentDatacenter.objects.count()==0:
-                CurrentDatacenter.objects.create(masterip = master, current=current)
-            else: CurrentDatacenter.objects.update(masterip = master, current=current)
-
-    datacenters = Datacenter.objects.filter(masterip=master).all()
-    configured = services.get_configured()
-    configured_count = configured.count()
-    
-    return render (request, 'home/home.html', { "datacenters": datacenters, "current": services.get_current_for_html(), "configured":configured, "configured_count": configured_count, "master":master, "page":"home"} )
-
 def floors(request):
+    context = {}
     master = services.get_master()
-    if CurrentDatacenter.objects.filter(masterip=master).all().count()==0:
-        return render (request, 'pick_datacenter/pick_data_center.html', { "floors": "Pick a data center", "floor_count": 0, "master": services.get_master(), "current": services.get_current_for_html(), "configured": services.get_configured(), "page":"assets"} )
-    current = services.get_current_datacenter()
-    asset_services.get_floors(current)
 
-    floors = Floor.objects.filter(datacenterid=current).filter(masterip=master).all()
-    floor_count = floors.count()
-    return render (request, 'assets/floors.html', { "floors": floors, "floor_count": floor_count, "master":master, "current": services.get_current_for_html(), "configured": services.get_configured(), "page":"assets"} )
+    if CurrentDatacenter.objects.filter(masterip=master).all().count()==0:
+        return services.prompt_configuration(request,"assets")
+
+    current = services.get_current_datacenter()
+    asset_services.get_floors(services.get_current_datacenter())
+
+    context['floors'] = Floor.objects.filter(datacenterid=current).filter(masterip=master).all()
+    context['floor_count'] = Floor.objects.filter(datacenterid=current).filter(masterip=master).all().count()
+    context['master'] = master
+    context['current'] = services.get_current_for_html()
+    context['configured'] = services.get_configured()
+    context['page'] = 'assets'
+    return render (request, 'assets/floors.html', context )
 
 
 def racks(request, floorid):
+    context = {}
     current = services.get_current_datacenter()
+
     asset_services.get_racks(current, floorid)
-    racks = Rack.objects.filter(datacenterid=current).filter(floorid=floorid).filter(masterip=services.get_master()).all()
-    rack_count = racks.count()
-    return render (request, 'assets/racks.html', { "racks": racks, "rack_count": rack_count, "master":services.get_master(), "current": services.get_current_for_html(), "configured": services.get_configured(), "page":"assets"} )
+
+    context['racks'] = Rack.objects.filter(datacenterid=current).filter(floorid=floorid).filter(masterip=services.get_master()).all()
+    context['rack_count'] = Rack.objects.filter(datacenterid=current).filter(floorid=floorid).filter(masterip=services.get_master()).all().count()
+    context['master'] = services.get_master()
+    context['current'] = services.get_current_for_html()
+    context['configured'] = services.get_configured()
+    context['page'] = "assets"
+    return render (request, 'assets/racks.html', context )
 
 
 def hosts(request, floorid, rackid):
-
     context = {}
-
-    if Threshold.objects.count()==0:
-        Threshold.objects.create(low=15,medium=30)
+    services.set_threshold()
 
     if request.method == 'POST':
         form = forms.ChanegThresholdForm(request.POST)
@@ -58,27 +50,18 @@ def hosts(request, floorid, rackid):
             Threshold.objects.update(low=low,medium=medium)
         context["error"] = form
 
-
     startTime, endTime = services.get_start_end()
-
     master=services.get_master()
     current = services.get_current_datacenter()
-
-
     asset_services.get_hosts(master, current, floorid, rackid, startTime, endTime)
-    hosts = Host.objects.filter(sub_id=services.get_current_sub_id()).filter(floorid=floorid).filter(masterip=master).filter(rackid=rackid).all()
-    host_count = hosts.count()
-    threshold = Threshold.objects.all().get()
 
-    # context.append({ "hosts": hosts, "host_count": host_count, "threshold": threshold, "master":services.get_master(), "current": services.get_current_for_html(), "configured": services.get_configured(), "page":"assets"})
-    context["hosts"] = hosts
-    context["host_count"] = host_count
-    context["threshold"] = threshold
+    context["hosts"] = Host.objects.filter(sub_id=services.get_current_sub_id()).filter(floorid=floorid).filter(masterip=master).filter(rackid=rackid).all()
+    context["host_count"] = Host.objects.filter(sub_id=services.get_current_sub_id()).filter(floorid=floorid).filter(masterip=master).filter(rackid=rackid).all().count()
+    context["threshold"] = Threshold.objects.all().get()
     context["master"] = services.get_master()
     context["current"] = services.get_current_for_html()
     context["configured"] = services.get_configured()
     context["page"] = "assets"
-
     return render (request, 'assets/hosts.html', context )
     
 @csrf_protect
@@ -94,7 +77,6 @@ def configure(request):
                 CurrentDatacenter.objects.filter(current=to_delete).filter(masterip=master).delete()
                 Host.objects.filter(sub_id=to_delete).filter(masterip=master).delete()
                 HostEnergy.objects.filter(sub_id=to_delete).filter(masterip=master).delete()
-
         elif 'ip' in request.POST:
             ip = request.POST['ip']
             MasterIP.objects.update(master = ip)
@@ -110,57 +92,31 @@ def configure(request):
                 Count.objects.create(configured=0)
             else: 
                 Count.objects.update(configured = Count.objects.all().values().get()['configured']+1)
+                
             if request.POST['endTime'] and not request.POST['budget']: 
-                ConfiguredDataCenters.objects.get_or_create(
-                masterip = master,
-                sub_id = str(to_configure)+"-"+str(Count.objects.all().values().get()['configured']+1),
-                datacenterid = to_configure,
-                startTime = start,
-                endTime = request.POST['endTime'],
-                pue = pue,
-                energy_cost = energy_cost,
-                carbon_conversion = carbon_conversion
-            )
+                model_services.create_configured_end_no_budget(master,
+                str(to_configure)+"-"+str(Count.objects.all().values().get()['configured']+1),
+                to_configure,start,request.POST['endTime'],pue,energy_cost,carbon_conversion)
+
             if request.POST['endTime'] and request.POST['budget']: 
-                ConfiguredDataCenters.objects.get_or_create(
-                masterip = master,
-                sub_id = str(to_configure)+"-"+str(Count.objects.all().values().get()['configured']+1),
-                datacenterid = to_configure,
-                startTime = start,
-                endTime = request.POST['endTime'],
-                pue = pue,
-                energy_cost = energy_cost,
-                carbon_conversion = carbon_conversion,
-                budget = budget
-            )
+                model_services.create_configured_end_budget(master,
+                str(to_configure)+"-"+str(Count.objects.all().values().get()['configured']+1),
+                to_configure,start,request.POST['endTime'],pue,energy_cost,carbon_conversion,budget)
+
             if not request.POST['endTime'] and request.POST['budget']: 
-                ConfiguredDataCenters.objects.get_or_create(
-                masterip = master,
-                sub_id = str(to_configure)+"-"+str(Count.objects.all().values().get()['configured']+1),
-                datacenterid = to_configure,
-                startTime = start,
-                pue = pue,
-                energy_cost = energy_cost,
-                carbon_conversion = carbon_conversion,
-                budget = budget
-            )
+                model_services.create_configured_no_end_budget(master,
+                str(to_configure)+"-"+str(Count.objects.all().values().get()['configured']+1),
+                to_configure,start,pue,energy_cost,carbon_conversion,budget)
+
             else:
-                ConfiguredDataCenters.objects.get_or_create(
-                    masterip = master,
-                    sub_id = str(to_configure)+"-"+str(Count.objects.all().values().get()['configured']+1),
-                    datacenterid = to_configure,
-                    startTime = start,
-                    pue = pue,
-                    energy_cost = energy_cost,
-                    carbon_conversion = carbon_conversion
-                )
+                model_services.create_configured_no_end_no_budget(master,
+                str(to_configure)+"-"+str(Count.objects.all().values().get()['configured']+1),
+                to_configure,start,pue,energy_cost,carbon_conversion)
         elif 'current_datacenter' in request.POST:
             form = forms.SelectCurrentForm(request.POST)
             if form.is_valid():
                 current = form.cleaned_data['current_datacenter']
-                if CurrentDatacenter.objects.count()==0:
-                    CurrentDatacenter.objects.create(masterip = master, current=current)
-                else: CurrentDatacenter.objects.update(masterip = master, current=current)
+                services.create_or_update_current(master,current)
 
 
     master = services.get_master()
