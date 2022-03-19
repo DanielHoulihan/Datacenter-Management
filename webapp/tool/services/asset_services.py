@@ -1,13 +1,14 @@
 from . import model_services
-from tool.models import Datacenter, Floor, CurrentDatacenter, Host, MasterIP, Rack, ConfiguredDataCenters
+from tool.models import Host
 import requests
-import time
 from . import services
 
 def get_datacenters():
+    """ Find all datacenters found on master IP """
+
     services.check_master()
     master = services.get_master()
-    url = "http://"+master+":8080/papillonserver/rest/datacenters" 
+    url = services.create_url(master)
     try:
         response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
     except Exception: return 
@@ -22,9 +23,15 @@ def get_datacenters():
 
 
 def get_floors(datacenter):
+    """ Create floor objects from floors in specified datacenter 
+
+    Args:
+        datacenter (String): Datacenter ID 
+    """
+
     get_datacenters()
     master = services.get_master()
-    url = "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors"
+    url = services.create_url(master, datacenter)
     response = services.get_reponse(url)
     data = response.json()
     if data!=None: 
@@ -37,9 +44,16 @@ def get_floors(datacenter):
 
 
 def get_racks(datacenter, floorid):
+    """ Create rack objects from racks in specified datacenter and floor
+
+    Args:
+        datacenter (String): Datacenter ID
+        floorid (String): Floor ID
+    """
+
     get_floors(datacenter)
     master = services.get_master()
-    url = "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"+floorid+"/racks"
+    url = services.create_url(master, datacenter, floorid)
     response = services.get_reponse(url)
     data = response.json()
     if data!=None: 
@@ -52,9 +66,22 @@ def get_racks(datacenter, floorid):
 
 
 def get_hosts(master, datacenter, floorid, rackid, startTime, endTime):
+    """ Create host objects for specified datacenter, floor, rack and populate Host objects with 
+        CPU usage metrics
+
+    Args:
+        master (String): IP address of master
+        datacenter (String): Current datacenter ID
+        floorid (String): Selected floor ID
+        rackid (String): Selected rack ID
+        hostid (String): Selected Host ID
+        startTime (String): Start Time of period
+        endTime (String): End time of period
+    """
+
     get_racks(datacenter, floorid)
     current = services.get_current_sub_id()
-    url = "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"+floorid+"/racks/"+rackid+"/hosts/"
+    url = services.create_url(master, datacenter, floorid, rackid)
     response = services.get_reponse(url)
     data = response.json()
     if data!=None: 
@@ -67,6 +94,20 @@ def get_hosts(master, datacenter, floorid, rackid, startTime, endTime):
 
 
 def get_host_energy(prefix, url, startTime,endTime,master,datacenter,floorid,current,rackid):
+    """ Create Host objects and populate with CPU usage metrics
+
+    Args:
+        prefix (_type_): Incremental prefix
+        url (_type_): URL to get respoinse from
+        startTime (_type_): Start Time of period
+        endTime (_type_): End Time of period
+        master (_type_): IP address of master
+        datacenter (_type_): current datacenter
+        floorid (_type_): Selected floor ID
+        current (_type_): sub_id of current datacenter
+        rackid (_type_): Selected Rack ID
+    """
+
     new_url = url + prefix['id'] +"/activity?starttime="+str(startTime)+"&endtime="+str(endTime)
     response = services.get_reponse(new_url)
     data2 = response.json()
@@ -90,6 +131,6 @@ def get_host_energy(prefix, url, startTime,endTime,master,datacenter,floorid,cur
         prefix['id'],prefix['name'],prefix['description'],prefix['hostType'],prefix['processorCount'],prefix['IPAddress'],
         data2['activity'][-1:][0]['timeStamp'],avg_cpu,cpu_count,cpu_total)
     else:
-        host.update(cpu_usage=avg_cpu, responses=cpu_count, total_cpu = cpu_total)
+        host.update(cpu_usage=avg_cpu, responses=cpu_count, total_cpu=cpu_total, lastTime=data2['activity'][-1:][0])
 
 

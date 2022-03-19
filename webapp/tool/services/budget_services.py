@@ -8,19 +8,27 @@ import matplotlib.pyplot as plt
 import base64
 import io
 import matplotlib.dates as mdates 
-
-
-
 plt.switch_backend('Agg') 
 
 def get_hosts(master, current_sub):
+    """ Finds energy usage in all hosts in specified datacenter
+
+    Args:
+        master (String): IP address of master
+        current_sub (String): sub_id of current datacenter
+
+    Returns:
+        Pandas DataFrame: Each hosts energy usage
+        Pandas DataFrame: Total of all hosts energy usage
+    """
 
     startTime,endTime = services.get_start_end()
     available_hosts = HostEnergy.objects.filter(masterip=master).filter(sub_id=current_sub).all().values()
     df_list=[unix_range(startTime,endTime)]
 
     for host in available_hosts:
-        url = "http://"+host['masterip']+":8080/papillonserver/rest/datacenters/"+host['datacenterid']+"/floors/"+str(host['floorid'])+"/racks/"+str(host['rackid'])+"/hosts/"+str(host['hostid'])+"/power?starttime="+startTime+"&endtime="+endTime
+        url = services.create_url(host['masterip'],host['datacenterid'],
+                                    str(host['floorid']),str(host['rackid']),str(host['hostid']),startTime,endTime)
         response = services.get_reponse(url)
         data = response.json()
         start=int(startTime)
@@ -56,6 +64,16 @@ def get_hosts(master, current_sub):
 
 
 def plot_usage(table, ylabel):
+    """ Generates matplotlib graph showing usage of carbon, energy, euro
+
+    Args:
+        table (Pandas DataFrame): Table holding daily consumption
+        ylabel (String): Y label of graph
+
+    Returns:
+        base64: base64 encoded matplotlib graph (for html)
+    """
+
     startTime, endTime = services.get_start_end()
     startTime=int(startTime)-10000
     fig, ax = plt.subplots(figsize=(6,5))
@@ -82,6 +100,16 @@ def plot_usage(table, ylabel):
 
 
 def plot_carbon_total(table):
+    """ Generates matplotlib graph showing usage of carbon with budget line
+
+    Args:
+        table (Pandas DataFrame): Table holding daily consumption
+        ylabel (String): Y label of graph
+
+    Returns:
+        base64: base64 encoded matplotlib graph (for html)
+    """
+
     startTime, endTime = services.get_start_end()
     startTime=int(startTime)-10000
     fig, ax = plt.subplots(figsize=(6,5))
@@ -108,6 +136,15 @@ def plot_carbon_total(table):
     return base64.b64encode(buf.getvalue()).decode()
 
 def carbon_usage(table):
+    """ Convert energy usage into carbon usage
+
+    Args:
+        table (Pandas Dataframe): energy table to convert into carbon usage
+
+    Returns:
+        Pandas DataFrame: Converted table
+    """
+    
     temp = table.copy()
     carbon = services.get_carbon_conversion()
     for col in temp.columns[1:]:
@@ -115,6 +152,15 @@ def carbon_usage(table):
     return temp
 
 def cost_estimate(table):
+    """ Convert energy usage into operational cost
+
+    Args:
+        table (Pandas Dataframe): energy table to convert into operational cost
+
+    Returns:
+        Pandas DataFrame: Converted table
+    """
+
     temp = table.copy()
     cost = services.get_energy_cost()
     for col in temp.columns[1:]:
@@ -122,7 +168,17 @@ def cost_estimate(table):
     return temp
 
 def unix_range(startTime,endTime):
-    start=int(startTime)
+    """ Create dataframe with index as unix date (step = 1 day)
+
+    Args:
+        startTime (String): start time of dataframe
+        endTime (String): end time of dataframe
+
+    Returns:
+        Pandas DataFrame: Empty dataframe with UNIX date range as index
+    """
+
+    start = int(startTime)
     range1 = int((int(endTime)-start)/86400)
     dates=[]
     for i in range(0,range1):

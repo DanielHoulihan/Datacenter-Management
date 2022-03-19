@@ -1,11 +1,23 @@
+#!/usr/bin/env python
+
 from django.shortcuts import render
 from tool.models import ConfiguredDataCenters, Datacenter, Floor, Rack, Host, CurrentDatacenter, Count, MasterIP, HostEnergy, Threshold
 from .services import services, asset_services, budget_services, tco_services, model_services
 from . import forms
 from django.views.decorators.csrf import csrf_protect
 
+__author__ = "Daniel Houlihan"
+__studentnumber__ = "18339866"
+__version__ = "1.0.1"
+__maintainer__ = "Daniel Houlihan"
+__email__ = "daniel.houlihan@ucdconnect.ie"
+__status__ = "Production"
 
 def floors(request):
+    """ Assets Tab
+    Finds the available floors in the chosen datacenter (assets) 
+    """    
+
     context = {}
     master = services.get_master()
 
@@ -19,12 +31,15 @@ def floors(request):
     context['floor_count'] = Floor.objects.filter(datacenterid=current).filter(masterip=master).all().count()
     context['master'] = master
     context['current'] = services.get_current_for_html()
-    # context['configured'] = services.get_configured()
     context['page'] = 'assets'
     return render (request, 'assets/floors.html', context )
 
 
 def racks(request, floorid):
+    """ Assets/Racks Tab
+    Finds the available racks in the chosen datacenter (assets) and sends to template
+    """
+
     context = {}
     current = services.get_current_datacenter()
 
@@ -34,12 +49,15 @@ def racks(request, floorid):
     context['rack_count'] = Rack.objects.filter(datacenterid=current).filter(floorid=floorid).filter(masterip=services.get_master()).all().count()
     context['master'] = services.get_master()
     context['current'] = services.get_current_for_html()
-    # context['configured'] = services.get_configured()
     context['page'] = "assets"
     return render (request, 'assets/racks.html', context )
 
 
 def hosts(request, floorid, rackid):
+    """ Assets/Racks/Hosts Tab 
+    Finds the available hosts in the chosen datacenter (assets) and sends to template
+    """
+
     context = {}
     services.set_threshold()
 
@@ -60,16 +78,22 @@ def hosts(request, floorid, rackid):
     context["threshold"] = Threshold.objects.all().get()
     context["master"] = services.get_master()
     context["current"] = services.get_current_for_html()
-    # context["configured"] = services.get_configured()
     context["page"] = "assets"
     return render (request, 'assets/hosts.html', context )
     
+
 @csrf_protect
 def configure(request):
+    """ Home Tab
+    # 'to_delete' - remove selected datacenter from database
+    # 'ip' - change the ip address of te master
+    # 'to_configure' - setting up a new configured datacenter
+    # 'current_datacenter' - select a current datacenter from the configured
+    """
+
     context = {}
     asset_services.get_datacenters()
     master = services.get_master()
-    
     if request.method == 'POST':
         if 'to_delete' in request.POST:
             form = forms.DeleteConfigurationForm(request.POST)
@@ -86,13 +110,13 @@ def configure(request):
             if form.is_valid():
                 ip = form.cleaned_data
                 MasterIP.objects.update(master = ip)
+                asset_services.get_datacenters()
 
     if request.method == 'POST':
         if 'to_configure' in request.POST:
             form = forms.ConfigureNewDatacenterForm(request.POST)
             if form.is_valid():
                 to_configure, start, end, pue, energy_cost, carbon_conversion, budget = form.cleaned_data
-
                 services.increment_count()
                 if end and not budget: 
                     model_services.create_configured_end_no_budget(master,
@@ -135,6 +159,10 @@ def configure(request):
 
 @csrf_protect
 def tco(request):
+    """ TCO Tab
+    # Calculates TCO of selected host - sends to template
+    """
+
     context = {}
     master = services.get_master()
 
@@ -162,6 +190,10 @@ def tco(request):
 
 
 def budget(request):
+    """ Budget Tab
+    Generate graphs for carbon usage, energy usage, costs
+    """
+
     context = {}
     master = services.get_master()
     current_sub = services.get_current_sub_id()
@@ -187,3 +219,6 @@ def budget(request):
 
     return render(request, 'budget/budget.html', context)
  
+
+
+ # production example - https://github.com/gothinkster/django-realworld-example-app

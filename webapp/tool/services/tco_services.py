@@ -1,13 +1,19 @@
-import requests
-import time
-from . import asset_services
-from tool.models import ConfiguredDataCenters, HostEnergy, CurrentDatacenter
+from tool.models import HostEnergy
 from . import services
 
 def find_available_floors(master, current):
-    url = "http://"+master+":8080/papillonserver/rest/datacenters/"+current+"/floors/"
+    """ Finds all floors in the currently selected datacenter 
+
+    Args:
+        master (String): IP address of master 
+        current (String): Current datacenter ID
+
+    Returns:
+        list[String]: list of all floors in specified datacenter
+    """    
+
+    url = services.create_url(master, current)
     response = services.get_reponse(url)
-    # response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
     data = response.json()
     floors = []
     if data!=None: 
@@ -20,9 +26,19 @@ def find_available_floors(master, current):
 
 
 def find_available_racks(master, current, floorid):
-    url = "http://"+master+":8080/papillonserver/rest/datacenters/"+current+"/floors/"+floorid+"/racks"
+    """ Finds all racks in the currently selected datacenter and specified floor
+
+    Args:
+        master (String): IP address of master
+        current (String): Current datacenter ID
+        floorid (String): Selected floor ID
+
+    Returns:
+        list[String]: list of all racks in specified datacenter and floor
+    """
+
+    url = services.create_url(master, current, floorid)
     response = services.get_reponse(url)
-    # response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
     data = response.json()
     racks = []
     if data!=None: 
@@ -36,20 +52,33 @@ def find_available_racks(master, current, floorid):
 
             
 def find_all_available_hosts(master, current):
+    """ Finds all floors, racks, hosts in selected datacenter
+
+    Args:
+        master (String): IP address of master
+        current (String): Current datacenter ID
+    """
+
     for floor in find_available_floors(master, current):
         for rack in find_available_racks(master, current, floor):
             get_hosts_tco(master, current, floor, rack)
 
 
-                
 
 def get_hosts_tco(master, datacenter, floorid, rackid):
+    """ Creates HostEnergy objects in specified rack
+
+    Args:
+        master (String): IP address of master
+        current (String): Current datacenter ID
+        floorid (String): Selected floor ID
+        rackid (String): Selected rack ID
+    """
+
     current = services.get_current_sub_id()
-    url = "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"+floorid+"/racks/"+rackid+"/hosts"
+    url = services.create_url(master, datacenter, floorid, rackid)
     response = services.get_reponse(url)
-    # response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
     data = response.json()
-    
     if data!=None: 
         if isinstance(data['host'], list):
             for i in data['host']:
@@ -75,10 +104,21 @@ def get_hosts_tco(master, datacenter, floorid, rackid):
 
 
 def get_energy_usage(master, datacenter, floorid, rackid, hostid, startTime, endTime, capital):
+    """ Calculates TCO for specified host and uipdates existing HostEnergy Object
+
+    Args:
+        master (String): IP address of master
+        current (String): Current datacenter ID
+        floorid (String): Selected floor ID
+        rackid (String): Selected rack ID
+        hostid (String): Selected Host ID
+        startTime (String): Start Time of period
+        endTime (String): End time of period
+        capital (Integer): Capital cost of selected host
+    """
     current = services.get_current_sub_id()
-    url = "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"+floorid+"/racks/"+rackid+"/hosts/"+hostid+"/power?starttime="+startTime+"&endtime="+endTime
+    url = services.create_url(master, datacenter, floorid, rackid, hostid, startTime, endTime)
     response = services.get_reponse(url)
-    # response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
     data = response.json()
     minutes=0
     total_watts=0

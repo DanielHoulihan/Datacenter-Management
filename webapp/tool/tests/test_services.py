@@ -2,7 +2,7 @@ import datetime
 from django.test import TestCase
 from tool.services import services
 from django.core.exceptions import ObjectDoesNotExist
-from tool.models import CurrentDatacenter, MasterIP, ConfiguredDataCenters
+from tool.models import Count, CurrentDatacenter, MasterIP, ConfiguredDataCenters,Threshold
 
 
 class ServicesTestEmpty(TestCase):
@@ -53,7 +53,24 @@ class ServicesTestEmpty(TestCase):
         test = services.get_reponse(url)
         self.assertEqual(ConnectionError, test)
 
+    def test_set_threshold(self):
+        services.set_threshold()
+        self.assertEqual(Threshold.objects.all().values().get()['low'],15)
+        self.assertEqual(Threshold.objects.all().values().get()['medium'],30)
 
+    def test_get_empty_threshold(self):
+        self.assertEqual(services.get_lower_threshold(),Threshold.DoesNotExist)
+        self.assertEqual(services.get_upper_threshold(),Threshold.DoesNotExist)
+
+    def test_increment_count(self):
+        services.increment_count()
+        services.increment_count()
+        self.assertEqual(Count.objects.all().values().get()['configured'], 1)
+    
+    def test_create_or_update_current(self):
+        master = "master IP"
+        current = "current datacenter"
+        services.create_or_update_current(master, current)
 
 
 class ServicesTest(TestCase):

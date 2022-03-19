@@ -1,7 +1,8 @@
-from tool.models import Datacenter, Floor, CurrentDatacenter, Host, MasterIP, Rack, ConfiguredDataCenters
-import requests
-import time
-from . import services
+from tool.models import Datacenter, Floor, Host, Rack, ConfiguredDataCenters
+
+""" 
+Filling models for cleaner, more readable code
+"""
 
 def create_datacenter(master,id,name,description):
     Datacenter.objects.get_or_create(
@@ -31,7 +32,8 @@ def create_rack(master,datacenter,floor,rack,name,description,pdu):
         pdu = pdu
     )
 
-def create_empty_host(master,sub_id,datacenter,floorid,rack,id,name,description,type,processors,ip):
+def create_empty_host(master,sub_id,datacenter,floorid,rack,id,name,
+        description,type,processors,ip):
     Host.objects.get_or_create(
         masterip = master,
         sub_id = sub_id,
@@ -46,7 +48,8 @@ def create_empty_host(master,sub_id,datacenter,floorid,rack,id,name,description,
         ipaddress = ip
     )
 
-def create_host(master,sub_id,datacenter,floorid,rack,id,name,description,type,processors,ip,last,avg_cpu,cpu_count,cpu_total):
+def create_host(master,sub_id,datacenter,floorid,rack,id,name,description,
+        type,processors,ip,last,avg_cpu,cpu_count,cpu_total):
     Host.objects.get_or_create(
         masterip = master,
         sub_id = sub_id,
@@ -65,7 +68,8 @@ def create_host(master,sub_id,datacenter,floorid,rack,id,name,description,type,p
         total_cpu = cpu_total
     )
 
-def create_configured_end_no_budget(master,sub_id,datacenter,start,end,pue,energy_cost,carbon_conversion):
+def create_configured_end_no_budget(master,sub_id,datacenter,start,end,
+        pue,energy_cost,carbon_conversion):
     ConfiguredDataCenters.objects.get_or_create(
         masterip = master,
         sub_id = sub_id,
@@ -77,7 +81,8 @@ def create_configured_end_no_budget(master,sub_id,datacenter,start,end,pue,energ
         carbon_conversion = carbon_conversion
     )
 
-def create_configured_end_budget(master,sub_id,datacenter,start,end,pue,energy_cost,carbon_conversion,budget):
+def create_configured_end_budget(master,sub_id,datacenter,start,end,pue,
+        energy_cost,carbon_conversion,budget):
     ConfiguredDataCenters.objects.get_or_create(
         masterip = master,
         sub_id = sub_id,
@@ -90,7 +95,8 @@ def create_configured_end_budget(master,sub_id,datacenter,start,end,pue,energy_c
         budget = budget
     )
 
-def create_configured_no_end_budget(master,sub_id,datacenter,start,pue,energy_cost,carbon_conversion,budget):
+def create_configured_no_end_budget(master,sub_id,datacenter,start,pue,
+        energy_cost,carbon_conversion,budget):
     ConfiguredDataCenters.objects.get_or_create(
         masterip = master,
         sub_id = sub_id,
@@ -102,7 +108,8 @@ def create_configured_no_end_budget(master,sub_id,datacenter,start,pue,energy_co
         budget = budget
     )
 
-def create_configured_no_end_no_budget(master,sub_id,datacenter,start,pue,energy_cost,carbon_conversion):
+def create_configured_no_end_no_budget(master,sub_id,datacenter,start,
+        pue,energy_cost,carbon_conversion):
     ConfiguredDataCenters.objects.get_or_create(
         masterip = master,
         sub_id = sub_id,

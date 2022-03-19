@@ -5,10 +5,7 @@
 </head>
 
 <div class="content">
-
   <div class="sidenav">
-
-    <!-- <br> -->
     <div class="change_current_card">
       <h3>Selected Data Center: {{current}}</h3>
       <form method="POST">
@@ -23,7 +20,6 @@
       </form>
     </div>
     
-
     <div class="change_master_card">
       <h3>Change Master IP</h3>
       <form method="POST">
@@ -47,7 +43,8 @@
           {% for datacenter in datacenters %}
               <option name="to_configure" >{{ datacenter.datacenterid }}</option>
           {% endfor %}
-          </select></td>
+          </select>
+        </td>
       </tr>
 
       <tr>
@@ -97,6 +94,7 @@
           <input type="number" id="budget" name="budget" step="10">
         </td>
       </tr>
+
       <tr>
         <th></th>
         <td>            
@@ -107,8 +105,8 @@
     
     </form>
     {% if error.non_field_errors %}<div class="bar error2">{{error.non_field_errors}}</div>{% endif %}
+    </div>
   </div>
-</div>
 
 
 {% block content %}
