@@ -1,5 +1,5 @@
 from tool.models import HostEnergy
-from . import services
+from . import services, model_services
 
 def find_available_floors(master, current):
     """ Finds all floors in the currently selected datacenter 
@@ -82,25 +82,27 @@ def get_hosts_tco(master, datacenter, floorid, rackid):
     if data!=None: 
         if isinstance(data['host'], list):
             for i in data['host']:
-                HostEnergy.objects.get_or_create(
-                    masterip = master,
-                    sub_id = current,
-                    datacenterid = datacenter,
-                    floorid = floorid,
-                    rackid = i['rackId'],
-                    hostid = i['id'],
-                    ipaddress = i['IPAddress']
-                )
+                model_services.create_host_energy(master,current,datacenter,floorid,i['rackId'],i['id'],i['IPAddress'])
+                # HostEnergy.objects.get_or_create(
+                #     masterip = master,
+                #     sub_id = current,
+                #     datacenterid = datacenter,
+                #     floorid = floorid,
+                #     rackid = i['rackId'],
+                #     hostid = i['id'],
+                #     ipaddress = i['IPAddress']
+                # )
         else:
-            HostEnergy.objects.get_or_create(
-                masterip = master,
-                sub_id = current,
-                datacenterid = datacenter,
-                floorid = floorid,
-                rackid = data['host']['rackId'],
-                hostid = data['host']['id'],
-                ipaddress = data['host']['IPAddress']
-            )
+            model_services.create_host_energy(master,current,datacenter,floorid,data['host']['rackId'],data['host']['id'],data['host']['IPAddress'])
+            # HostEnergy.objects.get_or_create(
+            #     masterip = master,
+            #     sub_id = current,
+            #     datacenterid = datacenter,
+            #     floorid = floorid,
+            #     rackid = data['host']['rackId'],
+            #     hostid = data['host']['id'],
+            #     ipaddress = data['host']['IPAddress']
+            # )
 
 
 def get_energy_usage(master, datacenter, floorid, rackid, hostid, startTime, endTime, capital):
@@ -116,6 +118,7 @@ def get_energy_usage(master, datacenter, floorid, rackid, hostid, startTime, end
         endTime (String): End time of period
         capital (Integer): Capital cost of selected host
     """
+    
     current = services.get_current_sub_id()
     url = services.create_url(master, datacenter, floorid, rackid, hostid, startTime, endTime)
     response = services.get_reponse(url)
@@ -131,7 +134,6 @@ def get_energy_usage(master, datacenter, floorid, rackid, hostid, startTime, end
             minutes+=1
 
         hours = minutes/60
-        watt_hour = total_watts/hours
         kWh = total_watts/hours/1000
         ops_cons_3 =24*7*kWh*52*3
         pue = services.get_pue()
@@ -143,5 +145,14 @@ def get_energy_usage(master, datacenter, floorid, rackid, hostid, startTime, end
         kWh_consumed = total_watts/1000
 
         host = HostEnergy.objects.filter(masterip=master).filter(sub_id = current).filter(floorid=floorid).filter(rackid=rackid).filter(hostid=hostid)
-        host.update(TCO=tco_3,total_watt_hour=total_watts, minutes = minutes, hours = hours, avg_kWh=kWh, avg_watt_hour = watt_hour, capital=capital, ops_cons_3=ops_cons_3, carbon_footprint_3=carbon_footprint_3, op_cost_3=op_cost_3, kWh_consumed=kWh_consumed)
+        host.update(
+            capital=capital,
+            TCO=tco_3,
+            carbon_footprint_3=carbon_footprint_3,
+            minutes=minutes,
+            kWh_consumed=kWh_consumed,
+            ops_cons_3=ops_cons_3,
+            op_cost_3=op_cost_3
+        )
+        # host.update(TCO=tco_3,total_watt_hour=total_watts, minutes = minutes, hours = hours, avg_kWh=kWh, avg_watt_hour = watt_hour, capital=capital, ops_cons_3=ops_cons_3, carbon_footprint_3=carbon_footprint_3, op_cost_3=op_cost_3, kWh_consumed=kWh_consumed)
 

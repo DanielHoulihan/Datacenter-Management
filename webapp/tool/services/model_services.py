@@ -1,4 +1,4 @@
-from tool.models import Datacenter, Floor, Host, Rack, ConfiguredDataCenters
+from tool.models import Datacenter, Floor, Host, Rack, ConfiguredDataCenters, HostEnergy
 
 """ 
 Filling models for cleaner, more readable code
@@ -118,4 +118,16 @@ def create_configured_no_end_no_budget(master,sub_id,datacenter,start,
         pue = pue,
         energy_cost = energy_cost,
         carbon_conversion = carbon_conversion,
+    )
+    
+    
+def create_host_energy(master,current,datacenter,floorid,rackid,hostid,ip):
+    HostEnergy.objects.get_or_create(
+        masterip = master,
+        sub_id = current,
+        datacenterid = datacenter,
+        floorid = floorid,
+        rackid = rackid,
+        hostid = hostid,
+        ipaddress = ip
     )

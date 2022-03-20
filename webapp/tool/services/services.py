@@ -29,7 +29,7 @@ def get_current_for_html():
     """ Find the sub_id of the current datacenter for html use """
 
     try:
-        current = str(CurrentDatacenter.objects.all().values().get()['current'])
+        current = str(CurrentDatacenter.objects.filter(masterip=get_master()).all().values().get()['current'])
     except:
         current='-'
     return current

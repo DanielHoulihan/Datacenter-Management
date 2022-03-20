@@ -22,6 +22,8 @@ To start the webapp run:
 fab run
 ```
 
+Webapp is now available at http://localhost:8000
+
 To stop the webapp run:
 ```
 fab kill

@@ -1,6 +1,7 @@
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
+  background-color:#ffffff;
 }
 
 input[type=number]{
@@ -64,30 +65,36 @@ height: 25px;
 text-align: left;
 }
 
+.homecontent { 
+  margin-left : 20px; 
+  margin-right : 20px; 
+  margin-top:210px;
+  margin-bottom:30px;
+  background-color:#EEEEEE;
+  }
 
 .content { 
   margin-left : 20px; 
   margin-right : 20px; 
-  margin-top:160px;
+  margin-top:170px;
   margin-bottom:30px;
+  background-color:#EEEEEE;
   }
 
 .configure_content { 
-  margin-left : 280px; 
+  margin-left : 20px; 
+  background-color:#EEEEEE;
   }
 
 .sidenav {
     height: 90%; 
-    width: 265px;
+    width: 230px;
     position: fixed;
     z-index: 0; 
-    left: 6px;
+    left: 0px;
     background-color: #4a4a4a; 
     overflow-x: hidden; 
-    top:152px;
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
-    border-bottom-right-radius:20px;
+    top:148px;
     font-size:12px
   }
   
@@ -203,6 +210,20 @@ body {
   font-size: 17px;
 }
 
+.topnav3 a.a2 {
+  float: right;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.topnav3 a.a2:hover {
+  background-color: #AFEEEE;
+  color: black;
+}
+
 .topnav3 a:hover {
   background-color: #ddd;
   color: black;
@@ -217,14 +238,10 @@ body {
 .configure_card {
   width: 227px;
   height: 265px;
-  margin: 15px;
+  /* margin: 15px; */
   padding: 5px;
-  background-color: #F0FFFF;
+  background-color: #9e0dd8;
   box-shadow: 0 0 12px rgb(63, 63, 63);
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
-  border-bottom-right-radius:20px;
-  border-bottom-left-radius:20px;
   }
 
 .change_master_card {
@@ -274,11 +291,12 @@ border-bottom-left-radius:20px;
 
 .styled-table {
   border-collapse: collapse;
-  margin: 25px 0;
-  font-size: 0.9em;
+  /* margin: 10px 0; */
+  font-size: 15px;
   font-family: sans-serif;
   min-width: 400px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+  background-color: rgb(255, 255, 255);
 }
 
 .styled-table thead tr {
@@ -288,15 +306,15 @@ border-bottom-left-radius:20px;
 }
 .styled-table th,
 .styled-table td {
-    padding: 12px 15px;
+    padding: 10px 10px;
 }
 
 .styled-table tbody tr {
-  border-bottom: 1px solid #dddddd;
+  border-bottom: 1px solid #b63b3b;
 }
 
 .styled-table tbody tr:nth-of-type(even) {
-  background-color: #f3f3f3;
+  background-color: #460a0a;
 }
 
 .styled-table tbody tr:last-of-type {
@@ -320,7 +338,7 @@ body {font-family: Arial;}
   overflow: hidden;
   border: 1px solid rgb(255, 255, 255);
   background-color: #f1f1f1;
-  width: 250px;
+  width: 100%;
 }
 
 /* Style the buttons inside the tab */
@@ -357,4 +375,79 @@ body {font-family: Arial;}
   background: #ffe0e0;
   border: 1px solid #a33a3a;
   width:100%;
+}
+
+
+
+body {font-family: Arial, Helvetica, sans-serif;}
+* {box-sizing: border-box;}
+
+/* Button used to open the contact form - fixed at the bottom of the page */
+.open-button {
+  background-color: #555;
+  color: white;
+  padding: 16px 20px;
+  border: none;
+  cursor: pointer;
+  opacity: 0.8;
+  position: fixed;
+  top: 150px;
+  left: 28px;
+  width: 280px;
+}
+
+/* The popup form - hidden by default */
+.form-popup {
+  top: 150px;
+  left: 28px;
+  display: none;
+  position: fixed;
+  /* bottom: 0; */
+  right: 15px;
+  border: 3px solid #f1f1f1;
+  z-index: 9;
+}
+
+/* Add styles to the form container */
+.form-container {
+  max-width: 300px;
+  padding: 10px;
+  background-color: white;
+}
+
+/* Full-width input fields */
+.form-container input[type=text], .form-container input[type=password] {
+  width: 20%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  border: none;
+  background: #f1f1f1;
+}
+
+/* When the inputs get focus, do something */
+.form-container input[type=text]:focus, .form-container input[type=password]:focus {
+  background-color: #ddd;
+  outline: none;
+}
+
+/* Set a style for the submit/login button */
+.form-container .btn {
+  background-color: #04AA6D;
+  color: white;
+  padding: 16px 20px;
+  border: none;
+  cursor: pointer;
+  width: 20%;
+  margin-bottom:10px;
+  opacity: 0.8;
+}
+
+/* Add a red background color to the cancel button */
+.form-container .cancel {
+  background-color: red;
+}
+
+/* Add some hover effects to buttons */
+.form-container .btn:hover, .open-button:hover {
+  opacity: 1;
 }

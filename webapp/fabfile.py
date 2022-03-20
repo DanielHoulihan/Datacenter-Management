@@ -2,10 +2,8 @@ from fabric import task
 
 @task
 def setup(c):
-    c.run('virtualenv --no-site-packages --distribute .env && source .env/bin/activate && pip install -r requirements.txt', replace_env=True, pty=False)
-    # c.run('source env/bin/activate')
     # c.run('pip3 install -r requirements.txt')
-    # c.run("python3 manage.py collectstatic --noinput")
+    c.run("python3 manage.py collectstatic --noinput")
 
 @task
 def run(c):

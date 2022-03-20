@@ -4,31 +4,95 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 </head>
 
-<div class="content">
-  <div class="sidenav">
-    <div class="change_current_card">
-      <h3>Selected Data Center: {{current}}</h3>
-      <form method="POST">
-        {% csrf_token %}
-        <select name="current_datacenter" >
-          <option value={{current}} disabled selected>{{current}}</option>
-          {% for datacenter in configured %}
-            <option name="current_datacenter" >{{ datacenter.sub_id }}</option>
-          {% endfor %}
-        </select>
-        <button type="submit" class="save">Submit</button>
-      </form>
-    </div>
-    
-    <div class="change_master_card">
-      <h3>Change Master IP</h3>
-      <form method="POST">
-        {% csrf_token %}
-        <input type="text" id="ip" name="ip" placeholder={{master}}>
-        <button type="submit" class="save" >Change</button>
-      </form>
-    </div>
+<div class="homecontent">
 
+  <button class="open-button" onclick="openForm()">Configure Datacenter</button>
+  {% if error.non_field_errors %}<div class="bar error2">{{error.non_field_errors}}</div>{% endif %}
+  
+  <div class="form-popup" id="myForm">
+        
+      <div class="configure_card" action="/action_page.php" class="form-container">
+        <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
+      <form method="POST" >
+      {% csrf_token %}
+      <table style="width:100%" class="table2">
+        <tr>
+          <th>* Datacenter</th>
+          <td>            
+            <label for="to_configure"></label>
+            <select name="to_configure" required>
+            {% for datacenter in datacenters %}
+                <option name="to_configure" >{{ datacenter.datacenterid }}</option>
+            {% endfor %}
+            </select>
+          </td>
+        </tr>
+  
+        <tr>
+          <th>* Start Date</th>
+          <td>            
+            <label for="start"></label>
+            <input type="date" id="start" name="start" required>
+          </td>
+        </tr>
+        
+        <tr>
+          <th>End Date</th>
+          <td>            
+            <label for="endTime"></label>
+            <input type="date" id="endTime" name="endTime">
+          </td>
+        </tr>
+  
+        <tr>
+          <th>* PUE</th>
+          <td>            
+            <label width="1px" for="pue"></label>
+            <input type="number" id="pue" name="pue" step="0.1" required>
+          </td>
+        </tr>
+  
+        <tr>
+          <th>* Energy Cost</th>
+          <td>            
+            <label for="energy_cost"></label>
+            <input type="number" id="energy_cost" name="energy_cost" step="0.1" required>
+          </td>
+        </tr>
+  
+        <tr>
+          <th>* Carbon Conversion</th>
+          <td>            
+            <label for="carbon_conversion"></label>
+            <input type="number" id="carbon_conversion" name="carbon_conversion" step="0.1" required>
+          </td>
+        </tr>
+  
+        <tr>
+          <th>Carbon Budget</th>
+          <td>            
+            <label for="budget"></label>
+            <input type="number" id="budget" name="budget" step="10">
+          </td>
+        </tr>
+  
+        <tr>
+          <th></th>
+          <td>            
+            <button type="submit" class="save">Submit</button>
+          </td>
+        </tr>
+      </table>
+      
+      </form>
+      {% if error.non_field_errors %}<div class="bar error2">{{error.non_field_errors}}</div>{% endif %}
+      </div>
+  
+    </form>
+  
+  </div>
+  {% comment %} <div class="sidenav">   
+    <br> 
     <div class="configure_card">
       <h3>Configure New Datacenter</h3>
       <hr>
@@ -105,8 +169,8 @@
     
     </form>
     {% if error.non_field_errors %}<div class="bar error2">{{error.non_field_errors}}</div>{% endif %}
-    </div>
-  </div>
+    </div> {% endcomment %}
+  {% comment %} </div> {% endcomment %}
 
 
 {% block content %}
@@ -115,6 +179,7 @@
 <table style="width:100%" class="styled-table">
   <thead>
   <tr>
+    <th></th>
     <th>Datacenter ID</th>
     <th>Instance</th>
     <th>PUE</th>
@@ -128,8 +193,13 @@
   </thead>
   {% for datacenter in configured %}
   <tbody>
-    {% if datacenter.sub_id == current %}<tr style="font-weight: bold; color: #009879; background-color: rgb(240, 240, 255);">{% else %}<tr>{% endif %}
-      
+    {% if datacenter.sub_id == current %}<tr style="font-weight: bold; color: #041E42; background-color: #87CEFA;">{% else %}<tr>{% endif %}
+    <td>
+      <form method="POST">
+        {% csrf_token %}
+        <button type="submit" class="save" name = "current_datacenter" value={{datacenter.sub_id}}>Select</button>
+    </form>
+    </td>
     <td>{{datacenter.datacenterid}}</td>
     <td>{{datacenter.sub_id}}</td>
     <td>{{datacenter.pue}}</td>
@@ -141,7 +211,7 @@
     <td>
       <form method="POST">
           {% csrf_token %}
-          <button type="submit" class="save" name = "to_delete" value={{datacenter.sub_id}}>Delete</button>
+          <button type="submit" class="save" name = "to_delete" style="background-color: #cc0000; color:#FFFFFF"value={{datacenter.sub_id}}>Delete</button>
       </form>
     </td>
   </tr>
@@ -168,17 +238,18 @@
   </tr>
 </tbody>
   {% endfor %}
-
 </table>
 
 {% endblock %} 
 </div>
 </div>
 
-
-
 <script>
-$('.form-btn').click(function(){
-$(this).next().toggleClass('show-form');
-});
+  function openForm() {
+    document.getElementById("myForm").style.display = "block";
+  }
+  
+  function closeForm() {
+    document.getElementById("myForm").style.display = "none";
+  }
 </script>
