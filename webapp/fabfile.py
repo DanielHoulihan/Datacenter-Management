@@ -2,6 +2,7 @@ from fabric import task
 
 @task
 def setup(c):
+    c.run('source env/bin/activate')
     c.run('pip3 install -r requirements.txt')
     c.run("python3 manage.py collectstatic --noinput")
 
