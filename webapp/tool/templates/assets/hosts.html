@@ -13,18 +13,17 @@
       <input type="text" name="medium" required>
       <button type="submit" class="save   btn btn-default">Submit</button>
 
-      {% if error.non_field_errors %}<div class="bar error">{{error.non_field_errors}}</div>{% endif %}
+      {% if error.non_field_errors %}<div class="threshold-error">{{error.non_field_errors}}</div>{% endif %}
 
     </form>
 
     
     <!-- <div class="bar error">Hey</div> -->
 
-    <h2>Available Hosts: {{host_count}}</h2>
+    {% comment %} <h2>Available Hosts: {{host_count}}</h2> {% endcomment %}
     <div class="card-container">
       {% for host in hosts %}
-      <div class="card3">
-        <div style="background-color: rgb(255, 255, 255)">
+      <div class="host-card">
           <b>Host ID: {{ host.hostid }}</b><hr>
           <p>Rack ID: {{ host.rackid }}</p>
           <p>Host Name: {{ host.hostname }}</p>
@@ -32,18 +31,19 @@
           <p>Host Type: {{ host.hostType }}</p>
           <p># Processors: {{ host.processors }}</p>
           <p>IP Address: {{ host.ipaddress }}</p>
+          <p>Responses (mins): {{ host.responses }}</p>
 
           {% if host.cpu_usage > threshold.medium %}
-            <p style="background-color: rgb(235, 59, 59)">CPU Usage: {{ host.cpu_usage }}%</p>
+            <p class = "cpu-usage" style="background-color: rgb(235, 59, 59)">CPU Usage: {{ host.cpu_usage|floatformat }}%</p>
           {% elif host.cpu_usage < threshold.low %} 
-            <p style="background-color: rgb(11, 226, 58)">CPU Usage: {{ host.cpu_usage }}%</p>
+            <p class = "cpu-usage" style="background-color: rgb(11, 226, 58)">CPU Usage: {{ host.cpu_usage|floatformat }}%</p>
+          {% elif host.cpu_usage == none %} 
+            <p class = "cpu-usage" style="background-color: #b8b8b8">CPU Usage: {{ host.cpu_usage|floatformat }}%</p>        
           {% else %} 
-            <p style="background-color: rgb(235, 188, 59)">CPU Usage: {{ host.cpu_usage }}%</p>
+            <p class = "cpu-usage" style="background-color: rgb(235, 188, 59)">CPU Usage: {{ host.cpu_usage|floatformat }}%</p>
           {% endif %}
-
-          <p>Responses (mins): {{ host.responses }}</p>
+          
           <button onClick="window.location.reload();">Update</button>
-        </div>
       </div>
       {% endfor %}
     </div>  

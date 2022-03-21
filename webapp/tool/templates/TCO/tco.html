@@ -6,37 +6,34 @@
   {% block content %}
   
   <div class="content">
-    <h2>All hosts in data centers: {{tco_count}}</h2>
+    {% comment %} <h2>All hosts in data centers: {{tco_count}}</h2> {% endcomment %}
     <div class="card-container">
-      {% if error.non_field_errors %}<div class="bar error2">{{error.non_field_errors}}</div>{% endif %}
+      {% if error.non_field_errors %}<div class="capital-error">{{error.non_field_errors}}</div>{% endif %}
       {% for host in tco %}
-      <div class="card4">
-        <div style="background-color: rgb(255, 255, 255)">
+      <div class="tco-card">
           <b>Host ID: {{ host.hostid }}</b>
           <hr>
-          <p>Floor: {{ host.floorid }}</p>
-          <p>Rack: {{ host.rackid }}</p>
+          <p>Floor: {{ host.floorid }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Rack: {{ host.rackid }}</p>
           <p>IP Address: {{ host.ipaddress }}</p><hr>
 
           <form method="POST">
             {% csrf_token %}
             <label for="capital" >Capital Cost</label>
-            <input type="number" id="capital" name="capital" required>
+            <input type="number" id="capital" name="capital" required placeholder={{host.capital}}>
             <input type=hidden id=host name= host value={{host.hostid}}>
             <input type=hidden id=rack name= rack value={{host.rackid}}>
             <input type=hidden id=floor name= floor value={{host.floorid}}>
-            <button type="submit" class="save" >Calculate TCO</button>
+            <button type="submit" class="save" >Calculate</button>
           </form>
 
           <hr>
-          <p>Capital cost: {{ host.capital }}</p>
-          <p>TCO 3yrs: {{host.TCO}}</p>
-          <p>Carbon Footprint 3yrs: {{ host.carbon_footprint_3 }}</p>
-          <p>Time up (mins): {{ host.minutes }}</p>
-          <p>kWh consumed: {{host.kWh_consumed}}</p>
-          <p>Operational consumption 3yrs: {{host.ops_cons_3}}</p>
-          <p>Operational Cost 3yrs: {{host.op_cost_3}}</p>
-        </div>
+          {% comment %} <p>Capital cost: {{ host.capital }}</p> {% endcomment %}
+          <p>TCO 3yrs: {{host.TCO|floatformat}}</p>
+          <p>Carbon Footprint 3yrs: {{ host.carbon_footprint_3|floatformat }}</p>
+          {% comment %} <p>Time up (mins): {{ host.minutes }}</p> {% endcomment %}
+          {% comment %} <p>kWh consumed: {{host.kWh_consumed}}</p> {% endcomment %}
+          <p>Operational Consumption 3yrs: {{host.ops_cons_3|floatformat}}</p>
+          <p>Operational Cost 3yrs: {{host.op_cost_3|floatformat}}</p>
       </div>
       {% endfor %}
     </div>  

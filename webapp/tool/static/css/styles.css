@@ -1,7 +1,10 @@
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
-  background-color:#ffffff;
+  background-image: url('/../../static/media/background4.png');
+  background-repeat: no-repeat;
+  background-attachment: fixed; 
+  background-size: cover;
 }
 
 input[type=number]{
@@ -15,6 +18,7 @@ input[type=number]{
   position:fixed;
     overflow: hidden;
   background-color: rgb(225, 225, 225);
+  opacity:1;
 }
 
 .topnav h2 {
@@ -33,58 +37,34 @@ input[type=number]{
   text-decoration: none;
 }
 
-table.table1{
-    border: 1px solid rgb(207, 207, 207);
-    border-collapse: collapse;
-  }
-table.table1 td {
-  border: 1px solid rgb(0, 0, 0);
-  background-color: #e3e3e3;
-}
-table.table1 tr{
-  background-color: #b4b4b4;
-  height: 50px;
-}
 
 table.table2{
-  border: 1px solid rgb(255, 255, 255);
+  color:#ffffff;
   border-collapse: collapse;
   text-align: left;
 }
 
-
 table.table2 td {
-border: 1px solid rgb(255, 255, 255);
-background-color: #ffffff;
-text-align: left;
+  background-color: #012169;
+  text-align: left;
 }
 
 table.table2 tr{
-background-color: #ffffff;
-height: 25px;
-text-align: left;
+  background-color: #012169;
+  height: 35px;
+  text-align: left;
 }
 
-.homecontent { 
-  margin-left : 20px; 
-  margin-right : 20px; 
-  margin-top:210px;
-  margin-bottom:30px;
-  background-color:#EEEEEE;
-  }
 
 .content { 
   margin-left : 20px; 
   margin-right : 20px; 
   margin-top:170px;
   margin-bottom:30px;
-  background-color:#EEEEEE;
+  /* background-color:#9a9a9a; */
   }
 
-.configure_content { 
-  margin-left : 20px; 
-  background-color:#EEEEEE;
-  }
+
 
 .sidenav {
     height: 90%; 
@@ -138,37 +118,41 @@ text-align: left;
 
 .card-container {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  margin: 25px auto;
-  padding: 10px;
-  background-color: rgb(255, 255, 255);
+  width: auto;
+  background-color: transparent;
   }
   
-.card {
-  width: 250px;
+.floor-card {
+  font-size: 14px;
+  width: 200px;
   height: 200px;
-  margin: 25px;
-  padding: 10px;
-  background-color: rgb(68, 0, 255);
+  margin: 10px;
+  padding: 20px;
+  background-color: rgb(70, 70, 70);
+  color:yellow;
   box-shadow: 0 0 12px rgb(63, 63, 63);
+  opacity:1;
   }
 
-.card2 {
-  width: 250px;
-  height: 230px;
-  margin: 25px;
-  padding: 10px;
-  background-color: rgb(255, 0, 149);
+.rack-card {
+  font-size: 14px;
+  width: 200px;
+  height: 220px;
+  margin: 10px;
+  padding: 20px;
+  background-color: rgb(70, 70, 70);
+  color:yellow;  
   box-shadow: 0 0 12px rgb(63, 63, 63);
   }
     
-.card3 {
+.host-card {
+  font-size: 14px;
   width: 250px;
   height: 350px;
-  margin: 25px;
-  padding: 10px;
-  background-color: rgb(0, 217, 255);
+  margin: 10px;
+  padding: 20px;
+  background-color: rgb(70, 70, 70);
+  color:yellow;
   box-shadow: 0 0 12px rgb(63, 63, 63);
   }
 
@@ -176,12 +160,14 @@ text-align: left;
     margin-top: 1em;
   }
 
-.card4 {
-  width: 250px;
-  height: 630px;
-  margin: 25px;
-  padding: 10px;
-  background-color: rgb(0, 217, 255);
+.tco-card {
+  font-size: 14px;
+  width: 280px;
+  height: 300px;
+  margin: 10px;
+  padding: 20px;
+  background-color: rgb(70, 70, 70);
+  color:yellow;
   box-shadow: 0 0 12px rgb(63, 63, 63);
   }
 
@@ -220,7 +206,7 @@ body {
 }
 
 .topnav3 a.a2:hover {
-  background-color: #AFEEEE;
+  background-color: #009879;
   color: black;
 }
 
@@ -236,12 +222,16 @@ body {
 
 
 .configure_card {
-  width: 227px;
-  height: 265px;
+  left:100px;
+  width: 280px;
+  height: 350px;
+  opacity: 90%;
   /* margin: 15px; */
   padding: 5px;
-  background-color: #9e0dd8;
+  background-color: #012169;
   box-shadow: 0 0 12px rgb(63, 63, 63);
+  border-bottom-right-radius:20px;
+  border-bottom-left-radius:20px;
   }
 
 .change_master_card {
@@ -289,9 +279,10 @@ border-bottom-left-radius:20px;
 }
 
 
+
+
 .styled-table {
   border-collapse: collapse;
-  /* margin: 10px 0; */
   font-size: 15px;
   font-family: sans-serif;
   min-width: 400px;
@@ -309,22 +300,10 @@ border-bottom-left-radius:20px;
     padding: 10px 10px;
 }
 
-.styled-table tbody tr {
-  border-bottom: 1px solid #b63b3b;
-}
-
-.styled-table tbody tr:nth-of-type(even) {
-  background-color: #460a0a;
-}
-
 .styled-table tbody tr:last-of-type {
-  border-bottom: 2px solid #009879;
+  border-bottom: 2px solid #b8b8b8;
 }
 
-.styled-table tbody tr.active-row {
-  font-weight: bold;
-  color: #009879;
-}
 
 .img_container{
   float:left;
@@ -336,9 +315,9 @@ body {font-family: Arial;}
 /* Style the tab */
 .tab {
   overflow: hidden;
-  border: 1px solid rgb(255, 255, 255);
-  background-color: #f1f1f1;
-  width: 100%;
+  border: transparent;
+  background-color: #00BFFF;
+  width: 251px;
 }
 
 /* Style the buttons inside the tab */
@@ -370,13 +349,47 @@ body {font-family: Arial;}
   width:36%;
 }
 
-.error2 {
-  color: #ba3939;
-  background: #ffe0e0;
-  border: 1px solid #a33a3a;
-  width:100%;
+.configure-error {
+  font-size: 13px;
+  background-color: #ff0f0f;
+  color: white;
+  opacity: 0.8;
+  position: fixed;
+  top: 160px;
+  left: 320px;
+  border-radius: 0.5rem;
+  height:35px;
+  width: auto;
+  padding-right: 10px;
 }
 
+.capital-error {
+  font-size: 13px;
+  background-color: #ff0f0f;
+  color: white;
+  opacity: 0.8;
+  position: fixed;
+  top: 160px;
+  right: 15px;
+  border-radius: 0.5rem;
+  height:35px;
+  width: auto;
+  padding-right: 10px;
+}
+
+.threshold-error {
+  font-size: 13px;
+  background-color: #ff0f0f;
+  color: white;
+  opacity: 0.8;
+  position: fixed;
+  top: 160px;
+  left: 650px;
+  border-radius: 0.5rem;
+  height:35px;
+  width: auto;
+  padding-right: 10px;
+}
 
 
 body {font-family: Arial, Helvetica, sans-serif;}
@@ -384,7 +397,8 @@ body {font-family: Arial, Helvetica, sans-serif;}
 
 /* Button used to open the contact form - fixed at the bottom of the page */
 .open-button {
-  background-color: #555;
+  font-size: 15px;
+  background-color: #00BFFF;
   color: white;
   padding: 16px 20px;
   border: none;
@@ -392,45 +406,20 @@ body {font-family: Arial, Helvetica, sans-serif;}
   opacity: 0.8;
   position: fixed;
   top: 150px;
-  left: 28px;
+  /* left: 300px; */
+  border-radius: 1.5rem;
   width: 280px;
 }
 
 /* The popup form - hidden by default */
 .form-popup {
   top: 150px;
-  left: 28px;
+  /* left: 300px; */
   display: none;
   position: fixed;
-  /* bottom: 0; */
-  right: 15px;
-  border: 3px solid #f1f1f1;
   z-index: 9;
 }
 
-/* Add styles to the form container */
-.form-container {
-  max-width: 300px;
-  padding: 10px;
-  background-color: white;
-}
-
-/* Full-width input fields */
-.form-container input[type=text], .form-container input[type=password] {
-  width: 20%;
-  padding: 15px;
-  margin: 5px 0 22px 0;
-  border: none;
-  background: #f1f1f1;
-}
-
-/* When the inputs get focus, do something */
-.form-container input[type=text]:focus, .form-container input[type=password]:focus {
-  background-color: #ddd;
-  outline: none;
-}
-
-/* Set a style for the submit/login button */
 .form-container .btn {
   background-color: #04AA6D;
   color: white;
@@ -442,12 +431,141 @@ body {font-family: Arial, Helvetica, sans-serif;}
   opacity: 0.8;
 }
 
-/* Add a red background color to the cancel button */
-.form-container .cancel {
-  background-color: red;
-}
-
 /* Add some hover effects to buttons */
 .form-container .btn:hover, .open-button:hover {
   opacity: 1;
+}
+
+.close_button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 14px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+  border-radius: 6px;
+  border: none;
+  color: #fff;
+  background: linear-gradient(180deg, #fa4646 0%, #fa1717 100%);
+  background-origin: border-box;
+  width:100%
+}
+
+.submit_button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 14px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+  border-radius: 6px;
+  border: none;
+  color: #fff;
+  background: linear-gradient(180deg, #4B91F7 0%, #367AF6 100%);
+  background-origin: border-box;
+  box-shadow: 0px 0.5px 1.5px rgba(54, 122, 246, 0.25), inset 0px 0.8px 0px -0.25px rgba(255, 255, 255, 0.2);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  margin-left: 35%;
+}
+
+.delete_button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px 14px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+  border-radius: 6px;
+  border: none;
+  color: #fff;
+  background: linear-gradient(180deg, #fa4646 0%, #fa1717 100%);
+  background-origin: border-box;
+  box-shadow: 0px 0.5px 1.5px rgba(54, 122, 246, 0.25), inset 0px 0.8px 0px -0.25px rgba(255, 255, 255, 0.2);
+
+}
+
+.select_button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px 14px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+  border-radius: 6px;
+  border: none;
+  color: #fff;
+  background: linear-gradient(180deg, #4B91F7 0%, #367AF6 100%);
+  background-origin: border-box;
+  box-shadow: 0px 0.5px 1.5px rgba(54, 122, 246, 0.25), inset 0px 0.8px 0px -0.25px rgba(255, 255, 255, 0.2);
+
+}
+
+button.button2 {
+  padding: 15px 25px;
+  border: unset;
+  border-radius: 15px;
+  color: #212121;
+  z-index: 1;
+  background: #e8e8e8;
+  position: relative;
+  font-weight: 1000;
+  font-size: 17px;
+  -webkit-box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+  box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+  transition: all 250ms;
+  overflow: hidden;
+ }
+ 
+button.button2::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 0;
+  border-radius: 15px;
+  background-color: #212121;
+  z-index: -1;
+  -webkit-box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+  box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+  transition: all 250ms
+ }
+ 
+button.button2:hover {
+  color: #e8e8e8;
+ }
+ 
+button.button2:hover::before {
+  width: 100%;
+ }
+
+input[type=number]{
+  width: 80px;
+}
+
+.cpu-usage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 14px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+  border-radius: 6px;
+  border: none;
+  color: #fff;
+  background-origin: border-box;
+  box-shadow: 0px 0.5px 1.5px rgba(54, 122, 246, 0.25), inset 0px 0.8px 0px -0.25px rgba(255, 255, 255, 0.2);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.table-header {
+  background-color: #006d58;
+  width:220px;
+  border-radius: 6px;
+  border: none;
+  color: #fff;
+  background-origin: border-box;
+  box-shadow: 0px 0.5px 1.5px rgba(54, 122, 246, 0.25), inset 0px 0.8px 0px -0.25px rgba(255, 255, 255, 0.2);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
 }

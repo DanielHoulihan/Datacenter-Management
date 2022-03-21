@@ -76,15 +76,15 @@ def plot_usage(table, ylabel):
 
     startTime, endTime = services.get_start_end()
     startTime=int(startTime)-10000
-    fig, ax = plt.subplots(figsize=(6,5))
+    fig, ax = plt.subplots(figsize=(5.5,4.5))
     for column in table.columns[1:]:
         ax.plot(table['day'], table[column], label=column, markerfacecolor='blue')
+    plt.rc('grid', linestyle="--", color='lightgrey')
     plt.xlim([pd.to_datetime(startTime,unit='s'), pd.to_datetime(endTime,unit='s')])  
     plt.legend(loc='upper left')
     plt.axhline(y=0, linestyle='dashed')
     plt.xlabel("Date")
     plt.ylabel(ylabel)
-    plt.rc('grid', linestyle="--", color='lightgrey')
     plt.grid(True)
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
@@ -92,6 +92,7 @@ def plot_usage(table, ylabel):
     if x<1:
         ax.xaxis.set_major_locator(mdates.DayLocator(interval=1))
     else: ax.xaxis.set_major_locator(mdates.DayLocator(interval=int(x)))
+    fig.tight_layout()
     buf = io.BytesIO()
     fig.savefig(buf)
     fig.clf()
@@ -112,7 +113,7 @@ def plot_carbon_total(table):
 
     startTime, endTime = services.get_start_end()
     startTime=int(startTime)-10000
-    fig, ax = plt.subplots(figsize=(6,5))
+    fig, ax = plt.subplots(figsize=(5.5,4.5))
     for column in table.columns[1:]:
         ax.plot(table['day'], table[column], label=column, markerfacecolor='blue')
     plt.xlim([pd.to_datetime(startTime,unit='s'), pd.to_datetime(endTime,unit='s')])  
@@ -129,6 +130,7 @@ def plot_carbon_total(table):
     plt.xlabel("Date")
     plt.ylabel("KgCo2")
     plt.grid(True)
+    fig.tight_layout()
     buf = io.BytesIO()
     fig.savefig(buf)
     fig.clf()

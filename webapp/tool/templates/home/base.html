@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="/../../static/css/styles.css">
   </head>
 
+ 
+
   <div class="topnav">
     <a href="{% url 'configure' %}"><h2><img alt="My Image" src="/../../static/media/logo3.png" height="70" width="210"/></h2></a>
     <br><br>
@@ -20,17 +22,11 @@
     {% if page == "assets" %}<a class="active" href="{% url 'floors' %}">Assets</a>{% else %} <a href="{% url 'floors' %}">Assets</a>{% endif %}
     {% if page == "budget" %}<a class="active" href="{% url 'budget' %}">Budget</a>{% else %} <a href="{% url 'budget' %}">Budget</a>{% endif %}
     {% if page == "tco" %}<a class="active" href="{% url 'tco' %}">TCO</a>{% else %} <a href="{% url 'tco' %}">TCO</a>{% endif %}
-    <a class="a2">
-      <form method="POST">
-        {% csrf_token %}
-        <input type="text" id="ip" name="ip" placeholder={{master}}>
-        <button type="submit" class="save" >Change</button>
-      </form>
-    </a>
   </div>
 
 
   <div class="content">
+    {% comment %} <p style="background-image: url('/../../static/media/background1.jpg');"> {% endcomment %}
     {% block content %}
     {% endblock %}
   </div>

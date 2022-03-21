@@ -5,11 +5,10 @@
 
 {% block content %}
 <div class="content">
-<h2>Available Racks: {{rack_count}}</h2>
+{% comment %} <h2>Available Racks: {{rack_count}}</h2> {% endcomment %}
   <div class="card-container">
     {% for rack in racks %}
-      <div class="card2">
-        <div style="background-color: rgb(255, 255, 255)">
+      <div class="rack-card">
           <b>Rack ID: {{ rack.rackid }}</b>
           <hr>
           <p>Parent Floor ID: {{ rack.floorid }}</p>
@@ -17,8 +16,8 @@
           <p>Description: {{ rack.description }}</p>
           <p>PDU: {{ rack.pdu }}</p>
             <a href="racks/{{rack.rackid}}/hosts"><input type="submit" value="View Rack"
-                class="btn btn-danger btn-sm" type="button" /></a>
-        </div>
+                class="btn btn-danger btn-sm" type="button" />
+            </a>
       </div>
     {% endfor %}
   </div>  

@@ -94,6 +94,7 @@ def configure(request):
     context = {}
     asset_services.get_datacenters()
     master = services.get_master()
+    services.check_master()
     if request.method == 'POST':
         if 'to_delete' in request.POST:
             form = forms.DeleteConfigurationForm(request.POST)
@@ -149,6 +150,7 @@ def configure(request):
 
     master = services.get_master()
     context['datacenters'] = Datacenter.objects.filter(masterip=master).all()
+    context['datacenters_count'] = Datacenter.objects.filter(masterip=master).all().count()
     context['configured_count'] = ConfiguredDataCenters.objects.filter(masterip=master).all().count()
     context['configured'] = ConfiguredDataCenters.objects.filter(masterip=master).all()
     context['master'] = services.get_master()
@@ -205,6 +207,14 @@ def budget(request):
     tco_services.find_all_available_hosts(master, current)
     df, total = budget_services.get_hosts(master,current_sub)
 
+    if request.method == 'POST':            
+        if 'ip' in request.POST:
+            form = forms.ChangeIPForm(request.POST)
+            if form.is_valid():
+                ip = form.cleaned_data
+                MasterIP.objects.update(master = ip)
+                asset_services.get_datacenters()
+                
     context['page'] = 'budget'
     context['master'] = master
     context['current'] = services.get_current_for_html()

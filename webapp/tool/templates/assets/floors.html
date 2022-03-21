@@ -3,13 +3,11 @@
   <link rel="stylesheet" href="/../../static/css/styles.css">
 </head>
 
-{% block content %}
+{% comment %} {% block content %} {% endcomment %}
 <div class="content">
-  <h2>Available Floors: {{floor_count}}</h2>
   <div class="card-container">
     {% for floor in floors %}
-    <div class="card">
-      <div style="background-color: rgb(255, 255, 255)">
+    <div class="floor-card">
         <b>Floor ID: {{ floor.floorid }}</b>
         <hr>
         <p>Floor Name: {{ floor.floorname }}</p>
@@ -17,9 +15,8 @@
         <p>Data center: {{ floor.datacenterid }}</p>
           <a href="{{floor.floorid}}/racks"><input type="submit" value="View Floor"
               class="btn btn-danger btn-sm" type="button" /></a>
-      </div>
     </div>
     {% endfor %}
   </div>  
 </div>
-{% endblock %}
+{% comment %} {% endblock %} {% endcomment %}
