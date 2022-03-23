@@ -38,22 +38,37 @@ input[type=number]{
 }
 
 
-table.table2{
+table.configure-table{
   color:#ffffff;
   border-collapse: collapse;
   text-align: left;
 }
 
-table.table2 td {
+table.configure-table td {
   background-color: #012169;
   text-align: left;
 }
 
-table.table2 tr{
+table.configure-table tr{
   background-color: #012169;
   height: 35px;
   text-align: left;
 }
+
+table.tco-table{
+  border-collapse: collapse;
+}
+
+table.tco-table td {
+  padding: 0 15px;
+  text-align: right;
+}
+
+table.tco-table tr{
+  height: 20px;
+  text-align: left;
+}
+
 
 
 .content { 
@@ -162,7 +177,7 @@ table.table2 tr{
 
 .tco-card {
   font-size: 14px;
-  width: 280px;
+  width: 330px;
   height: 300px;
   margin: 10px;
   padding: 20px;
@@ -227,11 +242,13 @@ body {
   height: 350px;
   opacity: 90%;
   /* margin: 15px; */
-  padding: 5px;
+  padding: 10px;
   background-color: #012169;
   box-shadow: 0 0 12px rgb(63, 63, 63);
   border-bottom-right-radius:20px;
   border-bottom-left-radius:20px;
+  border-top-right-radius:20px;
+  border-top-left-radius:20px;
   }
 
 .change_master_card {
@@ -316,12 +333,13 @@ body {font-family: Arial;}
 .tab {
   overflow: hidden;
   border: transparent;
-  background-color: #00BFFF;
-  width: 251px;
+  /* background-color: #008B8B; */
+  width: auto;
 }
 
 /* Style the buttons inside the tab */
 .tab button {
+  color:rgb(53, 53, 53);
   background-color: inherit;
   float: left;
   border: none;
@@ -334,12 +352,12 @@ body {font-family: Arial;}
 
 /* Change background color of buttons on hover */
 .tab button:hover {
-  background-color: #ddd;
+  background-color: rgb(151, 151, 151);
 }
 
 /* Create an active/current tablink class */
 .tab button.active {
-  background-color: #ccc;
+  background-color: rgb(141, 141, 141);
 }
 
 .error {
@@ -398,7 +416,7 @@ body {font-family: Arial, Helvetica, sans-serif;}
 /* Button used to open the contact form - fixed at the bottom of the page */
 .open-button {
   font-size: 15px;
-  background-color: #00BFFF;
+  background-color: #008B8B;
   color: white;
   padding: 16px 20px;
   border: none;

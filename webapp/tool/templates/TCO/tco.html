@@ -27,13 +27,52 @@
           </form>
 
           <hr>
-          {% comment %} <p>Capital cost: {{ host.capital }}</p> {% endcomment %}
-          <p>TCO 3yrs: {{host.TCO|floatformat}}</p>
+          
+          <table class ="tco-table">
+            <tr>
+              <th>Responses (mins)</th>
+              <td>            
+                {{host.minutes|floatformat}}
+              </td>
+            </tr>
+            <tr>
+              <th>kWh Consumed</th>
+              <td>            
+                {{host.kWh_consumed|floatformat}} 
+              </td>
+            </tr>
+            <tr>
+              <th>TCO 3yrs (€)</th>
+              <td>            
+                {{host.TCO|floatformat}}
+              </td>
+            </tr>
+
+            <tr>
+              <th>Operational Cons 3yrs (kWh)</th>
+              <td>            
+                {{host.ops_cons_3|floatformat}}
+              </td>
+            </tr>
+            <tr>
+              <th>Operational Cost 3yrs (€)</th>
+              <td>            
+                {{host.op_cost_3|floatformat}}
+              </td>
+            </tr>
+            <tr>
+              <th>Carbon Footprint 3yrs (KgCo2)</th>
+              <td>            
+                {{host.carbon_footprint_3|floatformat}}
+              </td>
+            </tr>
+          </table>
+          {% comment %} <p>TCO 3yrs: {{host.TCO|floatformat}}</p>
           <p>Carbon Footprint 3yrs: {{ host.carbon_footprint_3|floatformat }}</p>
-          {% comment %} <p>Time up (mins): {{ host.minutes }}</p> {% endcomment %}
-          {% comment %} <p>kWh consumed: {{host.kWh_consumed}}</p> {% endcomment %}
+          <p>Responses (mins): {{ host.minutes }}</p>
+          <p>kWh consumed: {{host.kWh_consumed|floatformat}}</p>
           <p>Operational Consumption 3yrs: {{host.ops_cons_3|floatformat}}</p>
-          <p>Operational Cost 3yrs: {{host.op_cost_3|floatformat}}</p>
+          <p>Operational Cost 3yrs: {{host.op_cost_3|floatformat}}</p> {% endcomment %}
       </div>
       {% endfor %}
     </div>  

@@ -30,7 +30,7 @@
         <form method="POST" >
         {% csrf_token %}
         <br>
-        <table style="width:100%" class="table2">
+        <table style="width:100%" class="configure-table">
           <tr>
             <th>* Datacenter</th>
             <td>            
@@ -99,7 +99,7 @@
   </div>
 
 {% block content %}
-<div class="configure_content">
+{% comment %} <div class="configure_content"> {% endcomment %}
 <table style="width:100%" class="styled-table">
   <br><br>
   <caption class="table-header">Configured Datacenters: {{configured_count}}</caption>
