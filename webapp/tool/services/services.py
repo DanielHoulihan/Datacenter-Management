@@ -137,18 +137,22 @@ def get_upper_threshold():
     try:
         return Threshold.objects.all().values().get()['low']
     except: return Threshold.DoesNotExist
+ 
+def datacenter_url(master):
+    return "http://"+master+":8080/papillonserver/rest/datacenters/"
 
-def create_url(master, datacenter=None, floor=None, rack=None, host=None, start=None, end=None):
-    """ Create URL given arguments (Python overloading) """
+def floor_url(master, datacenter):
+    return "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"
 
-    if datacenter is None:
-        return "http://"+master+":8080/papillonserver/rest/datacenters/"
-    if floor is None:
-        return "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"
-    if rack is None:
-        return "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"+floor+"/racks/"
-    if host is None:
-        return "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"+floor+"/racks/"+rack+"/hosts/"
-    else: 
-        return "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"+floor+"/racks/"+rack+"/hosts/"+host+"/power?starttime="+start+"&endtime="+end
-    
+def rack_url(master, datacenter,floor):
+    return "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"+floor+"/racks/"
+
+def host_url(master, datacenter,floor,rack):
+    return "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"+floor+"/racks/"+rack+"/hosts/"
+
+def power_url(master, datacenter,floor,rack,host,start,end):
+    return "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"+floor+"/racks/"+rack+"/hosts/"+host+"/power?starttime="+start+"&endtime="+end
+
+def cpu_usage_url(master, datacenter,floor,rack,host,start,end):
+    return "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"+floor+"/racks/"+rack+"/hosts/"+host+"/activity?starttime="+start+"&endtime="+end
+

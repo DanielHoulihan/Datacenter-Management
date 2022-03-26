@@ -8,18 +8,18 @@ def get_datacenters():
 
     services.check_master()
     master = services.get_master()
-    url = services.create_url(master)
+    url = services.datacenter_url(master)
     try:
         response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
     except Exception: return 
     data = response.json()
-    if data!=None: 
-        if isinstance(data['datacenter'], list):
-            for i in data['datacenter']:
-                model_services.create_datacenter(master,i['id'],i['name'],i['description'])
-        else:
-            model_services.create_datacenter(master,data['datacenter']['id'],data['datacenter']['name'],
-            data['datacenter']['description'])
+    if data==None: return
+    if isinstance(data['datacenter'], list):
+        for i in data['datacenter']:
+            model_services.create_datacenter(master,i['id'],i['name'],i['description'])
+    else:
+        model_services.create_datacenter(master,data['datacenter']['id'],data['datacenter']['name'],
+        data['datacenter']['description'])
 
 
 def get_floors(datacenter):
@@ -31,16 +31,17 @@ def get_floors(datacenter):
 
     get_datacenters()
     master = services.get_master()
-    url = services.create_url(master, datacenter)
+    url=services.floor_url(master,datacenter)
+    # url = services.create_url(master, datacenter)
     response = services.get_reponse(url)
     data = response.json()
-    if data!=None: 
-        if isinstance(data['floor'], list):
-            for i in data['floor']:
-                model_services.create_floor(master,i['datacenterId'],i['id'],i['name'],i['description'])
-        else:
-            model_services.create_floor(master,data['floor']['datacenterId'],data['floor']['id'],
-            data['floor']['name'],data['floor']['description'])
+    if data==None: return
+    if isinstance(data['floor'], list):
+        for i in data['floor']:
+            model_services.create_floor(master,i['datacenterId'],i['id'],i['name'],i['description'])
+    else:
+        model_services.create_floor(master,data['floor']['datacenterId'],data['floor']['id'],
+        data['floor']['name'],data['floor']['description'])
 
 
 def get_racks(datacenter, floorid):
@@ -53,16 +54,17 @@ def get_racks(datacenter, floorid):
 
     get_floors(datacenter)
     master = services.get_master()
-    url = services.create_url(master, datacenter, floorid)
+    # url = services.create_url(master, datacenter, floorid)
+    url = services.rack_url(master, datacenter, floorid)
     response = services.get_reponse(url)
     data = response.json()
-    if data!=None: 
-        if isinstance(data['rack'], list):
-            for i in data['rack']:
-                model_services.create_rack(master,datacenter,i['floorId'],i['id'],i['name'],i['description'], i['pdu'])
-        else:
-            model_services.create_rack(master,datacenter,data['rack']['floorId'],data['rack']['id'],
-            data['rack']['name'],data['rack']['description'],data['rack']['pdu'])
+    if data==None: return
+    if isinstance(data['rack'], list):
+        for i in data['rack']:
+            model_services.create_rack(master,datacenter,i['floorId'],i['id'],i['name'],i['description'], i['pdu'])
+    else:
+        model_services.create_rack(master,datacenter,data['rack']['floorId'],data['rack']['id'],
+        data['rack']['name'],data['rack']['description'],data['rack']['pdu'])
 
 
 def get_hosts(master, datacenter, floorid, rackid, startTime, endTime):
@@ -81,15 +83,16 @@ def get_hosts(master, datacenter, floorid, rackid, startTime, endTime):
 
     get_racks(datacenter, floorid)
     current = services.get_current_sub_id()
-    url = services.create_url(master, datacenter, floorid, rackid)
+    url=services.host_url(master,datacenter,floorid,rackid)
+    # url = services.create_url(master, datacenter, floorid, rackid)
     response = services.get_reponse(url)
     data = response.json()
-    if data!=None: 
-        if not isinstance(data['host'], list):
-            get_host_energy(data['host'], url, startTime,endTime,master,datacenter,floorid,current,rackid)
-        else:
-            for i in data['host']:
-                get_host_energy(i, url, startTime,endTime,master,datacenter,floorid,current,rackid)
+    if data==None: return 
+    if not isinstance(data['host'], list):
+        get_host_energy(data['host'], url, startTime,endTime,master,datacenter,floorid,current,rackid)
+    else:
+        for i in data['host']:
+            get_host_energy(i, url, startTime,endTime,master,datacenter,floorid,current,rackid)
 
 
 
@@ -97,18 +100,23 @@ def get_host_energy(prefix, url, startTime,endTime,master,datacenter,floorid,cur
     """ Create Host objects and populate with CPU usage metrics
 
     Args:
-        prefix (_type_): Incremental prefix
-        url (_type_): URL to get respoinse from
-        startTime (_type_): Start Time of period
-        endTime (_type_): End Time of period
-        master (_type_): IP address of master
-        datacenter (_type_): current datacenter
-        floorid (_type_): Selected floor ID
-        current (_type_): sub_id of current datacenter
-        rackid (_type_): Selected Rack ID
+        prefix (String): Incremental prefix
+        url (String): URL to get respoinse from
+        startTime (String): Start Time of period
+        endTime (String): End Time of period
+        master (String): IP address of master
+        datacenter (String): current datacenter
+        floorid (String): Selected floor ID
+        current (String): sub_id of current datacenter
+        rackid (String): Selected Rack ID
     """
-
-    new_url = url + prefix['id'] +"/activity?starttime="+str(startTime)+"&endtime="+str(endTime)
+    # test = "http://192.168.56.102:8080/papillonserver/rest/datacenters/267/floors/291/racks/294/host/284/activity?starttime=1646092800&endtime=1646352000"
+    # response = services.get_reponse(test)
+    # data4 = response.json()
+    # print(data4)
+    
+    # new_url = url + prefix['id'] +"/activity?starttime="+str(startTime)+"&endtime="+str(endTime)
+    new_url = services.cpu_usage_url(master,datacenter,floorid,rackid,prefix['id'],startTime,endTime)
     response = services.get_reponse(new_url)
     data2 = response.json()
     cpu_total = 0

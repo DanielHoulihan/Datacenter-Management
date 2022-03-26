@@ -5,8 +5,9 @@
 
 {% comment %} {% block content %} {% endcomment %}
 <div class="content">
-  <div class="card-container">
+  
     {% for floor in floors %}
+    <div class="card-container">
     <div class="floor-card">
         <b>Floor ID: {{ floor.floorid }}</b>
         <hr>
@@ -16,7 +17,8 @@
           <a href="{{floor.floorid}}/racks"><input type="submit" value="View Floor"
               class="btn btn-danger btn-sm" type="button" /></a>
     </div>
-    {% endfor %}
   </div>  
+    {% endfor %}
+  
 </div>
 {% comment %} {% endblock %} {% endcomment %}

@@ -21,8 +21,9 @@
     <!-- <div class="bar error">Hey</div> -->
 
     {% comment %} <h2>Available Hosts: {{host_count}}</h2> {% endcomment %}
-    <div class="card-container">
+    
       {% for host in hosts %}
+      <div class="card-container">
       <div class="host-card">
           <b>Host ID: {{ host.hostid }}</b><hr>
           <p>Rack ID: {{ host.rackid }}</p>
@@ -45,7 +46,8 @@
           
           <button onClick="window.location.reload();">Update</button>
       </div>
-      {% endfor %}
     </div>  
+      {% endfor %}
+    
   </div>
 {% endblock %}

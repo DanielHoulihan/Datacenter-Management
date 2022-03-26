@@ -12,16 +12,17 @@ def find_available_floors(master, current):
         list[String]: list of all floors in specified datacenter
     """    
 
-    url = services.create_url(master, current)
+    # url = services.create_url(master, current)
+    url = services.floor_url(master,current)
     response = services.get_reponse(url)
     data = response.json()
     floors = []
-    if data!=None: 
-        if isinstance(data['floor'], list):
-            for i in data['floor']:
-                floors.append(i['id'])  
-        else:
-            floors.append(data['floor']['id'])
+    if data==None: return floors
+    if isinstance(data['floor'], list):
+        for i in data['floor']:
+            floors.append(i['id'])  
+    else:
+        floors.append(data['floor']['id'])
     return floors
 
 
@@ -37,17 +38,17 @@ def find_available_racks(master, current, floorid):
         list[String]: list of all racks in specified datacenter and floor
     """
 
-    url = services.create_url(master, current, floorid)
+    # url = services.create_url(master, current, floorid)
+    url = services.rack_url(master, current, floorid)
     response = services.get_reponse(url)
     data = response.json()
     racks = []
-    if data!=None: 
-        if isinstance(data['rack'], list):
-            for i in data['rack']:
-                racks.append(i['id'])  
-        else:
-            racks.append(data['rack']['id'])
-            
+    if data==None: return racks
+    if isinstance(data['rack'], list):
+        for i in data['rack']:
+            racks.append(i['id'])  
+    else:
+        racks.append(data['rack']['id'])
     return racks
 
             
@@ -76,33 +77,17 @@ def get_hosts_tco(master, datacenter, floorid, rackid):
     """
 
     current = services.get_current_sub_id()
-    url = services.create_url(master, datacenter, floorid, rackid)
+    # url = services.create_url(master, datacenter, floorid, rackid)
+    url = services.host_url(master,datacenter,floorid,rackid)
     response = services.get_reponse(url)
     data = response.json()
-    if data!=None: 
-        if isinstance(data['host'], list):
-            for i in data['host']:
-                model_services.create_host_energy(master,current,datacenter,floorid,i['rackId'],i['id'],i['IPAddress'])
-                # HostEnergy.objects.get_or_create(
-                #     masterip = master,
-                #     sub_id = current,
-                #     datacenterid = datacenter,
-                #     floorid = floorid,
-                #     rackid = i['rackId'],
-                #     hostid = i['id'],
-                #     ipaddress = i['IPAddress']
-                # )
-        else:
-            model_services.create_host_energy(master,current,datacenter,floorid,data['host']['rackId'],data['host']['id'],data['host']['IPAddress'])
-            # HostEnergy.objects.get_or_create(
-            #     masterip = master,
-            #     sub_id = current,
-            #     datacenterid = datacenter,
-            #     floorid = floorid,
-            #     rackid = data['host']['rackId'],
-            #     hostid = data['host']['id'],
-            #     ipaddress = data['host']['IPAddress']
-            # )
+    if data==None: return
+    if isinstance(data['host'], list):
+        for i in data['host']:
+            model_services.create_host_energy(master,current,datacenter,floorid,i['rackId'],i['id'],i['IPAddress'])
+    else:
+        model_services.create_host_energy(master,current,datacenter,floorid,data['host']['rackId'],data['host']['id'],data['host']['IPAddress'])
+
 
 
 def get_energy_usage(master, datacenter, floorid, rackid, hostid, startTime, endTime, capital):
@@ -123,36 +108,46 @@ def get_energy_usage(master, datacenter, floorid, rackid, hostid, startTime, end
     url = services.create_url(master, datacenter, floorid, rackid, hostid, startTime, endTime)
     response = services.get_reponse(url)
     data = response.json()
-    minutes=0
-    total_watts=0
-    if data != None:
+    if data == None:return
+    total_watts = 0
+    minutes = 0
+    for power in data['power']:
+        total_watts += float(power['power'])
+        minutes+=1
 
-        total_watts = 0
-        minutes = 0
-        for power in data['power']:
-            total_watts += float(power['power'])
-            minutes+=1
+    hours = minutes/60
+    kWh = total_watts/hours/1000
+    ops_cons_3 =24*7*kWh*52*3
+    pue = services.get_pue()
+    carbon_conversion = services.get_carbon_conversion()
+    energy_cost = services.get_energy_cost()
+    op_cost_3 = ops_cons_3*pue*energy_cost
+    carbon_footprint_3=ops_cons_3*carbon_conversion
+    tco_3=int(capital)+(energy_cost*ops_cons_3)
+    kWh_consumed = total_watts/1000
 
-        hours = minutes/60
-        kWh = total_watts/hours/1000
-        ops_cons_3 =24*7*kWh*52*3
-        pue = services.get_pue()
-        carbon_conversion = services.get_carbon_conversion()
-        energy_cost = services.get_energy_cost()
-        op_cost_3 = ops_cons_3*pue*energy_cost
-        carbon_footprint_3=ops_cons_3*carbon_conversion
-        tco_3=int(capital)+(energy_cost*ops_cons_3)
-        kWh_consumed = total_watts/1000
-
-        host = HostEnergy.objects.filter(masterip=master).filter(sub_id = current).filter(floorid=floorid).filter(rackid=rackid).filter(hostid=hostid)
-        host.update(
-            capital=capital,
-            TCO=tco_3,
-            carbon_footprint_3=carbon_footprint_3,
-            minutes=minutes,
-            kWh_consumed=kWh_consumed,
-            ops_cons_3=ops_cons_3,
-            op_cost_3=op_cost_3
-        )
-        # host.update(TCO=tco_3,total_watt_hour=total_watts, minutes = minutes, hours = hours, avg_kWh=kWh, avg_watt_hour = watt_hour, capital=capital, ops_cons_3=ops_cons_3, carbon_footprint_3=carbon_footprint_3, op_cost_3=op_cost_3, kWh_consumed=kWh_consumed)
+    new_url = services.cpu_usage_url(master, datacenter, floorid, rackid, hostid, startTime, endTime)
+    response = services.get_reponse(new_url)
+    data2 = response.json()
+    cpu_total = 0
+    cpu_count = 0
+    if not isinstance(data2['activity'], list):return
+    else:
+        for activity in data2['activity']:
+            cpu_total += float(activity['stat1'])
+            cpu_count += 1 
+    avg_cpu = cpu_total/cpu_count
+    app_waste_cost_3 = op_cost_3*(1-avg_cpu/100)
+    
+    host = HostEnergy.objects.filter(masterip=master).filter(sub_id = current).filter(floorid=floorid).filter(rackid=rackid).filter(hostid=hostid)
+    host.update(
+        capital=capital,
+        TCO=tco_3,
+        carbon_footprint_3=carbon_footprint_3,
+        minutes=minutes,
+        kWh_consumed=kWh_consumed,
+        ops_cons_3=ops_cons_3,
+        op_cost_3=op_cost_3,
+        app_waste_cost_3=app_waste_cost_3
+    )
 

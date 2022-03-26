@@ -6,8 +6,9 @@
 {% block content %}
 <div class="content">
 {% comment %} <h2>Available Racks: {{rack_count}}</h2> {% endcomment %}
-  <div class="card-container">
+  
     {% for rack in racks %}
+    <div class="card-container">
       <div class="rack-card">
           <b>Rack ID: {{ rack.rackid }}</b>
           <hr>
@@ -19,7 +20,8 @@
                 class="btn btn-danger btn-sm" type="button" />
             </a>
       </div>
+    </div>  
     {% endfor %}
-  </div>  
+  
 </div>
 {% endblock %}

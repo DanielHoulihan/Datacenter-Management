@@ -27,8 +27,9 @@ def get_hosts(master, current_sub):
     df_list=[unix_range(startTime,endTime)]
 
     for host in available_hosts:
-        url = services.create_url(host['masterip'],host['datacenterid'],
-                                    str(host['floorid']),str(host['rackid']),str(host['hostid']),startTime,endTime)
+        # url = services.create_url(host['masterip'],host['datacenterid'],str(host['floorid']),str(host['rackid']),str(host['hostid']),startTime,endTime)
+        url = services.power_url(host['masterip'],host['datacenterid'],str(host['floorid']),
+                                 str(host['rackid']),str(host['hostid']),startTime,endTime)
         response = services.get_reponse(url)
         data = response.json()
         start=int(startTime)
@@ -61,6 +62,7 @@ def get_hosts(master, current_sub):
         hosts[col] = hosts[col].cumsum()
     hosts['Total'] = hosts[hosts.columns[1:]].sum(axis=1)
     return hosts[hosts.columns[:-1]], hosts[[hosts.columns[0], hosts.columns[-1]]]
+
 
 
 def plot_usage(table, ylabel):

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.urls import reverse
 from tool.models import ConfiguredDataCenters, Datacenter, Floor, Rack, Host, CurrentDatacenter, Count, MasterIP, HostEnergy, Threshold
 from .services import services, asset_services, budget_services, tco_services, model_services
 from . import forms
@@ -158,7 +159,7 @@ def configure(request):
     context['page'] = "home"
     return render (request, 'configure/configure.html', context)
 
-
+            
 @csrf_protect
 def tco(request):
     """ TCO Tab
@@ -207,20 +208,16 @@ def budget(request):
     tco_services.find_all_available_hosts(master, current)
     df, total = budget_services.get_hosts(master,current_sub)
 
-    if request.method == 'POST':            
-        if 'ip' in request.POST:
-            form = forms.ChangeIPForm(request.POST)
-            if form.is_valid():
-                ip = form.cleaned_data
-                MasterIP.objects.update(master = ip)
-                asset_services.get_datacenters()
-                
+    total_usage = list(total['Total'])[-1] * ConfiguredDataCenters.objects.filter(masterip=master).filter(sub_id=current_sub).values().get()['carbon_conversion']
+    context['usage'] = total_usage
     context['page'] = 'budget'
     context['master'] = master
     context['current'] = services.get_current_for_html()
     if ConfiguredDataCenters.objects.filter(masterip=master).filter(sub_id=current_sub).values().get()['budget'] == None:
         context['g1'] = budget_services.plot_usage(budget_services.carbon_usage(total), ylabel="KgCo2")
-    else: context['g1'] = budget_services.plot_carbon_total(budget_services.carbon_usage(total))
+    else: 
+        context['g1'] = budget_services.plot_carbon_total(budget_services.carbon_usage(total))
+        context['usage_percentage'] = (total_usage/ConfiguredDataCenters.objects.filter(masterip=master).filter(sub_id=current_sub).values().get()['budget'])*100
     context['g2'] = budget_services.plot_usage(budget_services.carbon_usage(df), ylabel="KgCo2")
     context['g3'] = budget_services.plot_usage(total, ylabel="kWh")
     context['g4'] = budget_services.plot_usage(df, ylabel="kWh")

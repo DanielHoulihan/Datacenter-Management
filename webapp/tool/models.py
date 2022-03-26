@@ -82,7 +82,13 @@ class ConfiguredDataCenters(models.Model):
     energy_cost = models.FloatField()
     carbon_conversion = models.FloatField()
     budget = models.IntegerField(null=True)
+    
+    def __str__(self):
+        return str(self.datacenterid)
 
+    def get_absolute_url(self):
+        return reverse('datacenterid', args=[str(self.id)])   
+    
 # Configured count database model
 class Count(models.Model):
     configured = models.IntegerField(null=True)
@@ -112,6 +118,7 @@ class HostEnergy(models.Model):
     ops_cons_3 = models.FloatField(null=True)
     op_cost_3 = models.FloatField(null=True)
     kWh_consumed = models.FloatField(null=True)
+    app_waste_cost_3 = models.FloatField(null=True)
 
 # Stores Threshold for host CPU % usage
 class Threshold(models.Model):

@@ -7,9 +7,10 @@
   
   <div class="content">
     {% comment %} <h2>All hosts in data centers: {{tco_count}}</h2> {% endcomment %}
-    <div class="card-container">
+    
       {% if error.non_field_errors %}<div class="capital-error">{{error.non_field_errors}}</div>{% endif %}
       {% for host in tco %}
+      <div class="card-container">
       <div class="tco-card">
           <b>Host ID: {{ host.hostid }}</b>
           <hr>
@@ -66,16 +67,18 @@
                 {{host.carbon_footprint_3|floatformat}}
               </td>
             </tr>
+            <tr>
+              <th>Apparant Wastage 3yrs (€)</th>
+              <td>            
+                {{host.app_waste_cost_3|floatformat}}
+              </td>
+            </tr>
           </table>
-          {% comment %} <p>TCO 3yrs: {{host.TCO|floatformat}}</p>
-          <p>Carbon Footprint 3yrs: {{ host.carbon_footprint_3|floatformat }}</p>
-          <p>Responses (mins): {{ host.minutes }}</p>
-          <p>kWh consumed: {{host.kWh_consumed|floatformat}}</p>
-          <p>Operational Consumption 3yrs: {{host.ops_cons_3|floatformat}}</p>
-          <p>Operational Cost 3yrs: {{host.op_cost_3|floatformat}}</p> {% endcomment %}
+
       </div>
+    </div> 
       {% endfor %}
-    </div>  
+     
   </div>
 
   {% endblock %}
