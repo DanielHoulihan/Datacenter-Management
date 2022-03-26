@@ -32,7 +32,6 @@ def get_floors(datacenter):
     get_datacenters()
     master = services.get_master()
     url=services.floor_url(master,datacenter)
-    # url = services.create_url(master, datacenter)
     response = services.get_reponse(url)
     data = response.json()
     if data==None: return
@@ -54,7 +53,6 @@ def get_racks(datacenter, floorid):
 
     get_floors(datacenter)
     master = services.get_master()
-    # url = services.create_url(master, datacenter, floorid)
     url = services.rack_url(master, datacenter, floorid)
     response = services.get_reponse(url)
     data = response.json()
@@ -84,19 +82,18 @@ def get_hosts(master, datacenter, floorid, rackid, startTime, endTime):
     get_racks(datacenter, floorid)
     current = services.get_current_sub_id()
     url=services.host_url(master,datacenter,floorid,rackid)
-    # url = services.create_url(master, datacenter, floorid, rackid)
     response = services.get_reponse(url)
     data = response.json()
     if data==None: return 
     if not isinstance(data['host'], list):
-        get_host_energy(data['host'], url, startTime,endTime,master,datacenter,floorid,current,rackid)
+        get_host_energy(data['host'],startTime,endTime,master,datacenter,floorid,current,rackid)
     else:
         for i in data['host']:
-            get_host_energy(i, url, startTime,endTime,master,datacenter,floorid,current,rackid)
+            get_host_energy(i,startTime,endTime,master,datacenter,floorid,current,rackid)
 
 
 
-def get_host_energy(prefix, url, startTime,endTime,master,datacenter,floorid,current,rackid):
+def get_host_energy(prefix, startTime,endTime,master,datacenter,floorid,current,rackid):
     """ Create Host objects and populate with CPU usage metrics
 
     Args:
@@ -110,35 +107,99 @@ def get_host_energy(prefix, url, startTime,endTime,master,datacenter,floorid,cur
         current (String): sub_id of current datacenter
         rackid (String): Selected Rack ID
     """
-    # test = "http://192.168.56.102:8080/papillonserver/rest/datacenters/267/floors/291/racks/294/host/284/activity?starttime=1646092800&endtime=1646352000"
-    # response = services.get_reponse(test)
-    # data4 = response.json()
-    # print(data4)
-    
-    # new_url = url + prefix['id'] +"/activity?starttime="+str(startTime)+"&endtime="+str(endTime)
+
+    host = Host.objects.filter(masterip=master).filter(sub_id = current).filter(floorid=floorid).filter(rackid=rackid).filter(hostid=prefix['id'])
+    if host.exists():
+        new_url = services.cpu_usage_url(master,datacenter,floorid,rackid,prefix['id'],str(int(host.values().get()['lastTime'])+1),endTime)
+        response = services.get_reponse(new_url)
+        data2 = response.json()
+        cpu_total = 0
+        cpu_count = 0
+        if data2==None:return
+        if isinstance(data2['activity'], list): 
+            for activity in data2['activity']:
+                cpu_total += float(activity['stat1'])
+                cpu_count += 1 
+        else:
+            updated_cpu_total = host.values().get()['total_cpu'] + float(data2['activity']['stat1'])
+            updated_responses = host.values().get()['responses'] + 1
+            updated_avg_cpu = updated_cpu_total/updated_responses
+            host.update(cpu_usage=updated_avg_cpu, responses=updated_responses, total_cpu=updated_cpu_total, lastTime=data2['activity']['timeStamp'])
+            print(host.values().get()['cpu_usage'])
+            return
+
+        updated_responses = host.values().get()['responses'] + cpu_count
+        updated_cpu_total = host.values().get()['total_cpu'] + cpu_total
+        updated_avg_cpu = updated_cpu_total/updated_responses
+        print(host.values().get()['cpu_usage'])
+        host.update(cpu_usage=updated_avg_cpu, responses=updated_responses, total_cpu=updated_cpu_total, lastTime=data2['activity'][-1:][0]['timeStamp'])
+
     new_url = services.cpu_usage_url(master,datacenter,floorid,rackid,prefix['id'],startTime,endTime)
     response = services.get_reponse(new_url)
     data2 = response.json()
+    if data2==None:return
     cpu_total = 0
     cpu_count = 0
-    if data2==None:
-        model_services.create_empty_host(master,services.get_current_sub_id(),datacenter,floorid,prefix['rackId'],
-        prefix['id'],prefix['name'],prefix['description'],prefix['hostType'],prefix['processorCount'],prefix['IPAddress'])
-        return
-    if not isinstance(data2['activity'], list):
-        cpu_total = float(data2['activity']['stat1'])
-        cpu_count = 1
-    else:
+    if isinstance(data2['activity'], list): 
         for activity in data2['activity']:
             cpu_total += float(activity['stat1'])
             cpu_count += 1 
-    avg_cpu = cpu_total/cpu_count
-    host = Host.objects.filter(masterip=master).filter(sub_id = current).filter(floorid=floorid).filter(rackid=rackid).filter(hostid=prefix['id'])
-    if host.count()==0:
-        model_services.create_host(master,services.get_current_sub_id(),datacenter,floorid,prefix['rackId'],
-        prefix['id'],prefix['name'],prefix['description'],prefix['hostType'],prefix['processorCount'],prefix['IPAddress'],
-        data2['activity'][-1:][0]['timeStamp'],avg_cpu,cpu_count,cpu_total)
     else:
-        host.update(cpu_usage=avg_cpu, responses=cpu_count, total_cpu=cpu_total, lastTime=data2['activity'][-1:][0])
+        cpu_total = float(data2['activity']['stat1'])
+        cpu_count = 1
+        
+    avg_cpu = cpu_total/cpu_count
+    print(data2['activity'][-1:][0]['timeStamp'])
+    model_services.create_host(master,services.get_current_sub_id(),datacenter,floorid,prefix['rackId'],
+    prefix['id'],prefix['name'],prefix['description'],prefix['hostType'],prefix['processorCount'],prefix['IPAddress'],
+    data2['activity'][-1:][0]['timeStamp'],avg_cpu,cpu_count,cpu_total)
 
 
+# def create_host(master,sub_id,datacenter,floorid,rack,id,name,description,
+#         type,processors,ip,last,avg_cpu,cpu_count,cpu_total):
+#     Host.objects.get_or_create(
+#         masterip = master,
+#         sub_id = sub_id,
+#         datacenterid = datacenter,
+#         floorid = floorid,
+#         rackid = rack,
+#         hostid = id,
+#         hostname = name,
+#         hostdescription = description,
+#         hostType = type,
+#         processors = processors,
+#         ipaddress = ip,
+#         lastTime = last,
+#         cpu_usage = avg_cpu,
+#         responses = cpu_count,
+#         total_cpu = cpu_total
+#     )
+
+
+
+    # new_url = services.cpu_usage_url(master,datacenter,floorid,rackid,prefix['id'],startTime,endTime)
+    # response = services.get_reponse(new_url)
+    # print(new_url)
+    # data2 = response.json()
+
+    # cpu_total = 0
+    # cpu_count = 0
+    
+    # if data2==None:
+    #     model_services.create_empty_host(master,services.get_current_sub_id(),datacenter,floorid,prefix['rackId'],
+    #     prefix['id'],prefix['name'],prefix['description'],prefix['hostType'],prefix['processorCount'],prefix['IPAddress'])
+    #     return
+    
+    # if isinstance(data2['activity'], list): 
+    #     for activity in data2['activity']:
+    #         cpu_total += float(activity['stat1'])
+    #         cpu_count += 1 
+            
+    # avg_cpu = cpu_total/cpu_count
+    # host = Host.objects.filter(masterip=master).filter(sub_id = current).filter(floorid=floorid).filter(rackid=rackid).filter(hostid=prefix['id'])
+    # if host.count()==0:
+    #     model_services.create_host(master,services.get_current_sub_id(),datacenter,floorid,prefix['rackId'],
+    #     prefix['id'],prefix['name'],prefix['description'],prefix['hostType'],prefix['processorCount'],prefix['IPAddress'],
+    #     data2['activity'][-1:][0]['timeStamp'],avg_cpu,cpu_count,cpu_total)
+    # else:
+    #     host.update(cpu_usage=avg_cpu, responses=cpu_count, total_cpu=cpu_total, lastTime=data2['activity'][-1:][0])

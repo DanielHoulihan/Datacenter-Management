@@ -12,7 +12,6 @@ def find_available_floors(master, current):
         list[String]: list of all floors in specified datacenter
     """    
 
-    # url = services.create_url(master, current)
     url = services.floor_url(master,current)
     response = services.get_reponse(url)
     data = response.json()
@@ -38,7 +37,6 @@ def find_available_racks(master, current, floorid):
         list[String]: list of all racks in specified datacenter and floor
     """
 
-    # url = services.create_url(master, current, floorid)
     url = services.rack_url(master, current, floorid)
     response = services.get_reponse(url)
     data = response.json()
@@ -77,7 +75,6 @@ def get_hosts_tco(master, datacenter, floorid, rackid):
     """
 
     current = services.get_current_sub_id()
-    # url = services.create_url(master, datacenter, floorid, rackid)
     url = services.host_url(master,datacenter,floorid,rackid)
     response = services.get_reponse(url)
     data = response.json()
@@ -105,7 +102,7 @@ def get_energy_usage(master, datacenter, floorid, rackid, hostid, startTime, end
     """
     
     current = services.get_current_sub_id()
-    url = services.create_url(master, datacenter, floorid, rackid, hostid, startTime, endTime)
+    url = services.power_url(master, datacenter, floorid, rackid, hostid, startTime, endTime)
     response = services.get_reponse(url)
     data = response.json()
     if data == None:return
@@ -141,13 +138,8 @@ def get_energy_usage(master, datacenter, floorid, rackid, hostid, startTime, end
     
     host = HostEnergy.objects.filter(masterip=master).filter(sub_id = current).filter(floorid=floorid).filter(rackid=rackid).filter(hostid=hostid)
     host.update(
-        capital=capital,
-        TCO=tco_3,
-        carbon_footprint_3=carbon_footprint_3,
-        minutes=minutes,
-        kWh_consumed=kWh_consumed,
-        ops_cons_3=ops_cons_3,
-        op_cost_3=op_cost_3,
-        app_waste_cost_3=app_waste_cost_3
+        capital=capital,TCO=tco_3,carbon_footprint_3=carbon_footprint_3,
+        minutes=minutes,kWh_consumed=kWh_consumed,ops_cons_3=ops_cons_3,
+        op_cost_3=op_cost_3,app_waste_cost_3=app_waste_cost_3
     )
 

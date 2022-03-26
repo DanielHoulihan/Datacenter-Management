@@ -27,7 +27,6 @@ def get_hosts(master, current_sub):
     df_list=[unix_range(startTime,endTime)]
 
     for host in available_hosts:
-        # url = services.create_url(host['masterip'],host['datacenterid'],str(host['floorid']),str(host['rackid']),str(host['hostid']),startTime,endTime)
         url = services.power_url(host['masterip'],host['datacenterid'],str(host['floorid']),
                                  str(host['rackid']),str(host['hostid']),startTime,endTime)
         response = services.get_reponse(url)
