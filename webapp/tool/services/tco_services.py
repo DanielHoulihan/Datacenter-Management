@@ -101,11 +101,10 @@ def get_energy_usage(master, datacenter, floorid, rackid, hostid, startTime, end
         capital (Integer): Capital cost of selected host
     """
     
-    current = services.get_current_sub_id()
     url = services.power_url(master, datacenter, floorid, rackid, hostid, startTime, endTime)
     response = services.get_reponse(url)
     data = response.json()
-    if data == None:return
+    if data == None: return
     total_watts = 0
     minutes = 0
     for power in data['power']:
@@ -128,7 +127,7 @@ def get_energy_usage(master, datacenter, floorid, rackid, hostid, startTime, end
     data2 = response.json()
     cpu_total = 0
     cpu_count = 0
-    if not isinstance(data2['activity'], list):return
+    if not isinstance(data2['activity'], list): return
     else:
         for activity in data2['activity']:
             cpu_total += float(activity['stat1'])
@@ -136,10 +135,9 @@ def get_energy_usage(master, datacenter, floorid, rackid, hostid, startTime, end
     avg_cpu = cpu_total/cpu_count
     app_waste_cost_3 = op_cost_3*(1-avg_cpu/100)
     
-    host = HostEnergy.objects.filter(masterip=master).filter(sub_id = current).filter(floorid=floorid).filter(rackid=rackid).filter(hostid=hostid)
-    host.update(
-        capital=capital,TCO=tco_3,carbon_footprint_3=carbon_footprint_3,
-        minutes=minutes,kWh_consumed=kWh_consumed,ops_cons_3=ops_cons_3,
-        op_cost_3=op_cost_3,app_waste_cost_3=app_waste_cost_3
+    host = HostEnergy.objects.filter(masterip=master).filter(sub_id = services.get_current_sub_id()).filter(floorid=floorid).filter(rackid=rackid).filter(hostid=hostid)
+    host.update(capital=capital,TCO=tco_3,carbon_footprint_3=carbon_footprint_3,
+                minutes=minutes,kWh_consumed=kWh_consumed,ops_cons_3=ops_cons_3,
+                op_cost_3=op_cost_3,app_waste_cost_3=app_waste_cost_3
     )
 

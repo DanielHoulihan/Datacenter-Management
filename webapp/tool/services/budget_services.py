@@ -90,9 +90,10 @@ def plot_usage(table, ylabel):
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
     x = (pd.to_datetime(endTime,unit='s') - pd.to_datetime(startTime,unit='s')).days/4
-    if x<1:
+    if x<=1:
         ax.xaxis.set_major_locator(mdates.DayLocator(interval=1))
-    else: ax.xaxis.set_major_locator(mdates.DayLocator(interval=int(x)))
+    else: 
+        ax.xaxis.set_major_locator(mdates.DayLocator(interval=int(x)))
     fig.tight_layout()
     buf = io.BytesIO()
     fig.savefig(buf)
