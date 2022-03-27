@@ -44,7 +44,7 @@
             <p class = "cpu-usage" style="background-color: rgb(235, 188, 59)">CPU Usage: {{ host.cpu_usage|floatformat }}%</p>
           {% endif %}
           
-          <button onClick="window.location.reload();">Update</button>
+          <button class="host_update_button" onClick="window.location.reload();">Update</button>
       </div>
     </div>  
       {% endfor %}

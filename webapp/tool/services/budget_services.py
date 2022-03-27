@@ -1,5 +1,5 @@
 from . import services
-from tool.models import HostEnergy
+from tool.models import HostEnergy, Budget
 import time
 from collections import defaultdict
 import pandas as pd
@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import base64
 import io
 import matplotlib.dates as mdates 
+import json
 plt.switch_backend('Agg') 
 
 def get_hosts(master, current_sub):
@@ -24,46 +25,102 @@ def get_hosts(master, current_sub):
 
     startTime,endTime = services.get_start_end()
     available_hosts = HostEnergy.objects.filter(masterip=master).filter(sub_id=current_sub).all().values()
-    df_list=[unix_range(startTime,endTime)]
+    budget = Budget.objects.filter(masterip=master).filter(sub_id=current_sub).all()
+    if budget.exists():
+        update_budget(budget, available_hosts, endTime)
+    else:
+        create_budget(startTime, endTime, available_hosts)
+        
+    budget = Budget.objects.filter(masterip=master).filter(sub_id=current_sub).all().values().get()['energy_dict']
+    decoded_data = json.loads(budget)
+    df = pd.DataFrame(decoded_data)
+    df = df.fillna(0)
+    df['day'] = pd.to_datetime(df['day'],unit='s')
+    for col in df.columns[1:]:
+        df[col] = df[col].cumsum()
+    hosts_df = df[df.columns[:-1]]
+    total_df = df[[df.columns[0], df.columns[-1]]]
+    return hosts_df, total_df
+    
 
+def update_budget(budget, available_hosts, endTime):
+    budgeted = budget.values().get()['energy_dict']
+    decoded_data = json.loads(budgeted)
+    startTime = str(int(decoded_data[-1]['day']))
+    df_list=[unix_range(startTime,endTime)]
     for host in available_hosts:
         url = services.power_url(host['masterip'],host['datacenterid'],str(host['floorid']),
-                                 str(host['rackid']),str(host['hostid']),startTime,endTime)
+                                str(host['rackid']),str(host['hostid']),startTime,endTime)
+        print(url)
         response = services.get_reponse(url)
         data = response.json()
         start=int(startTime)
         energy = defaultdict(list)
-        temp = 0
-        minutes=0
-        if data!=None:
+        if data!=None: 
             for power in data['power']:
                 if int(power['timeStamp']) >= start:
                     if int(power['timeStamp']) >= start+86400:
                         start+=86400
-                        temp+=float(power['power'])
-                        minutes+=1
+                        energy[start].append(float(power['power']))
                         continue
                     energy[start].append(float(power['power']))
-                    minutes+=1
 
-                    
-            energy[list(energy.keys())[0]].append(temp)
             summed = {k: sum(v) for (k, v) in energy.items()}
-            df = pd.DataFrame(summed.items(), columns=['day', host['hostid']])
-            df[host['hostid']] = df[host['hostid']]/1000
+            df = pd.DataFrame(summed.items(), columns=['day', str(host['hostid'])])
+            df[str(host['hostid'])] = df[str(host['hostid'])]/1000
             df_list.append(df)
 
     hosts = reduce(lambda x, y: pd.merge(x, y, on = 'day', how='left'), df_list)
-    hosts['day'] = pd.to_datetime(hosts['day'],unit='s')
     hosts = hosts.fillna(0)
-    hosts = hosts[hosts['day']<=pd.to_datetime(int(time.time()),unit='s')]
-    for col in hosts.columns[1:]:
-        hosts[col] = hosts[col].cumsum()
+    hosts = hosts[hosts['day']<=int(time.time())]
+
     hosts['Total'] = hosts[hosts.columns[1:]].sum(axis=1)
-    return hosts[hosts.columns[:-1]], hosts[[hosts.columns[0], hosts.columns[-1]]]
+    df_dicts = list(hosts.T.to_dict().values())
+
+    updated_dict = decoded_data[:-1] + df_dicts
+    
+    encoded_json = json.dumps(updated_dict)                
+    budget.update(energy_dict=encoded_json)
 
 
+def create_budget(startTime, endTime, available_hosts):
+    df_list=[unix_range(startTime,endTime)]
+    for host in available_hosts:
+        url = services.power_url(host['masterip'],host['datacenterid'],str(host['floorid']),
+                                    str(host['rackid']),str(host['hostid']),startTime,endTime)
+        print(url)
+        response = services.get_reponse(url)
+        data = response.json()
+        start=int(startTime)
+        energy = defaultdict(list)
+        if data!=None: 
+            for power in data['power']:
+                if int(power['timeStamp']) >= start:
+                    if int(power['timeStamp']) >= start+86400:
+                        start+=86400
+                        energy[start].append(float(power['power']))
+                        continue
+                    energy[start].append(float(power['power']))
 
+            summed = {k: sum(v) for (k, v) in energy.items()}
+            df = pd.DataFrame(summed.items(), columns=['day', str(host['hostid'])])
+            df[str(host['hostid'])] = df[str(host['hostid'])]/1000
+            df_list.append(df)
+
+    hosts = reduce(lambda x, y: pd.merge(x, y, on = 'day', how='left'), df_list)
+    hosts = hosts.fillna(0)
+    hosts = hosts[hosts['day']<=int(time.time())]
+    hosts['Total'] = hosts[hosts.columns[1:]].sum(axis=1)
+
+    df_dicts = list(hosts.T.to_dict().values())
+    encoded_json = json.dumps(df_dicts)        
+
+    Budget.objects.get_or_create(
+        masterip=services.get_master(),
+        sub_id=services.get_current_sub_id,
+        energy_dict=encoded_json
+    )
+    
 def plot_usage(table, ylabel):
     """ Generates matplotlib graph showing usage of carbon, energy, euro
 
@@ -80,6 +137,7 @@ def plot_usage(table, ylabel):
     fig, ax = plt.subplots(figsize=(5.5,4.5))
     for column in table.columns[1:]:
         ax.plot(table['day'], table[column], label=column, markerfacecolor='blue')
+        ax.annotate(xy=(list(table['day'])[-1],list(table[column])[-1]), text=round(list(table[column])[-1],2))
     plt.rc('grid', linestyle="--", color='lightgrey')
     plt.xlim([pd.to_datetime(startTime,unit='s'), pd.to_datetime(endTime,unit='s')])  
     plt.legend(loc='upper left')
@@ -118,6 +176,7 @@ def plot_carbon_total(table):
     fig, ax = plt.subplots(figsize=(5.5,4.5))
     for column in table.columns[1:]:
         ax.plot(table['day'], table[column], label=column, markerfacecolor='blue')
+        ax.annotate(xy=(list(table['day'])[-1],list(table[column])[-1]), text=round(list(table[column])[-1],2))
     plt.xlim([pd.to_datetime(startTime,unit='s'), pd.to_datetime(endTime,unit='s')])  
     plt.rc('grid', linestyle="--", color='lightgrey')
     ax.spines['top'].set_visible(False)
@@ -185,8 +244,13 @@ def unix_range(startTime,endTime):
     start = int(startTime)
     range1 = int((int(endTime)-start)/86400)
     dates=[]
-    for i in range(0,range1):
+    for i in range(0,range1+1):
         dates.append(start)
         start+=86400
     base_df = pd.DataFrame(dates, columns=['day'])
     return base_df
+
+
+
+
+# TODO add to existing dict and cumsum it.

@@ -5,18 +5,29 @@
 </head>
 <html>
 
+
 <div class="content">
 
   <div class="tab">
     <button class="tablinks" onclick="openCity(event, 'Carbon')" id="defaultOpen">Carbon</button>
     <button class="tablinks" onclick="openCity(event, 'Energy')">Energy</button>
     <button class="tablinks" onclick="openCity(event, 'Cost')">Cost</button>
-  </div>
+    {% if usage_percentage %}
 
+      {% if usage_percentage > 70 %}
+        <div class="carbon-percentage" style="background-color: rgb(235, 59, 59)"> You have consumed {{usage_percentage|floatformat}} % of your carbon budget</div>
+      {% elif usage_percentage > 30 %} 
+        <div class="carbon-percentage" style="background-color: #faab22"> You have consumed {{usage_percentage|floatformat}} % of your carbon budget</div>
+      {% else %} 
+        <div class="carbon-percentage" style="background-color: rgb(11, 226, 58)"> You have consumed {{usage_percentage|floatformat}} % of your carbon budget</div>     
+      {% endif %}
+    
+    {% endif %}
+  </div>
+  
   <div id="Carbon" class="tabcontent">
+    
     <div class="img_container"> 
-      {{usage|floatformat}}
-      {{usage_percentage|floatformat}}
       <img src="data:image/png;base64,{{ g1 }}" alt="">
       &nbsp; &nbsp;
       <img src="data:image/png;base64,{{ g2 }}" alt="">

@@ -9,6 +9,7 @@ def get_datacenters():
     services.check_master()
     master = services.get_master()
     url = services.datacenter_url(master)
+    print(url)
     try:
         response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
     except Exception: return 
@@ -111,6 +112,7 @@ def get_host_energy(prefix, startTime,endTime,master,datacenter,floorid,current,
     host = Host.objects.filter(masterip=master).filter(sub_id = current).filter(floorid=floorid).filter(rackid=rackid).filter(hostid=prefix['id'])
     if host.exists():
         new_url = services.cpu_usage_url(master,datacenter,floorid,rackid,prefix['id'],str(int(host.values().get()['lastTime'])+1),endTime)
+        print(new_url)
         response = services.get_reponse(new_url)
         data2 = response.json()
         cpu_total = 0
@@ -120,35 +122,35 @@ def get_host_energy(prefix, startTime,endTime,master,datacenter,floorid,current,
             for activity in data2['activity']:
                 cpu_total += float(activity['stat1'])
                 cpu_count += 1 
+            updated_responses = host.values().get()['responses'] + cpu_count
+            updated_cpu_total = host.values().get()['total_cpu'] + cpu_total
+            updated_avg_cpu = updated_cpu_total/updated_responses
+            host.update(cpu_usage=updated_avg_cpu, responses=updated_responses, total_cpu=updated_cpu_total, lastTime=data2['activity'][-1:][0]['timeStamp'])
         else:
             updated_cpu_total = host.values().get()['total_cpu'] + float(data2['activity']['stat1'])
             updated_responses = host.values().get()['responses'] + 1
             updated_avg_cpu = updated_cpu_total/updated_responses
             host.update(cpu_usage=updated_avg_cpu, responses=updated_responses, total_cpu=updated_cpu_total, lastTime=data2['activity']['timeStamp'])
-            return
 
-        updated_responses = host.values().get()['responses'] + cpu_count
-        updated_cpu_total = host.values().get()['total_cpu'] + cpu_total
-        updated_avg_cpu = updated_cpu_total/updated_responses
-        host.update(cpu_usage=updated_avg_cpu, responses=updated_responses, total_cpu=updated_cpu_total, lastTime=data2['activity'][-1:][0]['timeStamp'])
-
-    new_url = services.cpu_usage_url(master,datacenter,floorid,rackid,prefix['id'],startTime,endTime)
-    response = services.get_reponse(new_url)
-    data2 = response.json()
-    if data2==None:return
-    cpu_total = 0
-    cpu_count = 0
-    if isinstance(data2['activity'], list): 
-        for activity in data2['activity']:
-            cpu_total += float(activity['stat1'])
-            cpu_count += 1 
-    else:
-        cpu_total = float(data2['activity']['stat1'])
-        cpu_count = 1
-        
-    avg_cpu = cpu_total/cpu_count
-    model_services.create_host(master,services.get_current_sub_id(),datacenter,floorid,prefix['rackId'],
-    prefix['id'],prefix['name'],prefix['description'],prefix['hostType'],prefix['processorCount'],prefix['IPAddress'],
-    data2['activity'][-1:][0]['timeStamp'],avg_cpu,cpu_count,cpu_total)
+    if not host.exists():
+        new_url = services.cpu_usage_url(master,datacenter,floorid,rackid,prefix['id'],startTime,endTime)
+        print(new_url)
+        response = services.get_reponse(new_url)
+        data2 = response.json()
+        if data2==None:return
+        cpu_total = 0
+        cpu_count = 0
+        if isinstance(data2['activity'], list): 
+            for activity in data2['activity']:
+                cpu_total += float(activity['stat1'])
+                cpu_count += 1 
+        else:
+            cpu_total = float(data2['activity']['stat1'])
+            cpu_count = 1
+            
+        avg_cpu = cpu_total/cpu_count
+        model_services.create_host(master,services.get_current_sub_id(),datacenter,floorid,prefix['rackId'],
+        prefix['id'],prefix['name'],prefix['description'],prefix['hostType'],prefix['processorCount'],prefix['IPAddress'],
+        data2['activity'][-1:][0]['timeStamp'],avg_cpu,cpu_count,cpu_total)
 
 

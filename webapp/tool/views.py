@@ -2,10 +2,13 @@
 
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from tool.models import ConfiguredDataCenters, Datacenter, Floor, Rack, Host, CurrentDatacenter, Count, MasterIP, HostEnergy, Threshold
+from tool.models import ConfiguredDataCenters, Datacenter, Floor, Rack, Host, CurrentDatacenter, Count, MasterIP, HostEnergy, Threshold, Budget
 from .services import services, asset_services, budget_services, tco_services, model_services
 from . import forms
 from django.views.decorators.csrf import csrf_protect
+import json
+import pandas as pd
+import time
 
 __author__ = "Daniel Houlihan"
 __studentnumber__ = "18339866"
@@ -73,7 +76,7 @@ def hosts(request, floorid, rackid):
     master=services.get_master()
     current = services.get_current_datacenter()
     asset_services.get_hosts(master, current, floorid, rackid, startTime, endTime)
-
+    
     context["hosts"] = Host.objects.filter(sub_id=services.get_current_sub_id()).filter(floorid=floorid).filter(masterip=master).filter(rackid=rackid).all()
     context["host_count"] = Host.objects.filter(sub_id=services.get_current_sub_id()).filter(floorid=floorid).filter(masterip=master).filter(rackid=rackid).all().count()
     context["threshold"] = Threshold.objects.all().get()
@@ -196,6 +199,7 @@ def budget(request):
     """ Budget Tab
     Generate graphs for carbon usage, energy usage, costs
     """
+    # t0 = time.time()
 
     context = {}
     master = services.get_master()
@@ -206,23 +210,25 @@ def budget(request):
         return services.prompt_configuration(request,"budget")
 
     tco_services.find_all_available_hosts(master, current)
-    df, total = budget_services.get_hosts(master,current_sub)
+    
+    hosts_df, total_df = budget_services.get_hosts(master, current_sub)
 
-    total_usage = list(total['Total'])[-1] * ConfiguredDataCenters.objects.filter(masterip=master).filter(sub_id=current_sub).values().get()['carbon_conversion']
+    total_usage = list(total_df['Total'])[-1] * ConfiguredDataCenters.objects.filter(masterip=master).filter(sub_id=current_sub).values().get()['carbon_conversion']
     context['usage'] = total_usage
     context['page'] = 'budget'
     context['master'] = master
     context['current'] = services.get_current_for_html()
     if ConfiguredDataCenters.objects.filter(masterip=master).filter(sub_id=current_sub).values().get()['budget'] == None:
-        context['g1'] = budget_services.plot_usage(budget_services.carbon_usage(total), ylabel="KgCo2")
+        context['g1'] = budget_services.plot_usage(budget_services.carbon_usage(total_df), ylabel="KgCo2")
     else: 
-        context['g1'] = budget_services.plot_carbon_total(budget_services.carbon_usage(total))
+        context['g1'] = budget_services.plot_carbon_total(budget_services.carbon_usage(total_df))
         context['usage_percentage'] = (total_usage/ConfiguredDataCenters.objects.filter(masterip=master).filter(sub_id=current_sub).values().get()['budget'])*100
-    context['g2'] = budget_services.plot_usage(budget_services.carbon_usage(df), ylabel="KgCo2")
-    context['g3'] = budget_services.plot_usage(total, ylabel="kWh")
-    context['g4'] = budget_services.plot_usage(df, ylabel="kWh")
-    context['g5'] = budget_services.plot_usage(budget_services.cost_estimate(total), ylabel="Euro")
-    context['g6'] = budget_services.plot_usage(budget_services.cost_estimate(df), ylabel="Euro")
+    context['g2'] = budget_services.plot_usage(budget_services.carbon_usage(hosts_df), ylabel="KgCo2")
+    context['g3'] = budget_services.plot_usage(total_df, ylabel="kWh")
+    context['g4'] = budget_services.plot_usage(hosts_df, ylabel="kWh")
+    context['g5'] = budget_services.plot_usage(budget_services.cost_estimate(total_df), ylabel="Euro")
+    context['g6'] = budget_services.plot_usage(budget_services.cost_estimate(hosts_df), ylabel="Euro")
+    # print(time.time()-t0)
 
     return render(request, 'budget/budget.html', context)
  

@@ -11,7 +11,7 @@
       {% if error.non_field_errors %}<div class="capital-error">{{error.non_field_errors}}</div>{% endif %}
       {% for host in tco %}
       <div class="card-container">
-      <div class="tco-card">
+          <div class="tco-card">
           <b>Host ID: {{ host.hostid }}</b>
           <hr>
           <p>Floor: {{ host.floorid }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Rack: {{ host.rackid }}</p>
@@ -24,11 +24,10 @@
             <input type=hidden id=host name= host value={{host.hostid}}>
             <input type=hidden id=rack name= rack value={{host.rackid}}>
             <input type=hidden id=floor name= floor value={{host.floorid}}>
-            <button type="submit" class="save" >Calculate</button>
+            <button type="submit" class="tco_calculate_button" >Calculate</button>
           </form>
-
           <hr>
-          
+          {% if host.capital != none %} 
           <table class ="tco-table">
             <tr>
               <th>Responses (mins)</th>
@@ -74,8 +73,22 @@
               </td>
             </tr>
           </table>
-
+          
+          <form method="POST">
+            {% csrf_token %}
+            <label for="capital"></label>
+            <input type="hidden" id="capital" name="capital" value={{host.capital}}>
+            <input type="hidden" id="host" name= "host" value={{host.hostid}}>
+            <input type="hidden" id="rack" name= "rack" value={{host.rackid}}>
+            <input type="hidden" id="floor" name= "floor" value={{host.floorid}}>
+            <button type="submit" class="tco_update_button">Update</button>
+          </form>
+          {%else%}
+          <br>
+            Enter Capital Cost to Calculate Metrics
+          {% endif %}
       </div>
+
     </div> 
       {% endfor %}
      

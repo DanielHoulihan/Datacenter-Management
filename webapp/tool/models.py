@@ -119,6 +119,11 @@ class HostEnergy(models.Model):
     op_cost_3 = models.FloatField(null=True)
     kWh_consumed = models.FloatField(null=True)
     app_waste_cost_3 = models.FloatField(null=True)
+    lastTime = models.CharField(null=True,max_length=25)
+    cpu_responses = models.IntegerField(null=True)
+    cpu_usage = models.FloatField(null=True)
+    total_cpu = models.FloatField(null=True)
+    cpu_lastTime = models.IntegerField(null=True)
 
 # Stores Threshold for host CPU % usage
 class Threshold(models.Model):
@@ -129,7 +134,6 @@ class Threshold(models.Model):
 class Budget(models.Model):
     masterip = models.CharField(max_length=20,null=True)
     sub_id = models.CharField(max_length=20,null=True)
-    carbon_used = models.FloatField(null=True)
-    energy_used = models.FloatField(null=True)
     time = models.IntegerField(null=True)
+    energy_dict = models.TextField(null=True)
     
