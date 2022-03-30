@@ -12,6 +12,14 @@ class SelectCurrentForm(forms.Form):
         data = self.cleaned_data['current_datacenter']
         return data
 
+class UpdateDatacenterForm(forms.Form):
+  
+    update = forms.CharField(required=False)
+
+    def clean_update(self):
+        data = self.cleaned_data['update']
+        return data
+    
 class DeleteConfigurationForm(forms.Form):
     """ Class to sanitize data for deleting selected datacenter
         from the Home tab

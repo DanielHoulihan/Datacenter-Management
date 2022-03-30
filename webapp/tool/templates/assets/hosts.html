@@ -32,7 +32,7 @@
           <p>Host Type: {{ host.hostType }}</p>
           <p># Processors: {{ host.processors }}</p>
           <p>IP Address: {{ host.ipaddress }}</p>
-          <p>Responses (mins): {{ host.responses }}</p>
+          <p>Responses (mins): {{ host.cpu_responses }}</p>
 
           {% if host.cpu_usage > threshold.medium %}
             <p class = "cpu-usage" style="background-color: rgb(235, 59, 59)">CPU Usage: {{ host.cpu_usage|floatformat }}%</p>

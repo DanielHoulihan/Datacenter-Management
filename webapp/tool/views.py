@@ -2,11 +2,12 @@
 
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from tool.models import ConfiguredDataCenters, Datacenter, Floor, Rack, Host, CurrentDatacenter, Count, MasterIP, HostEnergy, Threshold, Budget
+from tool.models import ConfiguredDataCenters, Datacenter, Floor, Rack, Host, CurrentDatacenter, Count, MasterIP, HostEnergy, Threshold, Budget, AvailableDatacenters
 from .services import services, asset_services, budget_services, tco_services, model_services
 from . import forms
 from django.views.decorators.csrf import csrf_protect
 import json
+from datetime import datetime 
 import pandas as pd
 import time
 
@@ -28,14 +29,14 @@ def floors(request):
     if CurrentDatacenter.objects.filter(masterip=master).all().count()==0:
         return services.prompt_configuration(request,"assets")
 
-    current = services.get_current_datacenter()
-    asset_services.get_floors(services.get_current_datacenter())
+    sub_id = services.get_current_sub_id()
 
-    context['floors'] = Floor.objects.filter(datacenterid=current).filter(masterip=master).all()
-    context['floor_count'] = Floor.objects.filter(datacenterid=current).filter(masterip=master).all().count()
+    context['floors'] = Floor.objects.filter(sub_id=sub_id).filter(masterip=master).all()
+    context['floor_count'] = Floor.objects.filter(sub_id=sub_id).filter(masterip=master).all().count()
     context['master'] = master
     context['current'] = services.get_current_for_html()
     context['page'] = 'assets'
+    
     return render (request, 'assets/floors.html', context )
 
 
@@ -45,12 +46,10 @@ def racks(request, floorid):
     """
 
     context = {}
-    current = services.get_current_datacenter()
+    sub_id = services.get_current_sub_id()
 
-    asset_services.get_racks(current, floorid)
-
-    context['racks'] = Rack.objects.filter(datacenterid=current).filter(floorid=floorid).filter(masterip=services.get_master()).all()
-    context['rack_count'] = Rack.objects.filter(datacenterid=current).filter(floorid=floorid).filter(masterip=services.get_master()).all().count()
+    context['racks'] = Rack.objects.filter(sub_id=sub_id).filter(floorid=floorid).filter(masterip=services.get_master()).all()
+    context['rack_count'] = Rack.objects.filter(sub_id=sub_id).filter(floorid=floorid).filter(masterip=services.get_master()).all().count()
     context['master'] = services.get_master()
     context['current'] = services.get_current_for_html()
     context['page'] = "assets"
@@ -72,10 +71,10 @@ def hosts(request, floorid, rackid):
             Threshold.objects.update(low=low,medium=medium)
         context["error"] = form
 
-    startTime, endTime = services.get_start_end()
+    # startTime, endTime = services.get_start_end()
     master=services.get_master()
-    current = services.get_current_datacenter()
-    asset_services.get_hosts(master, current, floorid, rackid, startTime, endTime)
+    # current = services.get_current_datacenter()
+    # asset_services.get_hosts_energy(master, current, floorid, rackid, startTime, endTime)
     
     context["hosts"] = Host.objects.filter(sub_id=services.get_current_sub_id()).filter(floorid=floorid).filter(masterip=master).filter(rackid=rackid).all()
     context["host_count"] = Host.objects.filter(sub_id=services.get_current_sub_id()).filter(floorid=floorid).filter(masterip=master).filter(rackid=rackid).all().count()
@@ -94,9 +93,9 @@ def configure(request):
     # 'to_configure' - setting up a new configured datacenter
     # 'current_datacenter' - select a current datacenter from the configured
     """
-
+    
     context = {}
-    asset_services.get_datacenters()
+    asset_services.get_available_datacenters()
     master = services.get_master()
     services.check_master()
     if request.method == 'POST':
@@ -115,7 +114,7 @@ def configure(request):
             if form.is_valid():
                 ip = form.cleaned_data
                 MasterIP.objects.update(master = ip)
-                asset_services.get_datacenters()
+                asset_services.get_available_datacenters() 
 
     if request.method == 'POST':
         if 'to_configure' in request.POST:
@@ -123,25 +122,29 @@ def configure(request):
             if form.is_valid():
                 to_configure, start, end, pue, energy_cost, carbon_conversion, budget = form.cleaned_data
                 services.increment_count()
+                instance = str(to_configure)+"-"+str(Count.objects.all().values().get()['configured']+1)
                 if end and not budget: 
                     model_services.create_configured_end_no_budget(master,
-                    str(to_configure)+"-"+str(Count.objects.all().values().get()['configured']+1),
-                    to_configure,start,end,pue,energy_cost,carbon_conversion)
+                    instance,to_configure,start,end,pue,energy_cost,carbon_conversion)
 
                 if end and budget: 
                     model_services.create_configured_end_budget(master,
-                    str(to_configure)+"-"+str(Count.objects.all().values().get()['configured']+1),
-                    to_configure,start,end,pue,energy_cost,carbon_conversion,budget)
+                    instance,to_configure,start,end,pue,energy_cost,carbon_conversion,budget)
 
                 if not end and budget: 
                     model_services.create_configured_no_end_budget(master,
-                    str(to_configure)+"-"+str(Count.objects.all().values().get()['configured']+1),
-                    to_configure,start,pue,energy_cost,carbon_conversion,budget)
+                    instance,to_configure,start,pue,energy_cost,carbon_conversion,budget)
 
                 else:
                     model_services.create_configured_no_end_no_budget(master,
-                    str(to_configure)+"-"+str(Count.objects.all().values().get()['configured']+1),
-                    to_configure,start,pue,energy_cost,carbon_conversion)
+                    instance,to_configure,start,pue,energy_cost,carbon_conversion)
+                    
+                services.create_or_update_current(master,instance)
+                asset_services.find_available_hosts(master, to_configure, instance)
+                asset_services.get_hosts_energy(master, instance)
+                tco_services.get_hosts_power(master, instance)
+                budget_services.get_hosts_budget(master, instance)
+
             context['error'] = form
 
     if request.method == 'POST':
@@ -152,14 +155,33 @@ def configure(request):
                 services.create_or_update_current(master,current)
             context['error'] = form
 
+    if request.method == 'POST':
+        if 'update' in request.POST:
+            form = forms.UpdateDatacenterForm(request.POST)
+            if form.is_valid():
+                to_update = form.cleaned_data['update']
+                asset_services.find_available_hosts(master, services.get_current_datacenter(), to_update)
+                asset_services.update_hosts_energy(master,to_update)
+                budget_services.get_hosts_budget(master,to_update)
+                tco_services.update_hosts_power(master,to_update)
+
+
+    sub_id = services.get_current_sub_id()
+    try:
+        last_update = Host.objects.filter(masterip=master).filter(sub_id=sub_id).all().values()[0]['cpu_last_response']
+        last_update = datetime.fromtimestamp(int(last_update)).strftime("%Y-%m-%d %H:%M")
+    except: last_update='Never'
+    
     master = services.get_master()
-    context['datacenters'] = Datacenter.objects.filter(masterip=master).all()
-    context['datacenters_count'] = Datacenter.objects.filter(masterip=master).all().count()
+    context['last_update'] = last_update
+    context['datacenters'] = AvailableDatacenters.objects.filter(masterip=master).all()
+    context['datacenters_count'] = AvailableDatacenters.objects.filter(masterip=master).all().count()
     context['configured_count'] = ConfiguredDataCenters.objects.filter(masterip=master).all().count()
     context['configured'] = ConfiguredDataCenters.objects.filter(masterip=master).all()
     context['master'] = services.get_master()
     context['current'] = services.get_current_for_html()
     context['page'] = "home"
+    
     return render (request, 'configure/configure.html', context)
 
             
@@ -175,20 +197,16 @@ def tco(request):
     if CurrentDatacenter.objects.filter(masterip=master).all().count()==0:
         return services.prompt_configuration(request,"tco")
 
-    current = services.get_current_datacenter()
+    sub_id = services.get_current_sub_id()
     if request.method == 'POST':
         form = forms.CalculateTCOForm(request.POST)
         if form.is_valid():
             capital,rack,floor,host = form.cleaned_data
-            startTime,endTime = services.get_start_end()            
-            tco_services.get_energy_usage(master, current, floor, rack, host, startTime, endTime, capital)
+            tco_services.calculate_tco(master, sub_id, floor, rack, host, capital)
         context['error'] = form
 
-    current_sub = services.get_current_sub_id()
-    tco_services.find_all_available_hosts(master, current)
-
-    context['tco'] = HostEnergy.objects.filter(sub_id=current_sub).filter(masterip=master).all()
-    context['tco_count'] = HostEnergy.objects.filter(sub_id=current_sub).filter(masterip=master).all().count()
+    context['tco'] = Host.objects.filter(sub_id=sub_id).filter(masterip=master).all()
+    context['tco_count'] = Host.objects.filter(sub_id=sub_id).filter(masterip=master).all().count()
     context['master'] = master
     context['current'] = services.get_current_for_html()
     context['page'] = 'tco'
@@ -199,39 +217,29 @@ def budget(request):
     """ Budget Tab
     Generate graphs for carbon usage, energy usage, costs
     """
-    # t0 = time.time()
-
     context = {}
     master = services.get_master()
     current_sub = services.get_current_sub_id()
-    current = services.get_current_datacenter()
 
     if CurrentDatacenter.objects.filter(masterip=master).all().count()==0:
         return services.prompt_configuration(request,"budget")
-
-    tco_services.find_all_available_hosts(master, current)
     
-    hosts_df, total_df = budget_services.get_hosts(master, current_sub)
-
-    total_usage = list(total_df['Total'])[-1] * ConfiguredDataCenters.objects.filter(masterip=master).filter(sub_id=current_sub).values().get()['carbon_conversion']
-    context['usage'] = total_usage
     context['page'] = 'budget'
     context['master'] = master
     context['current'] = services.get_current_for_html()
-    if ConfiguredDataCenters.objects.filter(masterip=master).filter(sub_id=current_sub).values().get()['budget'] == None:
-        context['g1'] = budget_services.plot_usage(budget_services.carbon_usage(total_df), ylabel="KgCo2")
-    else: 
-        context['g1'] = budget_services.plot_carbon_total(budget_services.carbon_usage(total_df))
-        context['usage_percentage'] = (total_usage/ConfiguredDataCenters.objects.filter(masterip=master).filter(sub_id=current_sub).values().get()['budget'])*100
-    context['g2'] = budget_services.plot_usage(budget_services.carbon_usage(hosts_df), ylabel="KgCo2")
-    context['g3'] = budget_services.plot_usage(total_df, ylabel="kWh")
-    context['g4'] = budget_services.plot_usage(hosts_df, ylabel="kWh")
-    context['g5'] = budget_services.plot_usage(budget_services.cost_estimate(total_df), ylabel="Euro")
-    context['g6'] = budget_services.plot_usage(budget_services.cost_estimate(hosts_df), ylabel="Euro")
-    # print(time.time()-t0)
+    
+    # print(Budget.objects.filter(masterip=master).filter(sub_id=current_sub).all().values().get())
+    
+    budget = Budget.objects.filter(masterip=master).filter(sub_id=current_sub).all().values().get()
+    context['g1'] = budget['carbon_graph1']
+    context['g2'] = budget['carbon_graph2']
+    context['g3'] = budget['energy_graph1']
+    context['g4'] = budget['energy_graph2']
+    context['g5'] = budget['cost_graph1']
+    context['g6'] = budget['cost_graph2']
+    context['usage_percentage'] = budget['usage_percentage']
 
     return render(request, 'budget/budget.html', context)
- 
 
 
- # production example - https://github.com/gothinkster/django-realworld-example-app
+

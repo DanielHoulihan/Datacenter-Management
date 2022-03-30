@@ -3,8 +3,22 @@ from django.http import HttpResponseBadRequest
 from django.urls import reverse
 
 # Datacenter database model
+class AvailableDatacenters(models.Model):
+    masterip = models.CharField(null=True, max_length=25)
+    datacenterid = models.CharField(max_length=20,null=True)
+    datacentername = models.CharField(max_length=25, null=True)
+    description = models.CharField(max_length=100, null=True)
+
+    def __str__(self):
+        return str(self.datacenterid)
+
+    def get_absolute_url(self):
+        return reverse('datacenterid', args=[str(self.id)])  
+    
+# Datacenter database model
 class Datacenter(models.Model):
     masterip = models.CharField(null=True, max_length=25)
+    sub_id = models.CharField(null=True,max_length=15)
     datacenterid = models.CharField(max_length=20,null=True)
     datacentername = models.CharField(max_length=25, null=True)
     description = models.CharField(max_length=100, null=True)
@@ -18,6 +32,7 @@ class Datacenter(models.Model):
 # Floor (asset) database model
 class Floor(models.Model):
     masterip = models.CharField(null=True, max_length=25)
+    sub_id = models.CharField(null=True,max_length=15)
     datacenterid = models.CharField(max_length=20,null=True)
     floorid = models.IntegerField()
     floorname = models.CharField(max_length=25, null=True)
@@ -32,6 +47,7 @@ class Floor(models.Model):
 # Rack (asset) database model
 class Rack(models.Model):
     masterip = models.CharField(null=True, max_length=25)
+    sub_id = models.CharField(null=True,max_length=15)
     datacenterid = models.CharField(max_length=20,null=True)
     floorid = models.IntegerField()
     rackid = models.IntegerField()
@@ -58,14 +74,25 @@ class Host(models.Model):
     hostType = models.CharField(max_length=20)
     processors = models.IntegerField()
     ipaddress = models.CharField(max_length=25)
-    lastTime = models.CharField(max_length=25, null=True)
+    cpu_last_response = models.CharField(max_length=25, null=True)
     cpu_usage = models.FloatField(null=True)
-    responses = models.IntegerField(null=True)
+    cpu_responses = models.IntegerField(null=True)
     total_cpu = models.FloatField(null=True)
-
+    TCO = models.FloatField(null=True)
+    carbon_footprint_3 = models.FloatField(null=True)
+    power_responses = models.IntegerField(null=True)
+    kWh_consumed = models.FloatField(null=True)
+    ops_cons_3 = models.FloatField(null=True)
+    op_cost_3 = models.FloatField(null=True)
+    power_last_response = models.IntegerField(null=True)
+    total_watt_hour = models.FloatField(null=True)
+    app_waste_cost_3 = models.FloatField(null=True)
+    capital = models.IntegerField(null=True)
+    
     def __str__(self):
         return str(self.hostid)
-
+                
+                
 # Stores the current datacenter 
 class CurrentDatacenter(models.Model):
     masterip = models.CharField(null=True, max_length=25)
@@ -136,4 +163,12 @@ class Budget(models.Model):
     sub_id = models.CharField(max_length=20,null=True)
     time = models.IntegerField(null=True)
     energy_dict = models.TextField(null=True)
+    carbon_graph1 = models.ImageField(null=True)
+    carbon_graph2 = models.ImageField(null=True)
+    energy_graph1 = models.ImageField(null=True)
+    energy_graph2 = models.ImageField(null=True)
+    cost_graph1 = models.ImageField(null=True)
+    cost_graph2 = models.ImageField(null=True)
+    total_usage = models.FloatField(null=True)
+    usage_percentage = models.FloatField(null=True)
     

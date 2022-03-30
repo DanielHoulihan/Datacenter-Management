@@ -156,3 +156,5 @@ def power_url(master, datacenter,floor,rack,host,start,end):
 def cpu_usage_url(master, datacenter,floor,rack,host,start,end):
     return "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"+floor+"/racks/"+rack+"/hosts/"+host+"/activity?starttime="+start+"&endtime="+end
 
+def all_power_url(master, datacenter, start, end):
+    return "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/allhosts/power?starttime="+start+"&endtime="+end

@@ -27,12 +27,11 @@
             <button type="submit" class="tco_calculate_button" >Calculate</button>
           </form>
           <hr>
-          {% if host.capital != none %} 
           <table class ="tco-table">
             <tr>
               <th>Responses (mins)</th>
               <td>            
-                {{host.minutes|floatformat}}
+                {{host.power_responses|floatformat}}
               </td>
             </tr>
             <tr>
@@ -83,10 +82,7 @@
             <input type="hidden" id="floor" name= "floor" value={{host.floorid}}>
             <button type="submit" class="tco_update_button">Update</button>
           </form>
-          {%else%}
-          <br>
-            Enter Capital Cost to Calculate Metrics
-          {% endif %}
+
       </div>
 
     </div> 
