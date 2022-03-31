@@ -124,13 +124,14 @@ def configure(request):
 
     if request.method == 'POST':
         if 'update' in request.POST:
-            form = forms.UpdateDatacenterForm(request.POST)
-            if form.is_valid():
-                to_update = form.cleaned_data['update']
-                asset_services.find_available_hosts(master, services.get_current_datacenter(), to_update)
-                asset_services.update_hosts_energy(master,to_update)
-                budget_services.get_hosts_budget(master,to_update)
-                tco_services.update_hosts_power(master,to_update)
+            if services.get_current_datacenter()!=CurrentDatacenter.DoesNotExist:
+                form = forms.UpdateDatacenterForm(request.POST)
+                if form.is_valid():
+                    to_update = form.cleaned_data['update']
+                    asset_services.find_available_hosts(master, services.get_current_datacenter(), to_update)
+                    asset_services.update_hosts_energy(master,to_update)
+                    budget_services.get_hosts_budget(master,to_update)
+                    tco_services.update_hosts_power(master,to_update)
 
 
     sub_id = services.get_current_sub_id()

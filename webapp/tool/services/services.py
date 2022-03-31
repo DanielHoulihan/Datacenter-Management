@@ -9,7 +9,7 @@ def get_current_sub_id():
 
     try:
         return str(CurrentDatacenter.objects.all().values().get()['current'])
-    except: return CurrentDatacenter.DoesNotExist
+    except: return CurrentDatacenter.DoesNotExist    
 
 def get_current_datacenter():
     """ Find the id of the current datacenter """
