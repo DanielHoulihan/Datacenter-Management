@@ -124,33 +124,6 @@ class Count(models.Model):
 class MasterIP(models.Model):
     master = models.CharField(null=True, max_length=25)
 
-# Host energy (TCO + budget) database model
-class HostEnergy(models.Model):
-    masterip = models.CharField(null=True, max_length=25)
-    datacenterid = models.CharField(max_length=20,null=True)
-    sub_id = models.CharField(max_length=20,null=True)
-    floorid = models.IntegerField(null=True)
-    rackid = models.IntegerField()
-    hostid = models.IntegerField()
-    ipaddress = models.CharField(max_length=25)
-    TCO = models.FloatField(null=True)
-    carbon_footprint_3 = models.FloatField(null=True)
-    ops_cons = models.FloatField(null=True)
-    total_watt_hour = models.FloatField(null=True)
-    minutes = models.FloatField(null=True)
-    hours = models.FloatField(null=True)
-    avg_kWh = models.FloatField(null=True)
-    avg_watt_hour = models.FloatField(null=True)
-    capital = models.IntegerField(null=True)
-    ops_cons_3 = models.FloatField(null=True)
-    op_cost_3 = models.FloatField(null=True)
-    kWh_consumed = models.FloatField(null=True)
-    app_waste_cost_3 = models.FloatField(null=True)
-    lastTime = models.CharField(null=True,max_length=25)
-    cpu_responses = models.IntegerField(null=True)
-    cpu_usage = models.FloatField(null=True)
-    total_cpu = models.FloatField(null=True)
-    cpu_lastTime = models.IntegerField(null=True)
 
 # Stores Threshold for host CPU % usage
 class Threshold(models.Model):

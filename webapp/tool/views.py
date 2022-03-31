@@ -2,7 +2,7 @@
 
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from tool.models import ConfiguredDataCenters, Datacenter, Floor, Rack, Host, CurrentDatacenter, Count, MasterIP, HostEnergy, Threshold, Budget, AvailableDatacenters
+from tool.models import ConfiguredDataCenters, Datacenter, Floor, Rack, Host, CurrentDatacenter, Count, MasterIP, Threshold, Budget, AvailableDatacenters
 from .services import services, asset_services, budget_services, tco_services, model_services
 from . import forms
 from django.views.decorators.csrf import csrf_protect
@@ -18,50 +18,14 @@ __maintainer__ = "Daniel Houlihan"
 __email__ = "daniel.houlihan@ucdconnect.ie"
 __status__ = "Production"
 
-def floors(request):
+def assets(request):
     """ Assets Tab
     Finds the available floors in the chosen datacenter (assets) 
     """    
 
     context = {}
     master = services.get_master()
-
-    if CurrentDatacenter.objects.filter(masterip=master).all().count()==0:
-        return services.prompt_configuration(request,"assets")
-
-    sub_id = services.get_current_sub_id()
-
-    context['floors'] = Floor.objects.filter(sub_id=sub_id).filter(masterip=master).all()
-    context['floor_count'] = Floor.objects.filter(sub_id=sub_id).filter(masterip=master).all().count()
-    context['master'] = master
-    context['current'] = services.get_current_for_html()
-    context['page'] = 'assets'
     
-    return render (request, 'assets/floors.html', context )
-
-
-def racks(request, floorid):
-    """ Assets/Racks Tab
-    Finds the available racks in the chosen datacenter (assets) and sends to template
-    """
-
-    context = {}
-    sub_id = services.get_current_sub_id()
-
-    context['racks'] = Rack.objects.filter(sub_id=sub_id).filter(floorid=floorid).filter(masterip=services.get_master()).all()
-    context['rack_count'] = Rack.objects.filter(sub_id=sub_id).filter(floorid=floorid).filter(masterip=services.get_master()).all().count()
-    context['master'] = services.get_master()
-    context['current'] = services.get_current_for_html()
-    context['page'] = "assets"
-    return render (request, 'assets/racks.html', context )
-
-
-def hosts(request, floorid, rackid):
-    """ Assets/Racks/Hosts Tab 
-    Finds the available hosts in the chosen datacenter (assets) and sends to template
-    """
-
-    context = {}
     services.set_threshold()
 
     if request.method == 'POST':
@@ -71,19 +35,23 @@ def hosts(request, floorid, rackid):
             Threshold.objects.update(low=low,medium=medium)
         context["error"] = form
 
-    # startTime, endTime = services.get_start_end()
-    master=services.get_master()
-    # current = services.get_current_datacenter()
-    # asset_services.get_hosts_energy(master, current, floorid, rackid, startTime, endTime)
-    
-    context["hosts"] = Host.objects.filter(sub_id=services.get_current_sub_id()).filter(floorid=floorid).filter(masterip=master).filter(rackid=rackid).all()
-    context["host_count"] = Host.objects.filter(sub_id=services.get_current_sub_id()).filter(floorid=floorid).filter(masterip=master).filter(rackid=rackid).all().count()
+    if CurrentDatacenter.objects.filter(masterip=master).all().count()==0:
+        return services.prompt_configuration(request,"assets")
+
+    sub_id = services.get_current_sub_id()
+    context['master'] = master
+    context['floors'] = Floor.objects.filter(sub_id=sub_id).filter(masterip=master).all()
+    context['floor_count'] = Floor.objects.filter(sub_id=sub_id).filter(masterip=master).all().count()
+    context['rack_count'] = Rack.objects.filter(sub_id=sub_id).filter(masterip=master).all().count()
+    context["host_count"] = Host.objects.filter(sub_id=services.get_current_sub_id()).filter(masterip=master).all().count()
+    context['current'] = services.get_current_for_html()
     context["threshold"] = Threshold.objects.all().get()
-    context["master"] = services.get_master()
-    context["current"] = services.get_current_for_html()
-    context["page"] = "assets"
-    return render (request, 'assets/hosts.html', context )
+    context['racks'] = Rack.objects.filter(sub_id=sub_id).filter(masterip=services.get_master()).all()
+    context["hosts"] = Host.objects.filter(sub_id=services.get_current_sub_id()).filter(masterip=master).all()
+    context['page'] = 'assets'
     
+    return render (request, 'assets/assets.html', context )
+
 
 @csrf_protect
 def configure(request):
@@ -106,7 +74,6 @@ def configure(request):
                 ConfiguredDataCenters.objects.filter(sub_id=to_delete).filter(masterip=master).delete()
                 CurrentDatacenter.objects.filter(current=to_delete).filter(masterip=master).delete()
                 Host.objects.filter(sub_id=to_delete).filter(masterip=master).delete()
-                HostEnergy.objects.filter(sub_id=to_delete).filter(masterip=master).delete()
 
     if request.method == 'POST':            
         if 'ip' in request.POST:
@@ -171,7 +138,6 @@ def configure(request):
         last_update = Host.objects.filter(masterip=master).filter(sub_id=sub_id).all().values()[0]['cpu_last_response']
         last_update = datetime.fromtimestamp(int(last_update)).strftime("%Y-%m-%d %H:%M")
     except: last_update='Never'
-    
     master = services.get_master()
     context['last_update'] = last_update
     context['datacenters'] = AvailableDatacenters.objects.filter(masterip=master).all()
@@ -223,14 +189,11 @@ def budget(request):
 
     if CurrentDatacenter.objects.filter(masterip=master).all().count()==0:
         return services.prompt_configuration(request,"budget")
+    budget = Budget.objects.filter(masterip=master).filter(sub_id=current_sub).all().values().get()
     
     context['page'] = 'budget'
     context['master'] = master
-    context['current'] = services.get_current_for_html()
-    
-    # print(Budget.objects.filter(masterip=master).filter(sub_id=current_sub).all().values().get())
-    
-    budget = Budget.objects.filter(masterip=master).filter(sub_id=current_sub).all().values().get()
+    context['current'] = services.get_current_for_html()    
     context['g1'] = budget['carbon_graph1']
     context['g2'] = budget['carbon_graph2']
     context['g3'] = budget['energy_graph1']

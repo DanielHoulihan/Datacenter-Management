@@ -69,17 +69,19 @@ table.tco-table tr{
   text-align: left;
 }
 
-
-
 .content { 
   margin-left : 20px; 
   margin-right : 20px; 
   margin-top:170px;
   margin-bottom:30px;
-  /* background-color:#9a9a9a; */
-  }
+}
 
-
+.asset-content { 
+  overflow: visible;
+  width:max-content;
+  overflow-x: scroll;
+  margin-left: 20px;
+}
 
 .sidenav {
     height: 90%; 
@@ -131,23 +133,25 @@ table.tco-table tr{
     .sidenav a {font-size: 18px;}
   }
 
-.card-container {
-  /* overflow: hidden; */
-  /* border: transparent; */
-  /* background-color: #008B8B; */
-  /* width: auto; */
-  float:left;
-  /* display: flex; */
-  /* width: auto; */
-  /* background-color: transparent; */
-  }
-  
+  /* TCO cards */
+.card-container{
+  float: left;
+}
+
+/* Asset cards */
+.card-container2{
+  overflow:visible;
+  bottom: 0px;
+  right: 0px;
+  left:0px;
+}
+
 .floor-card {
-  font-size: 14px;
-  width: 200px;
-  height: 200px;
-  margin: 10px;
-  padding: 20px;
+  font-size: 12px;
+  width: 150px;
+  height: 90px;
+  margin: 8px;
+  padding: 15px;
   background-color: rgb(70, 70, 70);
   color:yellow;
   box-shadow: 0 0 12px rgb(63, 63, 63);
@@ -155,26 +159,29 @@ table.tco-table tr{
   }
 
 .rack-card {
-  font-size: 14px;
-  width: 200px;
-  height: 220px;
-  margin: 10px;
-  padding: 20px;
-  background-color: rgb(70, 70, 70);
+  font-size: 12px;
+  width: 150px;
+  height: 80px;
+  margin: 8px;
+  padding: 15px;
+  background-color: rgb(92, 91, 91);
   color:yellow;  
   box-shadow: 0 0 12px rgb(63, 63, 63);
   }
     
 .host-card {
-  font-size: 14px;
-  width: 250px;
-  height: 350px;
-  margin: 10px;
-  padding: 20px;
-  background-color: rgb(70, 70, 70);
+  font-size: 12px;
+  width: 150px;
+  height: 140px;
+  margin: 8px;
+  margin-bottom: 50px;
+  padding: 15px;
+  background-color: rgb(131, 130, 130);
   color:yellow;
   box-shadow: 0 0 12px rgb(63, 63, 63);
   }
+
+
 
   #progress-bar {
     margin-top: 1em;
@@ -182,8 +189,8 @@ table.tco-table tr{
 
 .tco-card {
   font-size: 14px;
-  width: 330px;
-  height: 335px;
+  width: 300px;
+  height: 280px;
   margin: 10px;
   padding: 20px;
   background-color: rgb(70, 70, 70);
@@ -258,18 +265,7 @@ body {
   border-top-left-radius:20px;
   }
 
-.change_master_card {
-  width: 227px;
-  height: 69px;
-  margin: 15px;
-  padding: 5px;
-  background-color: #F0FFFF;
-  box-shadow: 0 0 12px rgb(63, 63, 63);
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
-  border-bottom-right-radius:20px;
-  border-bottom-left-radius:20px;
-  }
+
 
 ul.no-bullets {
   list-style-type: none;
@@ -288,22 +284,6 @@ ul.no-bullets {
 .show-form{
 visibility: visible !important;
 }
-
-.change_current_card {
-width: 227px;
-height: 68px;
-margin: 15px;
-padding: 5px;
-background-color: #F0FFFF;
-box-shadow: 0 0 12px rgb(63, 63, 63);
-border-top-left-radius: 20px;
-border-top-right-radius: 20px;
-border-bottom-right-radius:20px;
-border-bottom-left-radius:20px;
-}
-
-
-
 
 .styled-table {
   border-collapse: collapse;
@@ -417,8 +397,8 @@ body {font-family: Arial;}
 }
 
 
-body {font-family: Arial, Helvetica, sans-serif;}
-* {box-sizing: border-box;}
+/* body {font-family: Arial, Helvetica, sans-serif;}
+* {box-sizing: border-box;} */
 
 /* Button used to open the contact form - fixed at the bottom of the page */
 .open-button {
@@ -567,7 +547,10 @@ input[type=number]{
 }
 
 .cpu-usage {
+  bottom:auto;
+  position: relative;
   display: flex;
+  justify-content: space-between;
   flex-direction: column;
   align-items: center;
   padding: 6px 14px;
@@ -648,7 +631,6 @@ input[type=number]{
   display: flex;
   flex-direction: column;
   width: auto;
-  /* align-items: center; */
   padding: 6px 14px;
   font-family: -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
   border-radius: 6px;
@@ -659,4 +641,134 @@ input[type=number]{
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
+}
+
+
+/* Updating datacenter */
+.update-button {
+  font-size: 15px;
+  background-color: #1e2828;
+  color: white;
+  padding: 16px 20px;
+  border: none;
+  cursor: pointer;
+  opacity: 0.8;
+  position: fixed;
+  top: 150px;
+  right: 40px;
+  border-radius: 1.5rem;
+  width: 280px;
+}
+.update-button {
+  top: 150px;
+  right: 40px;
+  width: 280px;
+  border-radius: 30em;
+  font-size: 15px;
+  font-family: inherit;
+  border: none;
+  overflow: hidden;
+  z-index: 1;
+ }
+.update-button::before {
+  content: '';
+  width: 0%;
+  height: 100%;
+  border-radius: 30em;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-image: linear-gradient(to right, #0fd850 0%, #182ce0 100%);
+  transition: .7s ease;
+  display: block;
+  z-index: -1;
+}
+.update-button:hover::before {
+  width: 100%;
+}
+#page-loader {
+  position: absolute;
+  top: 20%;
+  bottom: 30%;
+  left: 30%;
+  right: 30%;
+  z-index: 10000;
+  display: none;
+  text-align: center;
+  background-color: rgba(96, 96, 96, 0.7); 
+  color:rgb(255, 255, 255);
+}
+
+
+/* List for showing hosts in assets */
+ul, #myUL {
+  list-style-type: none;
+  padding-left: 0;
+  overflow: visible;
+  bottom:auto;
+  right:auto;
+}
+li, #myUL {
+  overflow: visible;
+  float: left;
+}
+.box {
+  overflow: visible;
+  cursor: pointer;
+  -webkit-user-select: none; /* Safari 3.1+ */
+  -moz-user-select: none; /* Firefox 2+ */
+  -ms-user-select: none; /* IE 10+ */
+  user-select: none;
+}
+.box::before {
+  color: black;
+  display: inline-block;
+}
+.check-box::before {
+  color: dodgerblue;
+}
+.nested {
+  display: none;
+}
+.active {
+  display: block;
+}
+
+/* Tooltip in assets  */
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 10px;
+  font-size: 10px;
+  padding: 1px 1px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+  border-radius: 6px;
+  border: none;
+  color: #fff;
+  background: linear-gradient(180deg, #32c9ba 0%, #1b9b8e 100%);
+  background-origin: border-box;
+  box-shadow: 0px 0.5px 1.5px rgba(54, 122, 246, 0.25), inset 0px 0.8px 0px -0.25px rgba(255, 255, 255, 0.2);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 200px;
+  height:auto;
+  background-color: rgb(79, 79, 79);
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+  position: absolute;
+  z-index: 1000;
+}
+.tooltip:hover .tooltiptext {
+  visibility: visible;
 }

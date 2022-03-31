@@ -15,11 +15,11 @@
     {% if usage_percentage %}
 
       {% if usage_percentage > 70 %}
-        <div class="carbon-percentage" style="background-color: rgb(235, 59, 59)"> You have consumed {{usage_percentage}} % of your carbon budget</div>
+        <div class="carbon-percentage" style="background-color: rgb(235, 59, 59)"> You have consumed {{usage_percentage|floatformat}} % of your carbon budget</div>
       {% elif usage_percentage > 30 %} 
-        <div class="carbon-percentage" style="background-color: #faab22"> You have consumed {{usage_percentage}} % of your carbon budget</div>
+        <div class="carbon-percentage" style="background-color: #faab22"> You have consumed {{usage_percentage|floatformat}} % of your carbon budget</div>
       {% else %} 
-        <div class="carbon-percentage" style="background-color: rgb(11, 226, 58)"> You have consumed {{usage_percentage}} % of your carbon budget</div>     
+        <div class="carbon-percentage" style="background-color: rgb(11, 226, 58)"> You have consumed {{usage_percentage|floatformat}} % of your carbon budget</div>     
       {% endif %}
     
     {% endif %}

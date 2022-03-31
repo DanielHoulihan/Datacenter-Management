@@ -43,7 +43,6 @@ def update_host_energy(hostid,startTime,endTime,master,datacenter,floorid,sub_id
         return
     
     new_url = services.cpu_usage_url(master,datacenter,str(floorid),str(rackid),str(hostid),startTime,endTime)
-    print(new_url)
     response = services.get_reponse(new_url)
     data2 = response.json()
     cpu_total = 0
@@ -56,13 +55,11 @@ def update_host_energy(hostid,startTime,endTime,master,datacenter,floorid,sub_id
         updated_responses = host.values().get()['cpu_responses'] + cpu_count
         updated_cpu_total = host.values().get()['total_cpu'] + cpu_total
         updated_avg_cpu = updated_cpu_total/updated_responses
-        print(data2['activity'][-1:][0]['timeStamp'])
         host.update(cpu_usage=updated_avg_cpu, cpu_responses=updated_responses, total_cpu=updated_cpu_total, cpu_last_response=data2['activity'][-1:][0]['timeStamp'])
     else:
         updated_responses = host.values().get()['cpu_responses'] + 1 
         updated_cpu_total = host.values().get()['total_cpu'] + float(data2['activity']['stat1'])
         updated_avg_cpu = updated_cpu_total/updated_responses
-        print(data2['activity']['timeStamp'])
         host.update(cpu_usage=updated_avg_cpu, cpu_responses=updated_responses, total_cpu=updated_cpu_total, cpu_last_response=data2['activity']['timeStamp'])
 
 def get_host_energy(hostid,startTime,endTime,master,datacenter,floorid,current,rackid):
@@ -114,7 +111,6 @@ def find_available_hosts(master, datacenter,sub_id):
                                                 host['hostName'],host['hostDescription'],host['hostType'],
                                                 host['processorCount'],host['IPAddress'])
             
-    # TODO one host** (not a list)
 
 
 

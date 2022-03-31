@@ -6,7 +6,7 @@
 
 <div class="topnav3">
   {% if page == "home" %}<a class="active" href="{% url 'configure' %}">Home</a>{% else %} <a href="{% url 'configure' %}">Home</a>{% endif %}
-  {% if page == "assets" %}<a class="active" href="{% url 'floors' %}">Assets</a>{% else %} <a href="{% url 'floors' %}">Assets</a>{% endif %}
+  {% if page == "assets" %}<a class="active" href="{% url 'assets' %}">Assets</a>{% else %} <a href="{% url 'assets' %}">Assets</a>{% endif %}
   {% if page == "budget" %}<a class="active" href="{% url 'budget' %}">Budget</a>{% else %} <a href="{% url 'budget' %}">Budget</a>{% endif %}
   {% if page == "tco" %}<a class="active" href="{% url 'tco' %}">TCO</a>{% else %} <a href="{% url 'tco' %}">TCO</a>{% endif %}
   <a class="a2">
@@ -31,7 +31,7 @@
 
   <form method="POST">
     {% csrf_token %}
-    <button onclick="javascript:document.getElementById('page-loader').style.display='block';" class="update-button" name = "update" value={{current}} >Update Datacenter: {{current}} Last update: {{last_update}}</button>
+    <button onclick="javascript:document.getElementById('page-loader').style.display='block';" class="update-button" name = "update" value={{current}} >Update Datacenter: {{current}} <br> Last update: {{last_update}}</button>
   </form>
 
 

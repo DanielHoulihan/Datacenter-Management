@@ -3,11 +3,9 @@
     <link rel="stylesheet" href="/../../static/css/styles.css">
 </head>
   
-  {% block content %}
+{% block content %}
   
-  <div class="content">
-    {% comment %} <h2>All hosts in data centers: {{tco_count}}</h2> {% endcomment %}
-    
+  <div class="content">    
       {% if error.non_field_errors %}<div class="capital-error">{{error.non_field_errors}}</div>{% endif %}
       {% for host in tco %}
       <div class="card-container">
@@ -21,9 +19,9 @@
             {% csrf_token %}
             <label for="capital" >Capital Cost</label>
             <input type="number" id="capital" name="capital" required placeholder={{host.capital}}>
-            <input type=hidden id=host name= host value={{host.hostid}}>
-            <input type=hidden id=rack name= rack value={{host.rackid}}>
-            <input type=hidden id=floor name= floor value={{host.floorid}}>
+            <input type="hidden" id="host" name= "host" value={{host.hostid}}>
+            <input type="hidden" id="rack" name= "rack" value={{host.rackid}}>
+            <input type="hidden" id="floor" name= "floor" value={{host.floorid}}>
             <button type="submit" class="tco_calculate_button" >Calculate</button>
           </form>
           <hr>
@@ -46,7 +44,6 @@
                 {{host.TCO|floatformat}}
               </td>
             </tr>
-
             <tr>
               <th>Operational Cons 3yrs (kWh)</th>
               <td>            
@@ -72,23 +69,10 @@
               </td>
             </tr>
           </table>
-          
-          <form method="POST">
-            {% csrf_token %}
-            <label for="capital"></label>
-            <input type="hidden" id="capital" name="capital" value={{host.capital}}>
-            <input type="hidden" id="host" name= "host" value={{host.hostid}}>
-            <input type="hidden" id="rack" name= "rack" value={{host.rackid}}>
-            <input type="hidden" id="floor" name= "floor" value={{host.floorid}}>
-            <button type="submit" class="tco_update_button">Update</button>
-          </form>
-
       </div>
-
     </div> 
-      {% endfor %}
-     
+    {% endfor %}
   </div>
 
-  {% endblock %}
+{% endblock %}
 
