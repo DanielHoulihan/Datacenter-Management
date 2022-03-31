@@ -1,4 +1,4 @@
-from tool.models import Datacenter, Floor, Host, Rack, ConfiguredDataCenters, AvailableDatacenters
+from tool.models import Floor, Host, Rack, ConfiguredDataCenters, AvailableDatacenters
 
 """ 
 Filling models for cleaner, more readable code
@@ -7,15 +7,6 @@ Filling models for cleaner, more readable code
 def create_available_datacenter(master,id,name,description):
     AvailableDatacenters.objects.get_or_create(
         masterip=master,
-        datacenterid = id,
-        datacentername = name,
-        description = description,
-    )
-    
-def create_datacenter(master,sub_id,id,name,description):
-    Datacenter.objects.get_or_create(
-        masterip=master,
-        sub_id = sub_id,
         datacenterid = id,
         datacentername = name,
         description = description,

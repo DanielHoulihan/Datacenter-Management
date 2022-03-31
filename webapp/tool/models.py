@@ -12,23 +12,6 @@ class AvailableDatacenters(models.Model):
     def __str__(self):
         return str(self.datacenterid)
 
-    def get_absolute_url(self):
-        return reverse('datacenterid', args=[str(self.id)])  
-    
-# Datacenter database model
-class Datacenter(models.Model):
-    masterip = models.CharField(null=True, max_length=25)
-    sub_id = models.CharField(null=True,max_length=15)
-    datacenterid = models.CharField(max_length=20,null=True)
-    datacentername = models.CharField(max_length=25, null=True)
-    description = models.CharField(max_length=100, null=True)
-
-    def __str__(self):
-        return str(self.datacenterid)
-
-    def get_absolute_url(self):
-        return reverse('datacenterid', args=[str(self.id)])   
-
 # Floor (asset) database model
 class Floor(models.Model):
     masterip = models.CharField(null=True, max_length=25)
@@ -40,9 +23,6 @@ class Floor(models.Model):
     
     def __str__(self):
         return str(self.floorid)
-
-    def get_absolute_url(self):
-        return reverse('floorid', args=[str(self.id)])   
 
 # Rack (asset) database model
 class Rack(models.Model):
@@ -58,9 +38,6 @@ class Rack(models.Model):
     def __str__(self):
         return str(self.rackid)
 
-    def get_absolute_url(self):
-        return reverse('rackid', args=[str(self.id)]) 
-
 # Host (asset) database model
 class Host(models.Model):
     masterip = models.CharField(null=True, max_length=25)
@@ -74,18 +51,24 @@ class Host(models.Model):
     hostType = models.CharField(max_length=20)
     processors = models.IntegerField()
     ipaddress = models.CharField(max_length=25)
+    
+    # Power
     cpu_last_response = models.CharField(max_length=25, null=True)
     cpu_usage = models.FloatField(null=True)
     cpu_responses = models.IntegerField(null=True)
     total_cpu = models.FloatField(null=True)
+    
+    # Energy
+    kWh_consumed = models.FloatField(null=True)
+    power_responses = models.IntegerField(null=True)
+    total_watt_hour = models.FloatField(null=True)
+    power_last_response = models.IntegerField(null=True)
+    
+    # Metrics
     TCO = models.FloatField(null=True)
     carbon_footprint_3 = models.FloatField(null=True)
-    power_responses = models.IntegerField(null=True)
-    kWh_consumed = models.FloatField(null=True)
     ops_cons_3 = models.FloatField(null=True)
     op_cost_3 = models.FloatField(null=True)
-    power_last_response = models.IntegerField(null=True)
-    total_watt_hour = models.FloatField(null=True)
     app_waste_cost_3 = models.FloatField(null=True)
     capital = models.IntegerField(null=True)
     
@@ -112,9 +95,6 @@ class ConfiguredDataCenters(models.Model):
     
     def __str__(self):
         return str(self.datacenterid)
-
-    def get_absolute_url(self):
-        return reverse('datacenterid', args=[str(self.id)])   
     
 # Configured count database model
 class Count(models.Model):
@@ -124,13 +104,12 @@ class Count(models.Model):
 class MasterIP(models.Model):
     master = models.CharField(null=True, max_length=25)
 
-
 # Stores Threshold for host CPU % usage
 class Threshold(models.Model):
     low = models.FloatField(null=True, max_length=25)
     medium = models.FloatField(null=True, max_length=25)
 
-# Model to allow updating Budget (TODO)
+# Stores budget Information
 class Budget(models.Model):
     masterip = models.CharField(max_length=20,null=True)
     sub_id = models.CharField(max_length=20,null=True)

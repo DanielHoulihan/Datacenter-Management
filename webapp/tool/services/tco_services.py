@@ -17,7 +17,7 @@ def get_host_power(master, sub_id, datacenter, floorid, rackid, hostid, startTim
 
     host = Host.objects.filter(masterip=master).filter(sub_id = sub_id).filter(floorid=floorid).filter(rackid=rackid).filter(hostid=hostid)
     url = services.power_url(master, datacenter, str(floorid), str(rackid), str(hostid), startTime, endTime)
-    response = services.get_reponse(url)
+    response = services.get_response(url)
     data = response.json()
     if data != None: 
         total_watts = 0
@@ -61,7 +61,7 @@ def update_host_power(master, sub_id, datacenter, floorid, rackid, hostid, start
         return
  
     url = services.power_url(master, datacenter, str(floorid), str(rackid), str(hostid), startTime, endTime)
-    response = services.get_reponse(url)
+    response = services.get_response(url)
     data = response.json()
     if data != None: 
         total_watts = 0

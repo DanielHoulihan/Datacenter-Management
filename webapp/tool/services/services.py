@@ -83,7 +83,7 @@ def get_start_end():
         return startTime, endTime
     except: return ConfiguredDataCenters.DoesNotExist
 
-def get_reponse(url):
+def get_response(url):
     """ Add headers to URL to get response in json (default is XML) """
 
     try:
@@ -140,15 +140,6 @@ def get_upper_threshold():
  
 def datacenter_url(master):
     return "http://"+master+":8080/papillonserver/rest/datacenters/"
-
-def floor_url(master, datacenter):
-    return "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"
-
-def rack_url(master, datacenter,floor):
-    return "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"+floor+"/racks/"
-
-def host_url(master, datacenter,floor,rack):
-    return "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"+floor+"/racks/"+rack+"/hosts/"
 
 def power_url(master, datacenter,floor,rack,host,start,end):
     return "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/floors/"+floor+"/racks/"+rack+"/hosts/"+host+"/power?starttime="+start+"&endtime="+end

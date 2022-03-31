@@ -48,9 +48,9 @@ class ServicesTestEmpty(TestCase):
         test = services.get_start_end()
         self.assertEqual(ConfiguredDataCenters.DoesNotExist, test)
 
-    def test_get_reponse(self):
+    def test_get_response(self):
         url="http://arbitrary_address"
-        test = services.get_reponse(url)
+        test = services.get_response(url)
         self.assertEqual(ConnectionError, test)
 
     def test_set_threshold(self):
@@ -71,6 +71,28 @@ class ServicesTestEmpty(TestCase):
         master = "master IP"
         current = "current datacenter"
         services.create_or_update_current(master, current)
+        
+    def test_check_master(self):
+        services.check_master()
+        self.assertEqual(MasterIP.objects.all().values().get()['master'], "localhost")
+        
+    def test_datacenter_url(self):
+        url = services.datacenter_url("localhost")
+        self.assertEqual(url, "http://localhost:8080/papillonserver/rest/datacenters/")
+
+    def test_power_url(self):
+        url = services.power_url("localhost", "datacenter", "floor", "rack", "host", "12", "13")
+        self.assertEqual(url, "http://localhost:8080/papillonserver/rest/datacenters/datacenter/floors/floor/racks/rack/hosts/host/power?starttime=12&endtime=13")
+    
+    def test_cpu_usage_url(self):
+        url = services.cpu_usage_url("localhost", "datacenter", "floor", "rack", "host", "12", "13")
+        self.assertEqual(url, "http://localhost:8080/papillonserver/rest/datacenters/datacenter/floors/floor/racks/rack/hosts/host/activity?starttime=12&endtime=13")
+        
+    def test_all_power_url(self):
+        url = services.all_power_url("localhost", "datacenter", "start", "end")
+        self.assertEqual(url, "http://localhost:8080/papillonserver/rest/datacenters/datacenter/allhosts/power?starttime=start&endtime=end")
+        
+        
 
 
 class ServicesTest(TestCase):

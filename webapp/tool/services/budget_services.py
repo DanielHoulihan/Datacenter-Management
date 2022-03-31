@@ -12,19 +12,7 @@ import json
 plt.switch_backend('Agg') 
 
 def get_hosts_budget(master, current_sub):
-    """ Finds energy usage in all hosts in specified datacenter
-
-    Args:
-        master (String): IP address of master
-        current_sub (String): sub_id of current datacenter
-
-    Returns:
-        Pandas DataFrame: Each hosts energy usage
-        Pandas DataFrame: Total of all hosts energy usage
-    """
     
-
-
     startTime,endTime = services.get_start_end()
     available_hosts = Host.objects.filter(masterip=master).filter(sub_id=current_sub).all().values()
     budget = Budget.objects.filter(masterip=master).filter(sub_id=current_sub).all()
@@ -77,7 +65,7 @@ def update_budget(budget, available_hosts, endTime):
         url = services.power_url(host['masterip'],host['datacenterid'],str(host['floorid']),
                                 str(host['rackid']),str(host['hostid']),startTime,endTime)
         
-        response = services.get_reponse(url)
+        response = services.get_response(url)
         data = response.json()
         start=int(startTime)
         energy = defaultdict(list)
@@ -114,7 +102,7 @@ def create_budget(startTime, endTime, available_hosts):
     for host in available_hosts:
         url = services.power_url(host['masterip'],host['datacenterid'],str(host['floorid']),
                                     str(host['rackid']),str(host['hostid']),startTime,endTime)
-        response = services.get_reponse(url)
+        response = services.get_response(url)
         data = response.json()
         start=int(startTime)
         energy = defaultdict(list)
@@ -148,15 +136,6 @@ def create_budget(startTime, endTime, available_hosts):
     )
     
 def save_plot_usage(master, current_sub):
-    """ Generates matplotlib graph showing usage of carbon, energy, euro
-
-    Args:
-        table (Pandas DataFrame): Table holding daily consumption
-        ylabel (String): Y label of graph
-
-    Returns:
-        base64: base64 encoded matplotlib graph (for html)
-    """
 
     budget = Budget.objects.filter(masterip=master).filter(sub_id=current_sub).all().values().get()['energy_dict']
     decoded_data = json.loads(budget)
@@ -256,8 +235,9 @@ def carbon_usage(table):
     Returns:
         Pandas DataFrame: Converted table
     """
-    
-    temp = table.copy()
+    try:
+        temp = table.copy()
+    except: return
     carbon = services.get_carbon_conversion()
     for col in temp.columns[1:]:
         temp[col] = temp[col]*carbon
@@ -273,7 +253,9 @@ def cost_estimate(table):
         Pandas DataFrame: Converted table
     """
 
-    temp = table.copy()
+    try:
+        temp = table.copy()
+    except: return
     cost = services.get_energy_cost()
     for col in temp.columns[1:]:
         temp[col] = temp[col]*cost

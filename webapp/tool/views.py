@@ -2,7 +2,7 @@
 
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from tool.models import ConfiguredDataCenters, Datacenter, Floor, Rack, Host, CurrentDatacenter, Count, MasterIP, Threshold, Budget, AvailableDatacenters
+from tool.models import ConfiguredDataCenters, Floor, Rack, Host, CurrentDatacenter, Count, MasterIP, Threshold, Budget, AvailableDatacenters
 from .services import services, asset_services, budget_services, tco_services, model_services
 from . import forms
 from django.views.decorators.csrf import csrf_protect

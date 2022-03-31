@@ -43,7 +43,7 @@ def update_host_energy(hostid,startTime,endTime,master,datacenter,floorid,sub_id
         return
     
     new_url = services.cpu_usage_url(master,datacenter,str(floorid),str(rackid),str(hostid),startTime,endTime)
-    response = services.get_reponse(new_url)
+    response = services.get_response(new_url)
     data2 = response.json()
     cpu_total = 0
     cpu_count = 0
@@ -66,7 +66,7 @@ def get_host_energy(hostid,startTime,endTime,master,datacenter,floorid,current,r
 
     host = Host.objects.filter(masterip=master).filter(sub_id = current).filter(floorid=floorid).filter(rackid=rackid).filter(hostid=hostid)
     new_url = services.cpu_usage_url(master,datacenter,str(floorid),str(rackid),str(hostid),startTime,endTime)
-    response = services.get_reponse(new_url)
+    response = services.get_response(new_url)
     data2 = response.json()
     if data2==None:return
     cpu_total = 0
@@ -96,12 +96,12 @@ def find_available_hosts(master, datacenter,sub_id):
     """
 
     url = "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/allhosts/"
-    response = services.get_reponse(url)
+    response = services.get_response(url)
     data = response.json()
     if data==None:return
     if isinstance(data['hostExtended'], list): 
         for host in data['hostExtended']:
-            model_services.create_datacenter(master,sub_id,host['datacenterId'],host['datacenterName'],host['datacenterDescription'])
+            # model_services.create_datacenter(master,sub_id,host['datacenterId'],host['datacenterName'],host['datacenterDescription'])
             
             model_services.create_floor(master,sub_id,host['datacenterId'],host['floorId'],host['floorName'],host['floorDescription'])
             
