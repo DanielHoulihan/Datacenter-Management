@@ -1,7 +1,7 @@
 {% include 'home/base.html'%}
-<head>
+{% comment %} <head>
   <link rel="stylesheet" href="/../../static/css/styles.css">
-</head>
+</head> {% endcomment %}
 
 <div class="topnav3">
   {% if page == "home" %}<a class="active" href="{% url 'configure' %}">Home</a>{% else %} <a href="{% url 'configure' %}">Home</a>{% endif %}
@@ -12,9 +12,9 @@
     <form method="POST" class="post-form"> 
       {% csrf_token %}
       Threshold
-      <input type="number" name="low" required placeholder={{threshold.low}} step="0.1">
+      <input type="number" name="low" required placeholder={{threshold.threshold_low}} step="0.1">
       {% comment %} Upper Threshold {% endcomment %}
-      <input type="number" name="medium" required placeholder={{threshold.medium}} step="0.1">
+      <input type="number" name="medium" required placeholder={{threshold.threshold_medium}} step="0.1">
       <button type="submit" class="save   btn btn-default">Submit</button>
       {% if error.non_field_errors %}<div class="threshold-error">{{error.non_field_errors}}</div>{% endif %}
     </form>

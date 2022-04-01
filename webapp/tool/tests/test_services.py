@@ -2,7 +2,7 @@ import datetime
 from django.test import TestCase
 from tool.services import services
 from django.core.exceptions import ObjectDoesNotExist
-from tool.models import Count, CurrentDatacenter, MasterIP, ConfiguredDataCenters,Threshold
+from tool.models import ConfiguredDataCenters, Application
 
 
 class ServicesTestEmpty(TestCase):
@@ -14,15 +14,15 @@ class ServicesTestEmpty(TestCase):
 
     def test_get_current_sub_id(self):
         test = services.get_current_sub_id()
-        self.assertEqual(CurrentDatacenter.DoesNotExist,test)
+        self.assertEqual(Application.DoesNotExist,test)
 
     def test_get_current_datacenter(self):
         test = services.get_current_datacenter()
-        self.assertEqual(CurrentDatacenter.DoesNotExist,test)
+        self.assertEqual(Application.DoesNotExist,test)
 
     def test_get_master(self):
         test = services.get_master()
-        self.assertEqual(MasterIP.DoesNotExist,test)
+        self.assertEqual(Application.DoesNotExist,test)
 
     def test_get_configured(self):
         test = services.get_configured()
@@ -53,19 +53,19 @@ class ServicesTestEmpty(TestCase):
         test = services.get_response(url)
         self.assertEqual(ConnectionError, test)
 
-    def test_set_threshold(self):
-        services.set_threshold()
-        self.assertEqual(Threshold.objects.all().values().get()['low'],15)
-        self.assertEqual(Threshold.objects.all().values().get()['medium'],30)
+    # def test_set_threshold(self):
+    #     services.set_threshold()
+    #     self.assertEqual(Threshold.objects.all().values().get()['low'],15)
+    #     self.assertEqual(Threshold.objects.all().values().get()['medium'],30)
 
     def test_get_empty_threshold(self):
-        self.assertEqual(services.get_lower_threshold(),Threshold.DoesNotExist)
-        self.assertEqual(services.get_upper_threshold(),Threshold.DoesNotExist)
+        self.assertEqual(services.get_lower_threshold(),Application.DoesNotExist)
+        self.assertEqual(services.get_upper_threshold(),Application.DoesNotExist)
 
     def test_increment_count(self):
         services.increment_count()
         services.increment_count()
-        self.assertEqual(Count.objects.all().values().get()['configured'], 1)
+        self.assertEqual(Application.objects.all().values().get()['configured'], 1)
     
     def test_create_or_update_current(self):
         master = "master IP"
@@ -74,7 +74,7 @@ class ServicesTestEmpty(TestCase):
         
     def test_check_master(self):
         services.check_master()
-        self.assertEqual(MasterIP.objects.all().values().get()['master'], "localhost")
+        self.assertEqual(Application.objects.all().values().get()['masterip'], "localhost")
         
     def test_datacenter_url(self):
         url = services.datacenter_url("localhost")
@@ -109,10 +109,7 @@ class ServicesTest(TestCase):
             carbon_conversion=0.8,
             budget=20
             )
-        MasterIP.objects.create(
-            master="master"
-        )
-        CurrentDatacenter.objects.create(
+        Application.objects.create(
             masterip="master",
             current="sub_id-1"
         )

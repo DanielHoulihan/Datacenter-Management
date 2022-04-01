@@ -2,6 +2,14 @@ from django.db import models
 from django.http import HttpResponseBadRequest
 from django.urls import reverse
 
+
+class Application(models.Model):
+    masterip = models.CharField(null=True, max_length=25)
+    current = models.CharField(null=True, max_length=25)
+    configured = models.IntegerField(null=True, default = 0)
+    threshold_low = models.FloatField(null=True, max_length=25, default=15)
+    threshold_medium = models.FloatField(null=True, max_length=25, default=30)
+    
 # Datacenter database model
 class AvailableDatacenters(models.Model):
     masterip = models.CharField(null=True, max_length=25)

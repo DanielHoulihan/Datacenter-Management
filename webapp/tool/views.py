@@ -2,14 +2,11 @@
 
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from tool.models import ConfiguredDataCenters, Floor, Rack, Host, CurrentDatacenter, Count, MasterIP, Threshold, Budget, AvailableDatacenters
+from tool.models import ConfiguredDataCenters, Floor, Rack, Host,MasterIP, Threshold, Budget, AvailableDatacenters, Application
 from .services import services, asset_services, budget_services, tco_services, model_services
 from . import forms
 from django.views.decorators.csrf import csrf_protect
-import json
 from datetime import datetime 
-import pandas as pd
-import time
 
 __author__ = "Daniel Houlihan"
 __studentnumber__ = "18339866"
@@ -26,8 +23,6 @@ def assets(request):
     context = {}
     master = services.get_master()
     
-    services.set_threshold()
-
     if request.method == 'POST':
         form = forms.ChangeThresholdForm(request.POST)
         if form.is_valid():
@@ -35,7 +30,7 @@ def assets(request):
             Threshold.objects.update(low=low,medium=medium)
         context["error"] = form
 
-    if CurrentDatacenter.objects.filter(masterip=master).all().count()==0:
+    if Application.objects.filter(masterip=master).values().all().get()['current']==None:
         return services.prompt_configuration(request,"assets")
 
     sub_id = services.get_current_sub_id()
@@ -45,7 +40,7 @@ def assets(request):
     context['rack_count'] = Rack.objects.filter(sub_id=sub_id).filter(masterip=master).all().count()
     context["host_count"] = Host.objects.filter(sub_id=services.get_current_sub_id()).filter(masterip=master).all().count()
     context['current'] = services.get_current_for_html()
-    context["threshold"] = Threshold.objects.all().get()
+    context["threshold"] = Application.objects.all().get()
     context['racks'] = Rack.objects.filter(sub_id=sub_id).filter(masterip=services.get_master()).all()
     context["hosts"] = Host.objects.filter(sub_id=services.get_current_sub_id()).filter(masterip=master).all()
     context['page'] = 'assets'
@@ -72,7 +67,7 @@ def configure(request):
             if form.is_valid():
                 to_delete = form.cleaned_data['to_delete']
                 ConfiguredDataCenters.objects.filter(sub_id=to_delete).filter(masterip=master).delete()
-                CurrentDatacenter.objects.filter(current=to_delete).filter(masterip=master).delete()
+                Application.objects.filter(current=to_delete).filter(masterip=master).update(current=None)
                 Host.objects.filter(sub_id=to_delete).filter(masterip=master).delete()
 
     if request.method == 'POST':            
@@ -80,8 +75,9 @@ def configure(request):
             form = forms.ChangeIPForm(request.POST)
             if form.is_valid():
                 ip = form.cleaned_data
-                MasterIP.objects.update(master = ip)
-                asset_services.get_available_datacenters() 
+                Application.objects.update(masterip=ip)
+                asset_services.get_available_datacenters()
+                
 
     if request.method == 'POST':
         if 'to_configure' in request.POST:
@@ -89,7 +85,8 @@ def configure(request):
             if form.is_valid():
                 to_configure, start, end, pue, energy_cost, carbon_conversion, budget = form.cleaned_data
                 services.increment_count()
-                instance = str(to_configure)+"-"+str(Count.objects.all().values().get()['configured']+1)
+                instance = str(to_configure)+"-"+str(Application.objects.all().values().get()['configured'])
+
                 if end and not budget: 
                     model_services.create_configured_end_no_budget(master,
                     instance,to_configure,start,end,pue,energy_cost,carbon_conversion)
@@ -124,7 +121,7 @@ def configure(request):
 
     if request.method == 'POST':
         if 'update' in request.POST:
-            if services.get_current_datacenter()!=CurrentDatacenter.DoesNotExist:
+            if services.get_current_datacenter()!=Application.DoesNotExist:
                 form = forms.UpdateDatacenterForm(request.POST)
                 if form.is_valid():
                     to_update = form.cleaned_data['update']
@@ -161,7 +158,7 @@ def tco(request):
     context = {}
     master = services.get_master()
 
-    if CurrentDatacenter.objects.filter(masterip=master).all().count()==0:
+    if Application.objects.filter(masterip=master).values().all().get()['current']==None:
         return services.prompt_configuration(request,"tco")
 
     sub_id = services.get_current_sub_id()
@@ -188,8 +185,9 @@ def budget(request):
     master = services.get_master()
     current_sub = services.get_current_sub_id()
 
-    if CurrentDatacenter.objects.filter(masterip=master).all().count()==0:
+    if Application.objects.filter(masterip=master).values().all().get()['current']==None:
         return services.prompt_configuration(request,"budget")
+    
     budget = Budget.objects.filter(masterip=master).filter(sub_id=current_sub).all().values().get()
     
     context['page'] = 'budget'

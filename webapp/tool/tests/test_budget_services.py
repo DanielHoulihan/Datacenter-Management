@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.core.exceptions import ObjectDoesNotExist
-from tool.models import CurrentDatacenter, MasterIP, ConfiguredDataCenters
+from tool.models import ConfiguredDataCenters, Application
 from tool.services import budget_services, services
 import pandas as pd
 import datetime
@@ -19,10 +19,8 @@ class BudgetServicesTestEmpty(TestCase):
             carbon_conversion=0.8,
             budget=20
             )
-        MasterIP.objects.create(
-            master="master"
-        )
-        CurrentDatacenter.objects.create(
+
+        Application.objects.create(
             masterip="master",
             current="sub_id-1"
         )

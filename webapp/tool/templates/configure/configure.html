@@ -1,8 +1,8 @@
 {% include 'home/base.html'%}
-<head>
+{% comment %} <head>
   <link rel="stylesheet" href="/../../static/css/styles.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-</head>
+</head> {% endcomment %}
 
 <div class="topnav3">
   {% if page == "home" %}<a class="active" href="{% url 'configure' %}">Home</a>{% else %} <a href="{% url 'configure' %}">Home</a>{% endif %}
@@ -24,7 +24,7 @@
 
   <div id="page-loader">
 		<h3>Configuring Datacenter. Please Wait...</h3>
-		<img src="/../../static/media/spinner2.gif" alt="loader">
+		<img src="/../../static/media/spinner5.gif" alt="loader">
 	</div>
 
 
