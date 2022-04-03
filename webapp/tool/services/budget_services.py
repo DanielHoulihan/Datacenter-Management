@@ -14,14 +14,20 @@ plt.switch_backend('Agg')
 def get_hosts_budget(master, current_sub):
     
     startTime,endTime = services.get_start_end()
-    available_hosts = Host.objects.filter(masterip=master).filter(sub_id=current_sub).all().values()
-    budget = Budget.objects.filter(masterip=master).filter(sub_id=current_sub).all()
+    
+    # available_hosts = Host.objects.filter(masterip=master).filter(sub_id=current_sub).all().values()
+    available_hosts = get_all_host_values(master,current_sub)
+    
+    budget = get_all_budgets(master,current_sub)
+    # budget = Budget.objects.filter(masterip=master).filter(sub_id=current_sub).all()
     if budget.exists():
         update_budget(budget, available_hosts, endTime)
     else:
         create_budget(startTime, endTime, available_hosts)
         
-    budget = Budget.objects.filter(masterip=master).filter(sub_id=current_sub).all().values().get()['energy_dict']
+    # budget = Budget.objects.filter(masterip=master).filter(sub_id=current_sub).all().values().get()['energy_dict']
+    budget = get_energy_dict(master, current_sub)
+    
     decoded_data = json.loads(budget)
     df = pd.DataFrame(decoded_data)
     df = df.fillna(0)
@@ -64,6 +70,7 @@ def update_budget(budget, available_hosts, endTime):
     for host in available_hosts:
         url = services.power_url(host['masterip'],host['datacenterid'],str(host['floorid']),
                                 str(host['rackid']),str(host['hostid']),startTime,endTime)
+        print(url)
         
         response = services.get_response(url)
         data = response.json()
@@ -87,12 +94,10 @@ def update_budget(budget, available_hosts, endTime):
     hosts = reduce(lambda x, y: pd.merge(x, y, on = 'day', how='left'), df_list)
     hosts = hosts.fillna(0)
     hosts = hosts[hosts['day']<=int(time.time())]
-
     hosts['Total'] = hosts[hosts.columns[1:]].sum(axis=1)
     df_dicts = list(hosts.T.to_dict().values())
 
     updated_dict = decoded_data[:-1] + df_dicts
-    
     encoded_json = json.dumps(updated_dict)       
     budget.update(energy_dict=encoded_json)
 
@@ -102,6 +107,7 @@ def create_budget(startTime, endTime, available_hosts):
     for host in available_hosts:
         url = services.power_url(host['masterip'],host['datacenterid'],str(host['floorid']),
                                     str(host['rackid']),str(host['hostid']),startTime,endTime)
+        print(url)
         response = services.get_response(url)
         data = response.json()
         start=int(startTime)
@@ -282,6 +288,19 @@ def unix_range(startTime,endTime):
     return base_df
 
 
+def get_all_budgets(master,current_sub):
+    try:
+        return Budget.objects.filter(masterip=master).filter(sub_id=current_sub).all()
+    except: return Budget.DoesNotExist
 
 
-
+def get_all_host_values(master, current_sub):
+    try:
+        return Host.objects.filter(masterip=master).filter(sub_id=current_sub).all().values()
+    except: return Host.DoesNotExist
+    
+    
+def get_energy_dict(master, current_sub):
+    try:
+        return Budget.objects.filter(masterip=master).filter(sub_id=current_sub).all().values().get()['energy_dict']
+    except: return Budget.DoesNotExist

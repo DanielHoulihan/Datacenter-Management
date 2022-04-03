@@ -302,7 +302,7 @@ span.blink {
 
 .configure_card {
   left:100px;
-  width: 280px;
+  width: 380px;
   height: 350px;
   opacity: 90%;
   /* margin: 15px; */
@@ -511,6 +511,7 @@ body {font-family: Arial;}
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-top: 20px;
   padding: 6px 14px;
   font-family: -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
   border-radius: 6px;
@@ -524,7 +525,7 @@ body {font-family: Arial;}
 
   -webkit-user-select: none;
   touch-action: manipulation;
-  margin-left: 35%;
+  margin-left: 43%;
 }
 
 .delete_button {

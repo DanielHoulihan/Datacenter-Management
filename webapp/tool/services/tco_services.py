@@ -1,15 +1,19 @@
-from tool.models import Host
+from tool.models import Host, ConfiguredDataCenters
 from . import services, model_services
 
 def get_hosts_power(master, sub_id):
 
-    startTime, endTime = services.get_start_end()
+    try: 
+        startTime, endTime = services.get_start_end()
+    except: return ConfiguredDataCenters.DoesNotExist
     for host in Host.objects.filter(sub_id=sub_id).filter(masterip=master).all().values():
         get_host_power(host['masterip'],host['sub_id'],host['datacenterid'],host['floorid'],host['rackid'],host['hostid'],startTime,endTime)
         
 def update_hosts_power(master, sub_id):
 
-    startTime, endTime = services.get_start_end()
+    try: 
+        startTime, endTime = services.get_start_end()
+    except: return ConfiguredDataCenters.DoesNotExist
     for host in Host.objects.filter(sub_id=sub_id).filter(masterip=master).all().values():
         update_host_power(host['masterip'],host['sub_id'],host['datacenterid'],host['floorid'],host['rackid'],host['hostid'],startTime,endTime)     
         
@@ -17,6 +21,7 @@ def get_host_power(master, sub_id, datacenter, floorid, rackid, hostid, startTim
 
     host = Host.objects.filter(masterip=master).filter(sub_id = sub_id).filter(floorid=floorid).filter(rackid=rackid).filter(hostid=hostid)
     url = services.power_url(master, datacenter, str(floorid), str(rackid), str(hostid), startTime, endTime)
+    print(url)
     response = services.get_response(url)
     data = response.json()
     if data != None: 
@@ -40,7 +45,6 @@ def get_host_power(master, sub_id, datacenter, floorid, rackid, hostid, startTim
         energy_cost = services.get_energy_cost()
         op_cost_3 = ops_cons_3*pue*energy_cost
         carbon_footprint_3=ops_cons_3*carbon_conversion
-        # tco_3=int(capital)+(energy_cost*ops_cons_3)
         kWh_consumed = total_watts/1000
         
         app_waste_cost_3 = op_cost_3 * (1-host.values().get()['cpu_usage']/100)
@@ -53,7 +57,7 @@ def get_host_power(master, sub_id, datacenter, floorid, rackid, hostid, startTim
 
 def update_host_power(master, sub_id, datacenter, floorid, rackid, hostid, startTime, endTime):
     host = Host.objects.filter(masterip=master).filter(sub_id = sub_id).filter(floorid=floorid).filter(rackid=rackid).filter(hostid=hostid)
-
+    if not host.exists(): return Host.DoesNotExist
     if host.values().get()['power_last_response']!=None:
         startTime = str(int(host.values().get()['power_last_response'])+1)
     else: 
@@ -61,6 +65,7 @@ def update_host_power(master, sub_id, datacenter, floorid, rackid, hostid, start
         return
  
     url = services.power_url(master, datacenter, str(floorid), str(rackid), str(hostid), startTime, endTime)
+    print(url)
     response = services.get_response(url)
     data = response.json()
     if data != None: 
@@ -79,14 +84,14 @@ def update_host_power(master, sub_id, datacenter, floorid, rackid, hostid, start
         updated_minutes = minutes + host.values().get()['power_responses']
         updated_watts = total_watts + host.values().get()['total_watt_hour']
         hours = updated_minutes/60
-        kWh = updated_watts/hours/1000
-        ops_cons_3 =24*7*kWh*52*3
+        avg_Wh = updated_watts/hours/1000
+        ops_cons_3 = calculate_ops_cons_3(avg_Wh)
         pue = services.get_pue()
         carbon_conversion = services.get_carbon_conversion()
         energy_cost = services.get_energy_cost()
-        op_cost_3 = ops_cons_3*pue*energy_cost
-        carbon_footprint_3=ops_cons_3*carbon_conversion
-        kWh_consumed = updated_watts/1000
+        op_cost_3 = calculate_op_cost_3(ops_cons_3, pue, energy_cost)
+        carbon_footprint_3=calculate_carbon_footprint_3(ops_cons_3, carbon_conversion)
+        kWh_consumed = calculate_kWh_consumed(updated_watts)
         
         if host.values().get()['capital']!=None:
             tco_3=int(host.values().get()['capital'])+(energy_cost*ops_cons_3)
@@ -104,6 +109,7 @@ def update_host_power(master, sub_id, datacenter, floorid, rackid, hostid, start
     
 def calculate_tco(master, sub_id, floor, rack, host, capital):
     host = Host.objects.filter(masterip=master).filter(sub_id = sub_id).filter(floorid=floor).filter(rackid=rack).filter(hostid=host)
+    if not host.exists(): return Host.DoesNotExist
     ops_cons_3 = host.values().get()['ops_cons_3']
     energy_cost = services.get_energy_cost()
     try:
@@ -111,3 +117,16 @@ def calculate_tco(master, sub_id, floor, rack, host, capital):
         host.update(TCO=tco_3,capital=capital)
     except: return
     
+    
+def calculate_ops_cons_3(kWh):
+    return  24*7*kWh*52*3
+
+def calculate_op_cost_3(ops_cons_3, pue, energy_cost):
+    return ops_cons_3*pue*energy_cost
+    
+def calculate_carbon_footprint_3(ops_cons_3,carbon_conversion):
+    return ops_cons_3*carbon_conversion
+
+def calculate_kWh_consumed(total_watts):
+    return total_watts/1000
+

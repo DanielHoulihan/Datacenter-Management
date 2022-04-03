@@ -53,11 +53,14 @@ class ServicesTestEmpty(TestCase):
         test = services.get_response(url)
         self.assertEqual(ConnectionError, test)
 
-    # def test_set_threshold(self):
-    #     services.set_threshold()
-    #     self.assertEqual(Threshold.objects.all().values().get()['low'],15)
-    #     self.assertEqual(Threshold.objects.all().values().get()['medium'],30)
+    def test_get_lower_threshold(self):
+        lower = services.get_lower_threshold()
+        self.assertEqual(lower, Application.DoesNotExist)
 
+    def test_get_upper_threshold(self):
+        upper = services.get_upper_threshold()
+        self.assertEqual(upper, Application.DoesNotExist)
+        
     def test_get_empty_threshold(self):
         self.assertEqual(services.get_lower_threshold(),Application.DoesNotExist)
         self.assertEqual(services.get_upper_threshold(),Application.DoesNotExist)
@@ -111,7 +114,10 @@ class ServicesTest(TestCase):
             )
         Application.objects.create(
             masterip="master",
-            current="sub_id-1"
+            current="sub_id-1",
+            configured=6,
+            threshold_low=50,
+            threshold_medium=70
         )
 
     def test_get_current_for_html(self):
@@ -154,3 +160,24 @@ class ServicesTest(TestCase):
         start,end = services.get_start_end()
         self.assertEqual(start, '1634601600')
         self.assertEqual(end, '1634774400')
+
+    def test_check_master(self):
+        services.check_master()
+        self.assertEqual(Application.objects.all().values().get()['masterip'], "master")
+        
+    def test_create_or_update_current(self):
+        master = "master_test"
+        current = "sub_id_test"
+        services.create_or_update_current(master, current)
+        self.assertEquals(Application.objects.all().values().get()['masterip'],"master_test")
+        self.assertEquals(Application.objects.all().values().get()['current'],"sub_id_test")
+        
+    def test_increment_count(self):
+        services.increment_count()
+        self.assertEquals(Application.objects.all().values().get()['configured'],7)
+        
+    def test_get_lower_threshold(self):
+        self.assertEqual(Application.objects.all().values().get()['threshold_low'],50)
+
+    def test_get_upper_threshold(self):
+        self.assertEqual(Application.objects.all().values().get()['threshold_medium'],70)

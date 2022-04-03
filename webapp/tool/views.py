@@ -87,22 +87,23 @@ def configure(request):
                 to_configure, start, end, pue, energy_cost, carbon_conversion, budget = form.cleaned_data
                 services.increment_count()
                 instance = str(to_configure)+"-"+str(Application.objects.all().values().get()['configured'])
+                
+                # print(budget)
+                # if end and not budget: 
+                #     model_services.create_configured_end_no_budget(master,
+                #     instance,to_configure,start,end,pue,energy_cost,carbon_conversion)
 
-                if end and not budget: 
-                    model_services.create_configured_end_no_budget(master,
-                    instance,to_configure,start,end,pue,energy_cost,carbon_conversion)
+                # if end and budget: 
+                model_services.create_configured(master,
+                instance,to_configure,start,end,pue,energy_cost,carbon_conversion,budget)
 
-                if end and budget: 
-                    model_services.create_configured_end_budget(master,
-                    instance,to_configure,start,end,pue,energy_cost,carbon_conversion,budget)
+                # if not end and budget: 
+                #     model_services.create_configured_no_end_budget(master,
+                #     instance,to_configure,start,pue,energy_cost,carbon_conversion,budget)
 
-                if not end and budget: 
-                    model_services.create_configured_no_end_budget(master,
-                    instance,to_configure,start,pue,energy_cost,carbon_conversion,budget)
-
-                else:
-                    model_services.create_configured_no_end_no_budget(master,
-                    instance,to_configure,start,pue,energy_cost,carbon_conversion)
+                # else:
+                #     model_services.create_configured_no_end_no_budget(master,
+                #     instance,to_configure,start,pue,energy_cost,carbon_conversion)
                     
                 services.create_or_update_current(master,instance)
                 asset_services.find_available_hosts(master, to_configure, instance)

@@ -1,5 +1,5 @@
 from . import model_services
-from tool.models import Host, AvailableDatacenters
+from tool.models import Host, AvailableDatacenters, ConfiguredDataCenters
 import requests
 from . import services
 
@@ -22,27 +22,34 @@ def get_available_datacenters():
         data['datacenter']['description'])
 
 def get_hosts_energy(master, sub_id):
-    startTime, endTime = services.get_start_end()
+    try: 
+        startTime, endTime = services.get_start_end()
+    except: return ConfiguredDataCenters.DoesNotExist
     for host in Host.objects.filter(sub_id=sub_id).filter(masterip=master).all().values():
         get_host_energy(host['hostid'],startTime,endTime,host['masterip'],host['datacenterid'],host['floorid'],host['sub_id'],host['rackid'])
         
 
 def update_hosts_energy(master,sub_id):
-    startTime, endTime = services.get_start_end()
+    try: 
+        startTime, endTime = services.get_start_end()
+    except: return ConfiguredDataCenters.DoesNotExist
     for host in Host.objects.filter(sub_id=sub_id).filter(masterip=master).all().values():
         update_host_energy(host['hostid'],startTime,endTime,host['masterip'],host['datacenterid'],host['floorid'],host['sub_id'],host['rackid'])
         
             
 def update_host_energy(hostid,startTime,endTime,master,datacenter,floorid,sub_id,rackid):
-    host = Host.objects.filter(masterip=master).filter(sub_id = sub_id).filter(floorid=floorid).filter(rackid=rackid).filter(hostid=hostid)
-
-    if host.values().get()['cpu_last_response']!=None:
+    
+    # host = Host.objects.filter(masterip=master).filter(sub_id = sub_id).filter(floorid=floorid).filter(rackid=rackid).filter(hostid=hostid)
+    host = get_host(master,sub_id,floorid,rackid,hostid)
+    
+    if get_last_cpu_response(host)!=None:
         startTime = str(int(host.values().get()['cpu_last_response'])+1)
     else:
         get_host_energy(hostid,startTime,endTime,master,datacenter,floorid,sub_id,rackid)
         return
     
     new_url = services.cpu_usage_url(master,datacenter,str(floorid),str(rackid),str(hostid),startTime,endTime)
+    print(new_url)
     response = services.get_response(new_url)
     data2 = response.json()
     cpu_total = 0
@@ -64,8 +71,10 @@ def update_host_energy(hostid,startTime,endTime,master,datacenter,floorid,sub_id
 
 def get_host_energy(hostid,startTime,endTime,master,datacenter,floorid,current,rackid):
 
-    host = Host.objects.filter(masterip=master).filter(sub_id = current).filter(floorid=floorid).filter(rackid=rackid).filter(hostid=hostid)
+    # host = Host.objects.filter(masterip=master).filter(sub_id = current).filter(floorid=floorid).filter(rackid=rackid).filter(hostid=hostid)
+    host = get_host(master,current,floorid,rackid,hostid)
     new_url = services.cpu_usage_url(master,datacenter,str(floorid),str(rackid),str(hostid),startTime,endTime)
+    print(new_url)
     response = services.get_response(new_url)
     data2 = response.json()
     if data2==None:return
@@ -84,20 +93,12 @@ def get_host_energy(hostid,startTime,endTime,master,datacenter,floorid,current,r
         host.update(cpu_usage=avg_cpu, cpu_responses=cpu_count, total_cpu=cpu_total, cpu_last_response=data2['activity']['timeStamp'])
     
 def find_available_hosts(master, datacenter,sub_id):
-    """ Finds all racks in the currently selected datacenter and specified floor
-
-    Args:
-        master (String): IP address of master
-        current (String): Current datacenter ID
-        floorid (String): Selected floor ID
-
-    Returns:
-        list[String]: list of all racks in specified datacenter and floor
-    """
-
+    
     url = "http://"+master+":8080/papillonserver/rest/datacenters/"+datacenter+"/allhosts/"
     response = services.get_response(url)
-    data = response.json()
+    try:
+        data = response.json()
+    except: return ConnectionRefusedError
     if data==None:return
     if isinstance(data['hostExtended'], list): 
         for host in data['hostExtended']:
@@ -112,5 +113,16 @@ def find_available_hosts(master, datacenter,sub_id):
                                                 host['processorCount'],host['IPAddress'])
             
 
+def get_host(master,sub_id,floorid,rackid,hostid):
+    try:
+        return Host.objects.filter(masterip=master).filter(sub_id = sub_id).filter(floorid=floorid).filter(rackid=rackid).filter(hostid=hostid)
+    except: return Host.DoesNotExist
 
 
+def get_last_cpu_response(host):
+    try:
+        return host.values().get()['cpu_last_response']
+    except: return Host.DoesNotExist
+    
+    
+    
