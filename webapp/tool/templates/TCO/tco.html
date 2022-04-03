@@ -13,7 +13,6 @@
           <b>Host ID: {{ host.hostid }}</b>
           <hr>
           <p>Floor: {{ host.floorid }} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Rack: {{ host.rackid }}</p>
-          <p>IP Address: {{ host.ipaddress }}</p><hr>
 
           <form method="POST">
             {% csrf_token %}
@@ -26,6 +25,18 @@
           </form>
           <hr>
           <table class ="tco-table">
+
+            <tr>
+              <th>TCO 3yrs (€)</th>
+              <td>            
+                {% if host.capital %}
+                {{host.TCO|floatformat}}
+                {%else%}
+                --
+                {%endif%}
+              </td>
+            </tr>
+
             <tr>
               <th>Responses (mins)</th>
               <td>            
@@ -38,12 +49,7 @@
                 {{host.kWh_consumed|floatformat}} 
               </td>
             </tr>
-            <tr>
-              <th>TCO 3yrs (€)</th>
-              <td>            
-                {{host.TCO|floatformat}}
-              </td>
-            </tr>
+
             <tr>
               <th>Operational Cons 3yrs (kWh)</th>
               <td>            

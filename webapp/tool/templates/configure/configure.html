@@ -9,6 +9,10 @@
   {% if page == "assets" %}<a class="active" href="{% url 'assets' %}">Assets</a>{% else %} <a href="{% url 'assets' %}">Assets</a>{% endif %}
   {% if page == "budget" %}<a class="active" href="{% url 'budget' %}">Budget</a>{% else %} <a href="{% url 'budget' %}">Budget</a>{% endif %}
   {% if page == "tco" %}<a class="active" href="{% url 'tco' %}">TCO</a>{% else %} <a href="{% url 'tco' %}">TCO</a>{% endif %}
+
+
+
+
   <a class="a2">
     <form method="POST">
       {% csrf_token %}
@@ -16,12 +20,24 @@
       <button type="submit" class="save">Change</button>
     </form>
   </a>
+  
+  {%if online == "true"%}
+  <div class="online-indicator">
+    <span class="blink"></span>
+  </div>
+  <h2>Online</h2>
+  {%else%}
+  <div class="online-indicator" style="background-color: #f82121;">
+    <span class="blink" style="background-color: #f82121;"></span>
+  </div>
+  <h2>Offline</h2>
+  {%endif%}
+
 </div>
 
 <div class="content">
-
+  
   <button class="open-button" onclick="openForm()">Configure New Datacenter</button>
-
   <div id="page-loader">
 		<h3>Configuring Datacenter. Please Wait...</h3>
 		<img src="/../../static/media/spinner5.gif" alt="loader">
@@ -114,13 +130,14 @@
   </div>
 
 {% block content %}
+<br><br>
 <div class="configure_content">
 <table style="width:100%" class="styled-table">
-  <br><br>
   <caption class="table-header">Configured Datacenters: {{configured_count}}</caption>
   <thead>
   <tr>
     <th></th>
+
     <th>Datacenter</th>
     <th>ID</th>
     <th>PUE</th>
@@ -141,6 +158,7 @@
         <button type="submit" class="select_button" name = "current_datacenter" value={{datacenter.sub_id}}>Select</button>
     </form>
     </td>
+    
     <td>{{datacenter.datacenterid}}</td>
     <td>{{datacenter.sub_id}}</td>
     <td>{{datacenter.pue}}</td>

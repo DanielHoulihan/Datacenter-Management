@@ -2,7 +2,7 @@
 
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from tool.models import ConfiguredDataCenters, Floor, Rack, Host,MasterIP, Threshold, Budget, AvailableDatacenters, Application
+from tool.models import ConfiguredDataCenters, Floor, Rack, Host, Budget, AvailableDatacenters, Application
 from .services import services, asset_services, budget_services, tco_services, model_services
 from . import forms
 from django.views.decorators.csrf import csrf_protect
@@ -27,7 +27,7 @@ def assets(request):
         form = forms.ChangeThresholdForm(request.POST)
         if form.is_valid():
             low,medium=form.cleaned_data
-            Threshold.objects.update(low=low,medium=medium)
+            Application.objects.update(threshold_low=low,threshold_medium=medium)
         context["error"] = form
 
     if Application.objects.filter(masterip=master).values().all().get()['current']==None:
@@ -58,7 +58,8 @@ def configure(request):
     """
     
     context = {}
-    asset_services.get_available_datacenters()
+    
+        
     master = services.get_master()
     services.check_master()
     if request.method == 'POST':
@@ -75,7 +76,7 @@ def configure(request):
             form = forms.ChangeIPForm(request.POST)
             if form.is_valid():
                 ip = form.cleaned_data
-                Application.objects.update(masterip=ip)
+                Application.objects.update(masterip=ip, current=None)
                 asset_services.get_available_datacenters()
                 
 
@@ -132,10 +133,12 @@ def configure(request):
 
 
     sub_id = services.get_current_sub_id()
+
     try:
         last_update = Host.objects.filter(masterip=master).filter(sub_id=sub_id).all().values()[0]['cpu_last_response']
         last_update = datetime.fromtimestamp(int(last_update)).strftime("%Y-%m-%d %H:%M")
     except: last_update='Never'
+    status = asset_services.get_available_datacenters()
     master = services.get_master()
     context['last_update'] = last_update
     context['datacenters'] = AvailableDatacenters.objects.filter(masterip=master).all()
@@ -146,6 +149,10 @@ def configure(request):
     context['current'] = services.get_current_for_html()
     context['page'] = "home"
     
+    context['online'] = "false"
+    # status = asset_services.get_available_datacenters()
+    if status!=ConnectionRefusedError:
+        context['online'] = 'true'
     return render (request, 'configure/configure.html', context)
 
             

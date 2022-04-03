@@ -1,7 +1,4 @@
 {% include 'home/base.html'%}
-{% comment %} <head>
-  <link rel="stylesheet" href="/../../static/css/styles.css">
-</head> {% endcomment %}
 
 <div class="topnav3">
   {% if page == "home" %}<a class="active" href="{% url 'configure' %}">Home</a>{% else %} <a href="{% url 'configure' %}">Home</a>{% endif %}
@@ -13,7 +10,6 @@
       {% csrf_token %}
       Threshold
       <input type="number" name="low" required placeholder={{threshold.threshold_low}} step="0.1">
-      {% comment %} Upper Threshold {% endcomment %}
       <input type="number" name="medium" required placeholder={{threshold.threshold_medium}} step="0.1">
       <button type="submit" class="save   btn btn-default">Submit</button>
       {% if error.non_field_errors %}<div class="threshold-error">{{error.non_field_errors}}</div>{% endif %}
@@ -27,7 +23,7 @@
       {% for floor in floors %}
         <li><span class="box">
             <div class="floor-card">
-                <b>Floor ID: {{ floor.floorid }}</b>
+                <b>Floor ID: {{ floor.floorid }}  </b>
                 <hr>
                 <p>Floor Name: {{ floor.floorname }}</p>
                 <p>Floor Description: {{ floor.description }}</p>
@@ -52,14 +48,10 @@
                         <div class="host-card">
                             <b>Host ID: {{ host.hostid }}</b><hr>
                             <p>Host Name: {{ host.hostname }}</p>
-                            {% comment %} <p>Host Description: {{ host.hostdescription }}</p> {% endcomment %}
-                            {% comment %} <p>Host Type: {{ host.hostType }}</p> {% endcomment %}
-                            {% comment %} <p># Processors: {{ host.processors }}</p> {% endcomment %}
-                            {% comment %} <p>IP Address: {{ host.ipaddress }}</p> {% endcomment %}
                             <p>Responses (mins): {{ host.cpu_responses }}</p>
-                            {% if host.cpu_usage > threshold.medium %}
+                            {% if host.cpu_usage > threshold.threshold_medium %}
                               <p class = "cpu-usage" style="background-color: rgb(235, 59, 59)">CPU Usage: {{ host.cpu_usage|floatformat }}%</p>
-                            {% elif host.cpu_usage < threshold.low %} 
+                            {% elif host.cpu_usage < threshold.threshold_low %} 
                               <p class = "cpu-usage" style="background-color: rgb(11, 226, 58)">CPU Usage: {{ host.cpu_usage|floatformat }}%</p>
                             {% elif host.cpu_usage == none %} 
                               <p class = "cpu-usage" style="background-color: #b8b8b8">CPU Usage: {{ host.cpu_usage|floatformat }}%</p>        

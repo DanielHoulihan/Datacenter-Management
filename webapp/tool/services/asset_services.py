@@ -10,8 +10,8 @@ def get_available_datacenters():
     master = services.get_master()
     url = services.datacenter_url(master)
     try:
-        response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"})
-    except Exception: return 
+        response = requests.get(url,headers={'Content-Type': 'application/json', 'Accept': "application/json"},timeout=5)
+    except Exception: return ConnectionRefusedError
     data = response.json()
     if data==None: return
     if isinstance(data['datacenter'], list):
