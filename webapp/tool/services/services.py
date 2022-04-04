@@ -45,40 +45,47 @@ def get_pue():
     """ Find the PUE of the specified datacenter """
 
     try: 
-        return ConfiguredDataCenters.objects.filter(masterip=get_master()).filter(sub_id=get_current_sub_id()).all().values().get()['pue']
+        return ConfiguredDataCenters.objects.filter(masterip=get_master()).filter(
+            sub_id=get_current_sub_id()).all().values().get()['pue']
     except: return ConfiguredDataCenters.DoesNotExist
 
 def get_energy_cost():
     """ Find the energy cost of the specified datacenter """
 
     try:
-        return ConfiguredDataCenters.objects.filter(masterip=get_master()).filter(sub_id=get_current_sub_id()).all().values().get()['energy_cost']
+        return ConfiguredDataCenters.objects.filter(masterip=get_master()).filter(
+            sub_id=get_current_sub_id()).all().values().get()['energy_cost']
     except: return ConfiguredDataCenters.DoesNotExist
 
 def get_carbon_conversion():
     """ Find the carbon conversion of the specified datacenter """
 
     try:
-        return ConfiguredDataCenters.objects.filter(masterip=get_master()).filter(sub_id=get_current_sub_id()).all().values().get()['carbon_conversion']
+        return ConfiguredDataCenters.objects.filter(masterip=get_master()).filter(
+            sub_id=get_current_sub_id()).all().values().get()['carbon_conversion']
     except: return ConfiguredDataCenters.DoesNotExist
 
 def get_budget():
     """ Find the budget of the specified datacenter """
 
     try:
-        return ConfiguredDataCenters.objects.filter(masterip=get_master()).filter(sub_id=get_current_sub_id()).all().values().get()['budget']
+        return ConfiguredDataCenters.objects.filter(masterip=get_master()).filter(
+            sub_id=get_current_sub_id()).all().values().get()['budget']
     except: return ConfiguredDataCenters.DoesNotExist
 
 def get_start_end():
     """ Generate UNIX times for start and end of currently selected datacenter """
 
     try:
-        startTime = ConfiguredDataCenters.objects.all().filter(sub_id = get_current_sub_id()).values().get()['startTime']
+        startTime = ConfiguredDataCenters.objects.all().filter(
+            sub_id = get_current_sub_id()).values().get()['startTime']
         startTime = str(int(time.mktime(startTime.timetuple())))
-        if ConfiguredDataCenters.objects.all().filter(sub_id = get_current_sub_id()).values().get()['endTime']==None:
+        if ConfiguredDataCenters.objects.all().filter(
+            sub_id = get_current_sub_id()).values().get()['endTime']==None:
             endTime = str(int(time.time()))
         else:
-            endTime = ConfiguredDataCenters.objects.all().filter(sub_id = get_current_sub_id()).values().get()['endTime']
+            endTime = ConfiguredDataCenters.objects.all().filter(
+                sub_id = get_current_sub_id()).values().get()['endTime']
             endTime = str(int(time.mktime(endTime.timetuple())))
         return startTime, endTime
     except: return ConfiguredDataCenters.DoesNotExist
@@ -135,6 +142,8 @@ def get_upper_threshold():
         return Application.objects.all().values().get()['threshold_medium']
     except: return Application.DoesNotExist
  
+ 
+""" URL methods which generate strings for cleaner code """
 def datacenter_url(master):
     return "http://"+master+":8080/papillonserver/rest/datacenters/"
 

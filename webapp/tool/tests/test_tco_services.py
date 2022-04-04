@@ -83,6 +83,3 @@ class TCOServicesTest(TestCase):
         
         self.assertEquals(cf_3, 104832)
         
-    def test_calculate_kWh_consumed(self):
-        kWh = tco_services.calculate_kWh_consumed(5000)
-        self.assertEquals(kWh, 5)

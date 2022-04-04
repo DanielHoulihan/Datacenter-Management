@@ -11,22 +11,24 @@ import matplotlib.dates as mdates
 import json
 plt.switch_backend('Agg') 
 
-def get_hosts_budget(master, current_sub):
+def get_hosts_budget(master, sub_id):
+    """ Determines whether a budget should be created or an existing one updated. Once this is 
+        complete the graphs are produced using methods and updated in the budegt objects. 
+
+    Args:
+        master (String): IP Address of the master
+        sub_id (String): Instance of datacenter
+    """
     
     startTime,endTime = services.get_start_end()
-    
-    # available_hosts = Host.objects.filter(masterip=master).filter(sub_id=current_sub).all().values()
-    available_hosts = get_all_host_values(master,current_sub)
-    
-    budget = get_all_budgets(master,current_sub)
-    # budget = Budget.objects.filter(masterip=master).filter(sub_id=current_sub).all()
+    available_hosts = get_all_host_values(master,sub_id)
+    budget = get_all_budgets(master,sub_id)
     if budget.exists():
         update_budget(budget, available_hosts, endTime)
     else:
         create_budget(startTime, endTime, available_hosts)
         
-    # budget = Budget.objects.filter(masterip=master).filter(sub_id=current_sub).all().values().get()['energy_dict']
-    budget = get_energy_dict(master, current_sub)
+    budget = get_energy_dict(master, sub_id)
     
     decoded_data = json.loads(budget)
     df = pd.DataFrame(decoded_data)
@@ -36,10 +38,12 @@ def get_hosts_budget(master, current_sub):
         df[col] = df[col].cumsum()
     hosts_df = df[df.columns[:-1]]
     total_df = df[[df.columns[0], df.columns[-1]]]
-    budget = Budget.objects.filter(masterip=master).filter(sub_id=current_sub).all()
+    budget = Budget.objects.filter(masterip=master).filter(sub_id=sub_id).all()
     
-    total_usage = list(total_df['Total'])[-1] * ConfiguredDataCenters.objects.filter(masterip=master).filter(sub_id=current_sub).values().get()['carbon_conversion']
-    if ConfiguredDataCenters.objects.filter(masterip=master).filter(sub_id=current_sub).values().get()['budget'] == None:
+    total_usage = list(total_df['Total'])[-1] * ConfiguredDataCenters.objects.filter(
+        masterip=master).filter(sub_id=sub_id).values().get()['carbon_conversion']
+    if ConfiguredDataCenters.objects.filter(masterip=master).filter(
+        sub_id=sub_id).values().get()['budget'] == None:
         budget.update(
             carbon_graph1 = plot_usage(carbon_usage(hosts_df),'kgC02'),
             carbon_graph2 = plot_usage(carbon_usage(total_df),'kgC02'),
@@ -58,11 +62,23 @@ def get_hosts_budget(master, current_sub):
             cost_graph1 = plot_usage(cost_estimate(hosts_df),'€'),
             cost_graph2 = plot_usage(cost_estimate(total_df),'€'),
             total_usage = total_usage,
-            usage_percentage = (total_usage/ConfiguredDataCenters.objects.filter(masterip=master).filter(sub_id=current_sub).values().get()['budget'])*100
+            usage_percentage = (total_usage/ConfiguredDataCenters.objects.filter(
+                masterip=master).filter(sub_id=sub_id).values().get()['budget'])*100
         )
     
 
 def update_budget(budget, available_hosts, endTime):
+    """ Updates the Budget object passed in. The energy_dict is the only field updated. This is
+        where the daily usage is stored along with the day identifier
+
+    Args:
+        budget (String): Budget object
+        available_hosts (Queryset<Host>): A list of hosts from the existing models
+                                          which are located in the current datacenter instance  
+        endTime (String): UNIX end time specified by user (or live if not specified)
+    """
+    
+    
     budgeted = budget.values().get()['energy_dict']
     decoded_data = json.loads(budgeted)
     startTime = str(int(decoded_data[-1]['day']))
@@ -90,6 +106,7 @@ def update_budget(budget, available_hosts, endTime):
             df = pd.DataFrame(summed.items(), columns=['day', str(host['hostid'])])
             df[str(host['hostid'])] = df[str(host['hostid'])]/1000
             df_list.append(df)
+            
 
     hosts = reduce(lambda x, y: pd.merge(x, y, on = 'day', how='left'), df_list)
     hosts = hosts.fillna(0)
@@ -103,6 +120,14 @@ def update_budget(budget, available_hosts, endTime):
 
 
 def create_budget(startTime, endTime, available_hosts):
+    """ Creates budget object since none exist for the specified datacenter
+
+    Args:
+        startTime (String): UNIX date in string format (specified by user)
+        endTime (String): UNIX date in string format (specified by user)
+        available_hosts (Queryset<Host>): _description_
+    """
+    
     df_list=[unix_range(startTime,endTime)]
     for host in available_hosts:
         url = services.power_url(host['masterip'],host['datacenterid'],str(host['floorid']),
@@ -141,29 +166,46 @@ def create_budget(startTime, endTime, available_hosts):
         energy_dict=encoded_json
     )
     
-def save_plot_usage(master, current_sub):
+# def save_plot_usage(master, current_sub):
+#     """_summary_
 
-    budget = Budget.objects.filter(masterip=master).filter(sub_id=current_sub).all().values().get()['energy_dict']
-    decoded_data = json.loads(budget)
-    df = pd.DataFrame(decoded_data)
-    df = df.fillna(0)
-    df['day'] = pd.to_datetime(df['day'],unit='s')
-    for col in df.columns[1:]:
-        df[col] = df[col].cumsum()
-    hosts_df = df[df.columns[:-1]]
-    total_df = df[[df.columns[0], df.columns[-1]]]
+#     Args:
+#         master (_type_): _description_
+#         current_sub (_type_): _description_
+#     """
+#     budget = Budget.objects.filter(masterip=master).filter(
+#         sub_id=current_sub).all().values().get()['energy_dict']
+#     decoded_data = json.loads(budget)
+#     df = pd.DataFrame(decoded_data)
+#     df = df.fillna(0)
+#     df['day'] = pd.to_datetime(df['day'],unit='s')
+#     for col in df.columns[1:]:
+#         df[col] = df[col].cumsum()
+#     hosts_df = df[df.columns[:-1]]
+#     total_df = df[[df.columns[0], df.columns[-1]]]
     
-    budget.update(
-        carbon_graph1 = plot_usage(carbon_usage(hosts_df),'kgC02'),
-        carbon_graph2 = plot_usage(carbon_usage(total_df),'kgC02'),
-        energy_graph1 = plot_usage(hosts_df,'kWh'),
-        energy_graph2 = plot_usage(total_df,'kWh'),
-        cost_graph1 = plot_usage(cost_estimate(hosts_df),'€'),
-        cost_graph2 = plot_usage(cost_estimate(total_df),'€')   
-    )
+#     budget.update(
+#         carbon_graph1 = plot_usage(carbon_usage(hosts_df),'kgC02'),
+#         carbon_graph2 = plot_usage(carbon_usage(total_df),'kgC02'),
+#         energy_graph1 = plot_usage(hosts_df,'kWh'),
+#         energy_graph2 = plot_usage(total_df,'kWh'),
+#         cost_graph1 = plot_usage(cost_estimate(hosts_df),'€'),
+#         cost_graph2 = plot_usage(cost_estimate(total_df),'€')   
+#     )
     
 
 def plot_usage(table,ylabel):
+    """ Plots the specified dataframe onto a line chart using matplotlib. This plot is encoded 
+        and saved into a Budget object (in another function). Raw matplotlib graphs cannot be saved
+        into a Django model.
+
+    Args:
+        table (Pandas DataFrame): DataFrame containing daily energy usage of datacenter
+        ylabel (String): Label for y axis of graphic
+
+    Returns:
+        base64: encoded graph depicting specified table
+    """
     
     startTime, endTime = services.get_start_end()
     startTime=int(startTime)-10000
@@ -195,14 +237,14 @@ def plot_usage(table,ylabel):
 
 
 def plot_carbon_total(table):
-    """ Generates matplotlib graph showing usage of carbon with budget line
+    """ Includes budget line if specified by the user.
 
     Args:
-        table (Pandas DataFrame): Table holding daily consumption
-        ylabel (String): Y label of graph
+        table (Pandas DataFrame): DataFrame containing daily energy usage of datacenter
+        ylabel (String): Label for y axis of graphic
 
     Returns:
-        base64: base64 encoded matplotlib graph (for html)
+        base64: encoded graph depicting specified table
     """
 
     startTime, endTime = services.get_start_end()
@@ -241,6 +283,7 @@ def carbon_usage(table):
     Returns:
         Pandas DataFrame: Converted table
     """
+    
     try:
         temp = table.copy()
     except: return
@@ -288,19 +331,50 @@ def unix_range(startTime,endTime):
     return base_df
 
 
-def get_all_budgets(master,current_sub):
+def get_all_budgets(master,sub_id):
+    """ Find and return all budget objects in the current datacenter
+
+    Args:
+        master (String): _description_
+        sub_id (String): _description_
+
+    Returns:
+        Exception: If no Budget objects exist in the database
+    """
+    
     try:
-        return Budget.objects.filter(masterip=master).filter(sub_id=current_sub).all()
+        return Budget.objects.filter(masterip=master).filter(sub_id=sub_id).all()
     except: return Budget.DoesNotExist
 
 
-def get_all_host_values(master, current_sub):
+def get_all_host_values(master, sub_id):
+    """ Returns all hosts values for selected datacenter 
+
+    Args:
+        master (String): _description_
+        sub_id (String): _description_
+
+    Returns:
+        Exception: If no Host objects exist in the database
+    """
+    
     try:
-        return Host.objects.filter(masterip=master).filter(sub_id=current_sub).all().values()
+        return Host.objects.filter(masterip=master).filter(sub_id=sub_id).all().values()
     except: return Host.DoesNotExist
     
     
-def get_energy_dict(master, current_sub):
+def get_energy_dict(master, sub_id):
+    """ Get the energydict of the specified datacenter. (dictionary of the daily energy usage)
+
+    Args:
+        master (String): IP Address of master
+        sub_id (String): Datacenter instance selected
+
+    Returns:
+        Exception: If no Budget objects exist in the database
+    """
+    
     try:
-        return Budget.objects.filter(masterip=master).filter(sub_id=current_sub).all().values().get()['energy_dict']
+        return Budget.objects.filter(masterip=master).filter(
+            sub_id=sub_id).all().values().get()['energy_dict']
     except: return Budget.DoesNotExist

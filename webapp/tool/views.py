@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
-from django.shortcuts import render, redirect
-from django.urls import reverse
+from django.shortcuts import render
 from tool.models import ConfiguredDataCenters, Floor, Rack, Host, Budget, AvailableDatacenters, Application
 from .services import services, asset_services, budget_services, tco_services, model_services
 from . import forms
@@ -17,7 +16,8 @@ __status__ = "Production"
 
 def assets(request):
     """ Assets Tab
-    Finds the available floors in the chosen datacenter (assets) 
+    Finds the available assets in the chosen datacenter. 
+    POST method allows user to change the treshold of the CPU usages.
     """    
 
     context = {}
@@ -38,11 +38,13 @@ def assets(request):
     context['floors'] = Floor.objects.filter(sub_id=sub_id).filter(masterip=master).all()
     context['floor_count'] = Floor.objects.filter(sub_id=sub_id).filter(masterip=master).all().count()
     context['rack_count'] = Rack.objects.filter(sub_id=sub_id).filter(masterip=master).all().count()
-    context["host_count"] = Host.objects.filter(sub_id=services.get_current_sub_id()).filter(masterip=master).all().count()
+    context["host_count"] = Host.objects.filter(sub_id=services.get_current_sub_id()).filter(
+        masterip=master).all().count()
     context['current'] = services.get_current_for_html()
     context["threshold"] = Application.objects.all().get()
     context['racks'] = Rack.objects.filter(sub_id=sub_id).filter(masterip=services.get_master()).all()
-    context["hosts"] = Host.objects.filter(sub_id=services.get_current_sub_id()).filter(masterip=master).all()
+    context["hosts"] = Host.objects.filter(sub_id=services.get_current_sub_id()).filter(
+        masterip=master).all()
     context['page'] = 'assets'
     
     return render (request, 'assets/assets.html', context )
@@ -51,10 +53,15 @@ def assets(request):
 @csrf_protect
 def configure(request):
     """ Home Tab
-    # 'to_delete' - remove selected datacenter from database
-    # 'ip' - change the ip address of te master
-    # 'to_configure' - setting up a new configured datacenter
-    # 'current_datacenter' - select a current datacenter from the configured
+    From AvailableDatacenters, ConfiguredDatacenters collects the relevent information
+    and sends to the HTML templates for the Home tab.
+    
+    POST methods:
+    'to_delete' - remove selected datacenter from database
+    'ip' - change the ip address of te master
+    'to_configure' - setting up a new configured datacenter
+    'current_datacenter' - select a current datacenter from the configured
+    'update' - updates the selected datacenter
     """
     
     context = {}
@@ -87,24 +94,10 @@ def configure(request):
                 to_configure, start, end, pue, energy_cost, carbon_conversion, budget = form.cleaned_data
                 services.increment_count()
                 instance = str(to_configure)+"-"+str(Application.objects.all().values().get()['configured'])
-                
-                # print(budget)
-                # if end and not budget: 
-                #     model_services.create_configured_end_no_budget(master,
-                #     instance,to_configure,start,end,pue,energy_cost,carbon_conversion)
 
-                # if end and budget: 
                 model_services.create_configured(master,
                 instance,to_configure,start,end,pue,energy_cost,carbon_conversion,budget)
 
-                # if not end and budget: 
-                #     model_services.create_configured_no_end_budget(master,
-                #     instance,to_configure,start,pue,energy_cost,carbon_conversion,budget)
-
-                # else:
-                #     model_services.create_configured_no_end_no_budget(master,
-                #     instance,to_configure,start,pue,energy_cost,carbon_conversion)
-                    
                 services.create_or_update_current(master,instance)
                 asset_services.find_available_hosts(master, to_configure, instance)
                 asset_services.get_hosts_energy(master, instance)
@@ -136,7 +129,8 @@ def configure(request):
     sub_id = services.get_current_sub_id()
 
     try:
-        last_update = Host.objects.filter(masterip=master).filter(sub_id=sub_id).all().values()[0]['cpu_last_response']
+        last_update = Host.objects.filter(masterip=master).filter(
+            sub_id=sub_id).all().values()[0]['cpu_last_response']
         last_update = datetime.fromtimestamp(int(last_update)).strftime("%Y-%m-%d %H:%M")
     except: last_update='Never'
     status = asset_services.get_available_datacenters()
@@ -160,7 +154,8 @@ def configure(request):
 @csrf_protect
 def tco(request):
     """ TCO Tab
-    # Calculates TCO of selected host - sends to template
+    From Host objects collects the relavent TCO information to show in TCO tab.
+    POST method allows for user to specify the capital cost of a host.
     """
 
     context = {}
@@ -187,8 +182,9 @@ def tco(request):
 
 def budget(request):
     """ Budget Tab
-    Generate graphs for carbon usage, energy usage, costs
+    Collects graphs from Budget objects to show in web application budget tab.
     """
+    
     context = {}
     master = services.get_master()
     current_sub = services.get_current_sub_id()
