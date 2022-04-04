@@ -17,7 +17,18 @@ source startup.sh
 
 All required libraries are now installed and the virtual environment is activated.
 
-To start the webapp run:
+To run the application in debug mode:
+
+```
+python3 manage.py runserver
+```
+
+
+OR
+
+
+
+To start the webapp using proper deployment:
 ```
 fab run
 ```
