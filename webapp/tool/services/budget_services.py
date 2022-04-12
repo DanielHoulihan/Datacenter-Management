@@ -86,7 +86,6 @@ def update_budget(budget, available_hosts, endTime):
     for host in available_hosts:
         url = services.power_url(host['masterip'],host['datacenterid'],str(host['floorid']),
                                 str(host['rackid']),str(host['hostid']),startTime,endTime)
-        print(url)
         
         response = services.get_response(url)
         data = response.json()
@@ -132,7 +131,6 @@ def create_budget(startTime, endTime, available_hosts):
     for host in available_hosts:
         url = services.power_url(host['masterip'],host['datacenterid'],str(host['floorid']),
                                     str(host['rackid']),str(host['hostid']),startTime,endTime)
-        print(url)
         response = services.get_response(url)
         data = response.json()
         start=int(startTime)

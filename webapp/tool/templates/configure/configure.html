@@ -3,6 +3,10 @@
   <link rel="stylesheet" href="/../../static/css/styles.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 </head> {% endcomment %}
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.js"></script>
+</head>
+
 
 <div class="topnav3">
   {% if page == "home" %}<a class="active" href="{% url 'configure' %}">Home</a>{% else %} <a href="{% url 'configure' %}">Home</a>{% endif %}
@@ -199,9 +203,65 @@
   {% endfor %}
 </table>
 
+<div class="tooltip-fuel">Live Carbon Info
+  <span class="tooltiptext-fuel">
+    <canvas id="myChart"></canvas>
+    <div class="carbon-intensity-box-2">
+      Carbon Intensity
+    </div>  
+    <div class="carbon-intensity-box">
+      {{carbon_intensity}} gCO2/kWh
+    </div>    
+    <div class="carbon-intensity-box-3">
+      Data from CO2 Signal
+    </div>   
+  </span>
+</div>   
+
 {% endblock %} 
 </div>
 </div>
+
+
+
+
+
+
+
+<script>
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'doughnut',
+
+        data: {
+            labels: {{labels|safe}},
+            datasets: [{
+                data: {{data|safe}},
+                backgroundColor: {{colors|safe}}
+            }]
+        },
+        options: {
+            title: {
+                display: true,
+                text: 'Current Irish Fuel Mix',
+                fontColor: '#fff'
+            },
+            legend: {
+                disblay: true,
+                position: 'right',
+                labels: {
+                    fontColor: '#fff'
+                }
+            }
+
+        }
+
+
+    });
+</script>
+
+
+
 
 <script>
   function openForm() {
@@ -211,4 +271,9 @@
   function closeForm() {
     document.getElementById("myForm").style.display = "none";
   }
+</script>
+<script>
+  $(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+  })
 </script>

@@ -2,7 +2,7 @@
 
 from django.shortcuts import render
 from tool.models import ConfiguredDataCenters, Floor, Rack, Host, Budget, AvailableDatacenters, Application
-from .services import services, asset_services, budget_services, tco_services, model_services
+from .services import services, asset_services, budget_services, tco_services, model_services, Co2_signal_services
 from . import forms
 from django.views.decorators.csrf import csrf_protect
 from datetime import datetime 
@@ -65,7 +65,6 @@ def configure(request):
     """
     
     context = {}
-    
         
     master = services.get_master()
     services.check_master()
@@ -133,6 +132,20 @@ def configure(request):
             sub_id=sub_id).all().values()[0]['cpu_last_response']
         last_update = datetime.fromtimestamp(int(last_update)).strftime("%Y-%m-%d %H:%M")
     except: last_update='Never'
+    
+    try:
+        carbon_intenisty, fuel_mix = Co2_signal_services.get_carbon_intensity()
+        context['labels'] = ['Fossil Fuels', 'Renewables']
+        context['data'] = [fuel_mix,100-fuel_mix]
+        context['colors'] = ["#fd5e53","#32de84"]   
+        context['carbon_intensity'] = carbon_intenisty
+    except:
+        context['labels'] = ['Fossil Fuels', 'Renewables']
+        context['data'] = [100,0]
+        context['colors'] = ["#fd5e53","#32de84"]   
+        context['carbon_intensity'] = "API limit reached"
+        
+  
     status = asset_services.get_available_datacenters()
     master = services.get_master()
     context['last_update'] = last_update

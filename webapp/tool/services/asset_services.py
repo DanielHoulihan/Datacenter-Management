@@ -91,7 +91,6 @@ def update_host_energy(hostid,startTime,endTime,master,datacenter,floorid,sub_id
         return
     
     new_url = services.cpu_usage_url(master,datacenter,str(floorid),str(rackid),str(hostid),startTime,endTime)
-    print(new_url)
     response = services.get_response(new_url)
     data2 = response.json()
     cpu_total = 0
@@ -131,7 +130,6 @@ def get_host_energy(hostid,startTime,endTime,master,datacenter,floorid,current,r
     
     host = get_host(master,current,floorid,rackid,hostid)
     new_url = services.cpu_usage_url(master,datacenter,str(floorid),str(rackid),str(hostid),startTime,endTime)
-    print(new_url)
     response = services.get_response(new_url)
     data2 = response.json()
     if data2==None:return
