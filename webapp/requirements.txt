@@ -3,3 +3,4 @@ fabric==2.6.0
 matplotlib==3.5.1
 pandas==1.4.1
 requests==2.27.1
+selenium==4.1.3

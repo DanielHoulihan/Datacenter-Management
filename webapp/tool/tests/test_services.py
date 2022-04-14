@@ -1,7 +1,6 @@
 import datetime
 from django.test import TestCase
 from tool.services import services
-from django.core.exceptions import ObjectDoesNotExist
 from tool.models import ConfiguredDataCenters, Application
 
 

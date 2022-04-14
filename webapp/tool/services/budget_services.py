@@ -163,33 +163,7 @@ def create_budget(startTime, endTime, available_hosts):
         sub_id=services.get_current_sub_id,
         energy_dict=encoded_json
     )
-    
-# def save_plot_usage(master, current_sub):
-#     """_summary_
 
-#     Args:
-#         master (_type_): _description_
-#         current_sub (_type_): _description_
-#     """
-#     budget = Budget.objects.filter(masterip=master).filter(
-#         sub_id=current_sub).all().values().get()['energy_dict']
-#     decoded_data = json.loads(budget)
-#     df = pd.DataFrame(decoded_data)
-#     df = df.fillna(0)
-#     df['day'] = pd.to_datetime(df['day'],unit='s')
-#     for col in df.columns[1:]:
-#         df[col] = df[col].cumsum()
-#     hosts_df = df[df.columns[:-1]]
-#     total_df = df[[df.columns[0], df.columns[-1]]]
-    
-#     budget.update(
-#         carbon_graph1 = plot_usage(carbon_usage(hosts_df),'kgC02'),
-#         carbon_graph2 = plot_usage(carbon_usage(total_df),'kgC02'),
-#         energy_graph1 = plot_usage(hosts_df,'kWh'),
-#         energy_graph2 = plot_usage(total_df,'kWh'),
-#         cost_graph1 = plot_usage(cost_estimate(hosts_df),'€'),
-#         cost_graph2 = plot_usage(cost_estimate(total_df),'€')   
-#     )
     
 
 def plot_usage(table,ylabel):

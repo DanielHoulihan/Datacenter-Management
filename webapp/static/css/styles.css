@@ -302,8 +302,8 @@ span.blink {
 
 .configure_card {
   left:100px;
-  width: 380px;
-  height: 350px;
+  width: 320px;
+  height: 370px;
   opacity: 90%;
   /* margin: 15px; */
   padding: 10px;
@@ -739,10 +739,10 @@ input[type=number]{
 
 #page-loader {
   position: absolute;
-  top: 20%;
-  bottom: 30%;
-  left: 30%;
-  right: 30%;
+  top: 150px;
+  bottom: 100px;
+  left: 200px;
+  right: 200px;
   z-index: 10000;
   display: none;
   text-align: center;
@@ -826,11 +826,80 @@ li, #myUL {
   visibility: visible;
 }
 
+/* Tooltip in assets  */
+.tooltip-fuel {
+  border: 2px solid black;
+  position: fixed;
+  top:115px;
+  left:36%;
+  display: inline-block;
+  display: flex;
+  text-align: center;
+  padding: 9px;
+  padding-left:50px;
+  height: 18px;
+  width:170px;
+  font-size: 16px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+  border-radius: 6px;
+  color: #fff;
+  background-image: linear-gradient(-180deg, #FF7E31, #E62C03);
+  box-shadow: 0px 0.5px 1.5px rgba(54, 122, 246, 0.25), inset 0px 0.8px 0px -0.25px rgba(255, 255, 255, 0.2);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
 
+.tooltip-fuel .tooltiptext-fuel {
+  visibility: hidden;
+  width: 400px;
+  height:400px;
+  background-color: rgb(79, 79, 79);
+  color: #fff;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+  position: absolute;
+  z-index: 1000;
+  opacity:0.95;
+}
+.tooltip-fuel:hover .tooltiptext-fuel {
+  visibility: visible;
+}
 
+.carbon-intensity-box {
+  bottom:auto;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 14px;
+  margin-top:10px;
+  margin-left:50px;
+  margin-right:50px;
+  height:45px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+  border-radius: 6px;
+  font-size: 30px;
+  border: none;
+  color: #fff;
+  background-origin: border-box;
+  background-color: #000000;
+  box-shadow: 0px 0.5px 1.5px rgba(54, 122, 246, 0.25), inset 0px 0.8px 0px -0.25px rgba(255, 255, 255, 0.2);
+  user-select: none;
+  border: 3px solid #ffffff;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
 
+.carbon-intensity-box-2 {
+  margin-top:25px;
+}
 
+.carbon-intensity-box-3 {
 
+  margin-top:20px;
+  font-size: 10px;
 
-
-
+}

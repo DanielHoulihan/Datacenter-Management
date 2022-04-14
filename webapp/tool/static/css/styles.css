@@ -410,6 +410,7 @@ body {font-family: Arial;}
   color: white;
   opacity: 0.8;
   position: fixed;
+  padding-left:5px;
   top: 120px;
   left: 320px;
   border-radius: 0.5rem;

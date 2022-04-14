@@ -87,6 +87,7 @@ def get_start_end():
             endTime = ConfiguredDataCenters.objects.all().filter(
                 sub_id = get_current_sub_id()).values().get()['endTime']
             endTime = str(int(time.mktime(endTime.timetuple())))
+            
         return startTime, endTime
     except: return ConfiguredDataCenters.DoesNotExist
 
