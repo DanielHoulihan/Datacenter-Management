@@ -6,6 +6,7 @@ from .services import services, asset_services, budget_services, tco_services, m
 from . import forms
 from django.views.decorators.csrf import csrf_protect
 from datetime import datetime 
+import time
 
 __author__ = "Daniel Houlihan"
 __studentnumber__ = "18339866"
@@ -93,7 +94,9 @@ def configure(request):
                 to_configure, start, end, pue, energy_cost, carbon_conversion, budget = form.cleaned_data
                 services.increment_count()
                 instance = str(to_configure)+"-"+str(Application.objects.all().values().get()['configured'])
-
+                
+                start1 = time.process_time()
+            
                 model_services.create_configured(master,
                 instance,to_configure,start,end,pue,energy_cost,carbon_conversion,budget)
 
@@ -101,8 +104,7 @@ def configure(request):
                 asset_services.find_available_hosts(master, to_configure, instance)
                 asset_services.get_hosts_energy(master, instance)
                 tco_services.get_hosts_power(master, instance)
-                budget_services.get_hosts_budget(master, instance)
-
+                budget_services.get_hosts_budget(master, instance)                
             context['error'] = form
 
     if request.method == 'POST':
@@ -119,6 +121,7 @@ def configure(request):
                 form = forms.UpdateDatacenterForm(request.POST)
                 if form.is_valid():
                     to_update = form.cleaned_data['update']
+                    start1 = time.process_time()
                     asset_services.find_available_hosts(master, services.get_current_datacenter(), to_update)
                     asset_services.update_hosts_energy(master,to_update)
                     budget_services.get_hosts_budget(master,to_update)
@@ -161,6 +164,8 @@ def configure(request):
     # status = asset_services.get_available_datacenters()
     if status!=ConnectionRefusedError:
         context['online'] = 'true'
+    # print(time.process_time() - start1)
+
     return render (request, 'configure/configure.html', context)
 
             

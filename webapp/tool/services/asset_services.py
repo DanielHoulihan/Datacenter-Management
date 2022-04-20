@@ -2,7 +2,7 @@ from . import model_services
 from tool.models import Host, ConfiguredDataCenters
 import requests
 from . import services
-
+import time
 def get_available_datacenters():
     """ Finds all available datacenters on the master IP address. 
 
@@ -90,9 +90,11 @@ def update_host_energy(hostid,startTime,endTime,master,datacenter,floorid,sub_id
         get_host_energy(hostid,startTime,endTime,master,datacenter,floorid,sub_id,rackid)
         return
     
+    s = time.process_time()
     new_url = services.cpu_usage_url(master,datacenter,str(floorid),str(rackid),str(hostid),startTime,endTime)
     response = services.get_response(new_url)
     data2 = response.json()
+    # print(time.process_time() - s)
     cpu_total = 0
     cpu_count = 0
     if data2==None:return
@@ -129,6 +131,7 @@ def get_host_energy(hostid,startTime,endTime,master,datacenter,floorid,current,r
     """
     
     host = get_host(master,current,floorid,rackid,hostid)
+    s = time.process_time()
     new_url = services.cpu_usage_url(master,datacenter,str(floorid),str(rackid),str(hostid),startTime,endTime)
     response = services.get_response(new_url)
     data2 = response.json()

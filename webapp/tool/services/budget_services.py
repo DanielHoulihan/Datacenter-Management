@@ -84,11 +84,13 @@ def update_budget(budget, available_hosts, endTime):
     startTime = str(int(decoded_data[-1]['day']))
     df_list=[unix_range(startTime,endTime)]
     for host in available_hosts:
+        s = time.process_time()
         url = services.power_url(host['masterip'],host['datacenterid'],str(host['floorid']),
                                 str(host['rackid']),str(host['hostid']),startTime,endTime)
         
         response = services.get_response(url)
         data = response.json()
+        # print(time.process_time() - s)
         start=int(startTime)
         energy = defaultdict(list)
         if data!=None: 
@@ -129,10 +131,12 @@ def create_budget(startTime, endTime, available_hosts):
     
     df_list=[unix_range(startTime,endTime)]
     for host in available_hosts:
+        s = time.process_time()
         url = services.power_url(host['masterip'],host['datacenterid'],str(host['floorid']),
                                     str(host['rackid']),str(host['hostid']),startTime,endTime)
         response = services.get_response(url)
         data = response.json()
+        s = time.process_time()
         start=int(startTime)
         energy = defaultdict(list)
         if data!=None: 
@@ -154,6 +158,11 @@ def create_budget(startTime, endTime, available_hosts):
     hosts = hosts.fillna(0)
     hosts = hosts[hosts['day']<=int(time.time())]
     hosts['Total'] = hosts[hosts.columns[1:]].sum(axis=1)
+
+    hosts.loc[len(hosts)] = 0
+    hosts = hosts.shift()
+    hosts.loc[0] = 0
+    hosts['day'][0]=hosts['day'][1]-86400
 
     df_dicts = list(hosts.T.to_dict().values())
     encoded_json = json.dumps(df_dicts)        
@@ -178,9 +187,8 @@ def plot_usage(table,ylabel):
     Returns:
         base64: encoded graph depicting specified table
     """
-    
     startTime, endTime = services.get_start_end()
-    startTime=int(startTime)-10000
+    startTime=int(startTime)-86400
     fig, ax = plt.subplots(figsize=(5.5,4.5))
     for column in table.columns[1:]:
         ax.plot(table['day'], table[column], label=column, markerfacecolor='blue')
@@ -218,9 +226,8 @@ def plot_carbon_total(table):
     Returns:
         base64: encoded graph depicting specified table
     """
-
     startTime, endTime = services.get_start_end()
-    startTime=int(startTime)-10000
+    startTime=int(startTime)-86400
     fig, ax = plt.subplots(figsize=(5.5,4.5))
     for column in table.columns[1:]:
         ax.plot(table['day'], table[column], label=column, markerfacecolor='blue')

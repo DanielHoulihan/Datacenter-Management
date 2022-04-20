@@ -1,6 +1,6 @@
 from tool.models import Host, ConfiguredDataCenters
 from . import services, model_services
-
+import time
 def get_hosts_power(master, sub_id):
     """  call get_host_power for all the Host objects in the selected datacenter
 
@@ -54,9 +54,11 @@ def get_host_power(master, sub_id, datacenter, floorid, rackid, hostid, startTim
         
     host = Host.objects.filter(masterip=master).filter(sub_id = sub_id).filter(
         floorid=floorid).filter(rackid=rackid).filter(hostid=hostid)
+    s = time.process_time()
     url = services.power_url(master, datacenter, str(floorid), str(rackid), str(hostid), startTime, endTime)
     response = services.get_response(url)
     data = response.json()
+    # print(time.process_time() - s)
     if data != None: 
         total_watts = 0
         minutes = 0
@@ -113,10 +115,11 @@ def update_host_power(master, sub_id, datacenter, floorid, rackid, hostid, start
     else: 
         get_host_power(master, sub_id, datacenter, floorid, rackid, hostid, startTime, endTime)
         return
- 
+    s = time.process_time()
     url = services.power_url(master, datacenter, str(floorid), str(rackid), str(hostid), startTime, endTime)
     response = services.get_response(url)
     data = response.json()
+    # print(time.process_time() - s)
     if data != None: 
         total_watts = 0
         minutes = 0
