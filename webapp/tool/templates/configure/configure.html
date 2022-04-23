@@ -76,17 +76,9 @@
               </select>
             </td>
           </tr>
-    
-          {% comment %} <tr>
-            <th>* Start Date</th>
-            <td>            
-              <label for="start"></label>
-              <input type="date" id="start" name="start" required>
-            </td>
-          </tr> {% endcomment %}
 
           <tr>
-            <th>Start Date</th>
+            <th>* Start Date</th>
             <td>            
               <label for="start"></label>
               <input type="date" id="start" name="start" required>
@@ -110,7 +102,7 @@
           </tr>
     
           <tr>
-            <th>* Energy Cost (Euro)</th>
+            <th>* Energy Cost (€/kWh)</th>
             <td>            
               <label for="energy_cost"></label>
               <input type="number" id="energy_cost" name="energy_cost" step="0.01" required>
@@ -126,7 +118,7 @@
           </tr>
     
           <tr>
-            <th>Carbon Budget (kg)</th>
+            <th>Carbon Budget (KgCO2)</th>
             <td>            
               <label for="budget"></label>
               <input type="number" id="budget" name="budget" step="1">
@@ -153,11 +145,11 @@
     <th>Datacenter</th>
     <th>ID</th>
     <th>PUE</th>
-    <th>Energy Cost</th>
-    <th>Carbon Conversion</th>
+    <th>Energy Cost (€/kWh)</th>
+    <th>Carbon Conversion (KgCO2/kWh)</th>
     <th>Start Time</th>
     <th>End Time</th>
-    <th>Budget</th>
+    <th>Budget (KgCo2)</th>
     <th></th>
   </tr>
   </thead>

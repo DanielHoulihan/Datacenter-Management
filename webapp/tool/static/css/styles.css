@@ -179,9 +179,10 @@ table.tco-table tr{
 }
   
 .host-card {
+  position:relative;
   font-size: 12px;
   width: 150px;
-  height: 140px;
+  height: 160px;
   margin: 8px;
   margin-bottom: 50px;
   padding: 15px;
@@ -189,7 +190,7 @@ table.tco-table tr{
   border-radius: 7px;
   color:rgb(255, 255, 255);
   border: 2px solid white;
-
+  /* contain:content; */
   }
 
 .host-card:hover{
@@ -607,9 +608,12 @@ input[type=number]{
 }
 
 .cpu-usage {
-  bottom:auto;
-  position: relative;
-  display: flex;
+  bottom:20px;
+  left: 15px;
+  right: 15px;
+  /* width: auto; */
+  position: absolute;
+  /* display: flex; */
   justify-content: space-between;
   flex-direction: column;
   align-items: center;
@@ -790,9 +794,13 @@ li, #myUL {
 
 /* Tooltip in assets  */
 .tooltip {
-  position: relative;
-  display: inline-block;
-  border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+  /* margin-bottom: 5px; */
+  bottom:10px;
+  left:30px;
+  right:30px;
+  position: absolute; 
+  display: inline-block; 
+  border-bottom: 1px dotted black; 
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -805,10 +813,10 @@ li, #myUL {
   color: #fff;
   background: linear-gradient(180deg, #32c9ba 0%, #1b9b8e 100%);
   background-origin: border-box;
-  box-shadow: 0px 0.5px 1.5px rgba(54, 122, 246, 0.25), inset 0px 0.8px 0px -0.25px rgba(255, 255, 255, 0.2);
+  box-shadow: 0px 0.5px 1.5px rgba(54, 122, 246, 0.25), inset 0px 0.8px 0px -0.25px rgba(255, 255, 255, 0.2); 
   user-select: none;
   -webkit-user-select: none;
-  touch-action: manipulation;
+  touch-action: manipulation; 
 }
 
 .tooltip .tooltiptext {

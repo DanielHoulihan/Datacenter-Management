@@ -9,31 +9,31 @@ Ensure Python 3.7 or higher is installed (older versions not tested)
 cd webapp
 ```
 
+There are three different ways to start the web application depending on your use case. 
+
+Using docker:
+
+```
+docker compose build
+docker compose up
+```
+
+Using a virtual environment (If you do not have adocker but still want the app contained)
 Run the startup bash script which creates a python virtual environment.
 
 ```
 source startup.sh
+fab run
 ```
 
-All required libraries are now installed and the virtual environment is activated.
-
-To run the application in debug mode:
+To run the application in debug mode (with command line output):
 
 ```
 python3 manage.py runserver
 ```
 
-
-OR
-
-
-
-To start the webapp using proper deployment:
-```
-fab run
-```
-
 Webapp is now available at http://localhost:8000
+
 
 To stop the webapp run:
 ```
