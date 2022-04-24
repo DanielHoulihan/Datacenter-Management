@@ -1,11 +1,33 @@
 {% include 'home/base.html'%}
-{% comment %} <head>
-    <link rel="stylesheet" href="/../../static/css/styles.css">
-</head> {% endcomment %}
+
+<div class="topnav3">
+  {% if page == "home" %}<a class="active" href="{% url 'configure' %}">Home</a>{% else %} <a href="{% url 'configure' %}">Home</a>{% endif %}
+  {% if page == "assets" %}<a class="active" href="{% url 'assets' %}">Assets</a>{% else %} <a href="{% url 'assets' %}">Assets</a>{% endif %}
+  {% if page == "budget" %}<a class="active" href="{% url 'budget' %}">Budget</a>{% else %} <a href="{% url 'budget' %}">Budget</a>{% endif %}
+  {% if page == "tco" %}<a class="active" href="{% url 'tco' %}">TCO</a>{% else %} <a href="{% url 'tco' %}">TCO</a>{% endif %}
+  <a class="a2">
+    <form method="POST">
+      {% csrf_token %}
+      <label for="order">Order by:</label>
+      <select name="order" id="order">
+        <option value="" disabled selected>Select</option>
+        <option value="host">Host ID</option>
+        <option value="TCO">TCO</option>
+        <option value="kWh_consumed">kWh Consumed</option>
+        <option value="ops_cons_3">Operational Consumption</option>
+        <option value="op_cost_3">Operational Cost</option>
+        <option value="carbon_footprint_3">Carbon Footprint</option>
+        <option value="app_waste_cost_3">Apparant Wastage</option>
+      </select>
+      <input type="submit" value="Submit">
+    </form>
+  </a>
+</div>
   
 {% block content %}
   
   <div class="content">    
+
       {% if error.non_field_errors %}<div class="capital-error">{{error.non_field_errors}}</div>{% endif %}
       {% for host in tco %}
       <div class="card-container">

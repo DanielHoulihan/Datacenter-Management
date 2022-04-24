@@ -184,13 +184,24 @@ def tco(request):
 
     sub_id = services.get_current_sub_id()
     if request.method == 'POST':
-        form = forms.CalculateTCOForm(request.POST)
-        if form.is_valid():
-            capital,rack,floor,host = form.cleaned_data
-            tco_services.calculate_tco(master, sub_id, floor, rack, host, capital)
-        context['error'] = form
-
+        if 'capital' in request.POST:
+            form = forms.CalculateTCOForm(request.POST)
+            if form.is_valid():
+                capital,rack,floor,host = form.cleaned_data
+                tco_services.calculate_tco(master, sub_id, floor, rack, host, capital)
+            context['error'] = form
+        
     context['tco'] = Host.objects.filter(sub_id=sub_id).filter(masterip=master).all()
+    if request.method == 'POST':
+        if 'order' in request.POST:
+            order = request.POST['order']
+            if order=='host':
+                context['tco'] = Host.objects.filter(sub_id=sub_id).filter(masterip=master).all()
+                context['placeholder'] = order
+            else:
+                context['tco'] = Host.objects.filter(sub_id=sub_id).filter(masterip=master).all().values().order_by('-'+order)
+                context['placeholder'] = order
+
     context['tco_count'] = Host.objects.filter(sub_id=sub_id).filter(masterip=master).all().count()
     context['master'] = master
     context['current'] = services.get_current_for_html()
