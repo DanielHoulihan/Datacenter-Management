@@ -2,6 +2,6 @@ version: '3.8'
 services:
    web:
        build: .
-       command: gunicorn webapp.wsgi:application --bind 0.0.0.0:8000 -D --pid pid.txt
+       command: gunicorn webapp.wsgi:application --bind 0.0.0.0:8000 --pid pid.txt #python3 manage.py runserver 0.0.0:8000 #gunicorn webapp.wsgi:application --bind 0.0.0.0:8000 -D --pid pid.txt
        ports:
            - 8000:8000
