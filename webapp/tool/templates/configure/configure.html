@@ -262,8 +262,10 @@
 
 
 
+<script src="/../../static/js/form.js"></script>
+<script src="/../../static/js/tooltip.js"></script>
 
-<script>
+{% comment %} <script>
   function openForm() {
     document.getElementById("myForm").style.display = "block";
   }
@@ -271,9 +273,9 @@
   function closeForm() {
     document.getElementById("myForm").style.display = "none";
   }
-</script>
-<script>
+</script> {% endcomment %}
+{% comment %} <script>
   $(function () {
     $('[data-toggle="tooltip"]').tooltip()
   })
-</script>
+</script> {% endcomment %}

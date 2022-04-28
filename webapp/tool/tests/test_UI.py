@@ -5,7 +5,9 @@ from tool.models import Application
 from webdriver_manager.chrome import ChromeDriverManager
 from datetime import datetime
 from selenium.webdriver.support.ui import Select
+import unittest
 
+@unittest.skip("skip the test")
 class TCOTest(LiveServerTestCase):
         
     def test_tco_submit(self):
@@ -56,7 +58,7 @@ class TCOTest(LiveServerTestCase):
 
         assert not 'hello' in selenium.page_source
         
-        
+@unittest.skip("skip the test") 
 class AssetTest(LiveServerTestCase):
         
     def test_asset_threshold_valid(self):
@@ -145,25 +147,25 @@ class AssetTest(LiveServerTestCase):
         assert 'Upper Threshold must be between 0 and 100' in selenium.page_source
 
 
+@unittest.skip("skip the test")
+class ChangeMaster(LiveServerTestCase):
+        
+    def test_asset_threshold_valid(self):
+        selenium = webdriver.Chrome(ChromeDriverManager().install())
 
-# class ChangeMaster(LiveServerTestCase):
+        selenium.get('http://localhost:8000/tool/')
+        player_name = selenium.find_element_by_name('ip')
+        submit = selenium.find_element_by_class_name('save')
+        player_name.send_keys('localhost')
+        submit.send_keys(Keys.RETURN)
         
-#     def test_asset_threshold_valid(self):
-#         selenium = webdriver.Chrome(ChromeDriverManager().install())
-
-#         selenium.get('http://localhost:8000/tool/')
-#         player_name = selenium.find_element_by_name('ip')
-#         submit = selenium.find_element_by_class_name('save')
-#         player_name.send_keys('localhost')
-#         submit.send_keys(Keys.RETURN)
+        assert 'localhost' in selenium.page_source
+        player_name = selenium.find_element_by_name('ip')
+        submit = selenium.find_element_by_class_name('save')
+        player_name.send_keys('192.168.56.102')
+        submit.send_keys(Keys.RETURN)
         
-#         assert 'localhost' in selenium.page_source
-#         player_name = selenium.find_element_by_name('ip')
-#         submit = selenium.find_element_by_class_name('save')
-#         player_name.send_keys('192.168.56.102')
-#         submit.send_keys(Keys.RETURN)
-        
-        
+@unittest.skip("skip the test")      
 class UpdateDatacenter(LiveServerTestCase):
         
     def test_configure_datacenter(self):

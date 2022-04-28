@@ -7,7 +7,7 @@ def setup(c):
 
 @task
 def run(c):
-    c.run("gunicorn webapp.wsgi:application --bind 0.0.0.0:8000 -D --pid pid.txt", replace_env=False, pty=False)
+    c.run("gunicorn webapp.wsgi:application --bind 0.0.0.0:8000 --pid pid.txt", replace_env=False, pty=False)
 
 @task
 def kill(c):

@@ -82,7 +82,7 @@
 </ul>
 
 </div>
-<script>
+{% comment %} <script>
   var toggler = document.getElementsByClassName("box");
   var i;
   
@@ -92,12 +92,16 @@
       this.classList.toggle("check-box");
     });
   }
-</script>
-<script>
+</script> {% endcomment %}
+{% comment %} <script>
   $(function () {
     $('[data-toggle="tooltip"]').tooltip()
   })
-</script>
+</script> {% endcomment %}
+<script src="/../../static/js/tree.js"></script>
+
+<script src="/../../static/js/tooltip.js"></script>
+
 
 </div>
 

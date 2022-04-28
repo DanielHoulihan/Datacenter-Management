@@ -1,10 +1,15 @@
-Repository for UCD COMP30910 Final Year Project
+## Repository for UCD COMP30910 
 
-Student Number: 18339866
+### Final Year Project
 
+### Student Number: 18339866
+
+
+##### Instructions for running:
 
 Ensure Python 3.7 or higher is installed (older versions not tested)
 
+Naviagte to the 'webapp' directory 
 ```
 cd webapp
 ```
@@ -18,7 +23,7 @@ docker compose build
 docker compose up
 ```
 
-Using a virtual environment (If you do not have adocker but still want the app contained)
+Using a virtual environment (If you do not have docker but still want the app contained)
 Run the startup bash script which creates a python virtual environment.
 
 ```
@@ -26,21 +31,13 @@ source startup.sh
 fab run
 ```
 
-To run the application in debug mode (with command line output):
+To run the application in debug mode:
+This will install python libraries globally (not recommended)
 
 ```
+pip3 install -r requirements.txt
 python3 manage.py runserver
 ```
 
-Webapp is now available at http://localhost:8000
 
-
-To stop the webapp run:
-```
-fab kill
-```
-
-To reset the webapp (including entire database) run:
-```
-fab reset
-```
+Web application is now available at http://localhost:8000
