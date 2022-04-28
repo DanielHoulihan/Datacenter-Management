@@ -64,7 +64,6 @@ def configure(request):
     'current_datacenter' - select a current datacenter from the configured
     'update' - updates the selected datacenter
     """
-    
     context = {}
         
     master = services.get_master()
@@ -94,9 +93,7 @@ def configure(request):
                 to_configure, start, end, pue, energy_cost, carbon_conversion, budget = form.cleaned_data
                 services.increment_count()
                 instance = str(to_configure)+"-"+str(Application.objects.all().values().get()['configured'])
-                
-                start1 = time.process_time()
-            
+                            
                 model_services.create_configured(master,
                 instance,to_configure,start,end,pue,energy_cost,carbon_conversion,budget)
 
@@ -121,7 +118,6 @@ def configure(request):
                 form = forms.UpdateDatacenterForm(request.POST)
                 if form.is_valid():
                     to_update = form.cleaned_data['update']
-                    start1 = time.process_time()
                     asset_services.find_available_hosts(master, services.get_current_datacenter(), to_update)
                     asset_services.update_hosts_energy(master,to_update)
                     budget_services.get_hosts_budget(master,to_update)
@@ -161,10 +157,8 @@ def configure(request):
     context['page'] = "home"
     
     context['online'] = "false"
-    # status = asset_services.get_available_datacenters()
     if status!=ConnectionRefusedError:
         context['online'] = 'true'
-    # print(time.process_time() - start1)
 
     return render (request, 'configure/configure.html', context)
 

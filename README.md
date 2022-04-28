@@ -7,7 +7,7 @@
 ---
 
 ### 3 minute demonstration
-Short demonstration of web application because you need to be on the same network as a datacenter to use any of the features:
+Short demonstration of web application since you need to be on the same network as a datacenter to use any of the features:
 
 https://drive.google.com/file/d/1Ki3sNgRQNWIsZqvzZYCo3Nslu1Wu_WTN/view?usp=sharing
 
@@ -31,15 +31,14 @@ docker compose build
 docker compose up
 ```
 
-Using a virtual environment (If you do not have docker but still want the app contained)
-Run the startup bash script which creates a python virtual environment.
+Using a virtual environment (If you do not want to use docker):
 
 ```
 source startup.sh
 fab run
 ```
 
-To run the application in debug mode:
+Debug mode
 This will install python libraries globally (not recommended)
 
 ```
