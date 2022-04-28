@@ -1,11 +1,12 @@
 ## Repository for UCD COMP30910 
 
-### Final Year Project
+## Final Year Project
 
-### Student Number: 18339866
+## Student Number: 18339866
 
+---
 
-##### Instructions for running:
+### Instructions for running:
 
 Ensure Python 3.7 or higher is installed (older versions not tested)
 
