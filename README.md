@@ -6,6 +6,13 @@
 
 ---
 
+### 3 minute demonstration
+Short demonstration of web application because you need to be on the same network as a datacenter to use any of the features:
+
+https://drive.google.com/file/d/1Ki3sNgRQNWIsZqvzZYCo3Nslu1Wu_WTN/view?usp=sharing
+
+---
+
 ### Instructions for running:
 
 Ensure Python 3.7 or higher is installed (older versions not tested)
