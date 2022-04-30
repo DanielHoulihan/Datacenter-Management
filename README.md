@@ -24,21 +24,22 @@ cd webapp
 
 There are three different ways to start the web application depending on your use case. 
 
-Using docker:
+#### Using docker:
 
 ```
 docker compose build
 docker compose up
 ```
 
-Using a virtual environment (If you do not want to use docker):
+#### Using a virtual environment (If you do not want to use docker):
 
 ```
 source startup.sh
 fab run
 ```
 
-Debug mode
+#### Debug mode:
+
 This will install python libraries globally (not recommended)
 
 ```
@@ -46,5 +47,7 @@ pip3 install -r requirements.txt
 python3 manage.py runserver
 ```
 
+---
 
-Web application is now available at http://localhost:8000
+After running the application it is accessible at: http://localhost:8000
+
