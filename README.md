@@ -13,6 +13,10 @@ https://drive.google.com/file/d/1Ki3sNgRQNWIsZqvzZYCo3Nslu1Wu_WTN/view?usp=shari
 
 ---
 
+Final release: Webapp_V3 (available to download in releases)
+
+---
+
 ### Instructions for running:
 
 Ensure Python 3.7 or higher is installed (older versions not tested)
