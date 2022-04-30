@@ -1,12 +1,19 @@
-## Repository for UCD COMP30910 
+# Repository for UCD COMP30910 
 
-## Final Year Project
+# Datacenter Management Tool
 
 ## Student Number: 18339866
 
 ---
 
-### 3 minute demonstration
+## Requirements
+
+- [Docker](https://www.docker.com/products/docker-desktop)
+- [Python 3.7+](https://www.python.org/downloads/release/python-370/)
+
+---
+
+## 3 minute demonstration
 Short demonstration of web application since you need to be on the same network as a datacenter to use any of the features:
 
 https://drive.google.com/file/d/1Ki3sNgRQNWIsZqvzZYCo3Nslu1Wu_WTN/view?usp=sharing
@@ -14,8 +21,6 @@ https://drive.google.com/file/d/1Ki3sNgRQNWIsZqvzZYCo3Nslu1Wu_WTN/view?usp=shari
 ---
 
 ### Instructions for running:
-
-Ensure Python 3.7 or higher is installed (older versions not tested)
 
 Naviagte to the 'webapp' directory 
 ```
@@ -46,5 +51,29 @@ pip3 install -r requirements.txt
 python3 manage.py runserver
 ```
 
-
 Web application is now available at http://localhost:8000
+
+---
+
+### Clean Up
+
+```
+fab kill
+fab reset
+```
+
+---
+
+### User Interface
+![](./images/sc-01.png)
+![](./images/sc-02.png)
+![](./images/sc-03.png)
+![](./images/sc-04.png)
+
+---
+
+### Team 
+
+- [Daniel Houlihan](https://github.com/DanielHoulihan)
+
+
